@@ -79,21 +79,17 @@ public class Assignment1
     //if stack pop = queue dequeue, then it still has a chance to be a palindrome, other cannot be
     public static boolean evalPalidrome(Stack s, Queue q, String item)
     {
-        boolean isPalindrome = true;
         int k = 0;
         while(k < item.length())
         {
             String stackPop = s.pop().data;
             String queueDequeue = q.dequeue().data;
-            if(isPalindrome && (stackPop.equals(queueDequeue)))
+            if((stackPop.equals(queueDequeue)))
                 k++;
-            else if(isPalindrome && !((stackPop.equals(queueDequeue))))
-            {
-                isPalindrome = false;
-                return isPalindrome;
-            }
+            else if(!((stackPop.equals(queueDequeue))))
+                return false;
         }
-        return isPalindrome;
+        return true;
     }
 
 }
