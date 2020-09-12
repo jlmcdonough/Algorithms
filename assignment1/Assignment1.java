@@ -24,6 +24,20 @@ public class Assignment1 {
         System.out.println(s.pop().data);
         s.push("n3");
         System.out.println(s.pop());System.out.println(s.pop());System.out.println(s.pop());
+
+
+        Queue q = new Queue();
+        System.out.println(q.dequeue());
+        q.enqueue("alpha");
+        System.out.println(q.dequeue().data);
+        q.enqueue("bravo");
+        q.enqueue("charlie");
+        q.enqueue("delta");
+        System.out.println(q.queueFirst.data + ' ' + q.queueLast.data);
+        System.out.println(q.dequeue().data);
+        System.out.println(q.dequeue().data);
+        q.enqueue("echo");
+        System.out.println(q.dequeue().data);
     }
 }
 
