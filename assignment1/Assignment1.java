@@ -15,52 +15,31 @@ public class Assignment1
     {
         try
         {
-            URL path = Assignment1.class.getResource("magicitems.txt");
-            File magicFile = new File(path.getFile());
-            System.out.println(magicFile);
-            Scanner reader = new Scanner(magicFile);
+            Scanner reader = new Scanner(getFile());
             ArrayList<String> myMagicItems = new ArrayList<String>();
             ArrayList<String> myPalindromes = new ArrayList<String>();
+            
             while (reader.hasNextLine())
             {
                 String item = reader.nextLine();
-                item = item.toLowerCase().trim().replaceAll(" ","");
-                item = item.replaceAll("\\p{Punct}", "");
-                myMagicItems.add(item);
+                myMagicItems.add(normalizeItems(item));
             }
 
             for(int i = 0; i < myMagicItems.size(); i++)
             {
                 Stack s = new Stack();
-                Queue q1 = new Queue();
+                Queue q = new Queue();
                 for(int j = 0; j < myMagicItems.get(i).length(); j++)
                 {
                     String letter = Character.toString(myMagicItems.get(i).charAt(j));
                     s.push(letter);
-                    q1.enqueue(letter);
+                    q.enqueue(letter);
                 }
 
-                boolean isPalindrome = true;
-                int k = 0;
-                while(k < myMagicItems.get(i).length())
-                {
-                    String stackPop = s.pop().data;
-                    String queueDequeue = q1.dequeue().data;
-                    if(isPalindrome && (stackPop.equals(queueDequeue)))
-                        k++;
-                    else if(isPalindrome && !((stackPop.equals(queueDequeue))))
-                    {
-                        isPalindrome = false;
-                        break;
-                    }
-                }
-
-                if(s.isEmpty() && isPalindrome)
+                if(evalPalidrome(s, q, myMagicItems.get(i)))
                     myPalindromes.add(myMagicItems.get(i));
-
             }
 
-            System.out.println(myPalindromes.size());
             for(String palindromes : myPalindromes )
                 System.out.println(palindromes);
         }
@@ -71,5 +50,39 @@ public class Assignment1
         }
 
     }
+
+    public static File getFile()
+    {
+        URL path = Assignment1.class.getResource("magicitems.txt");
+        File magicFile = new File(path.getFile());
+        return magicFile;
+    }
+
+    public static String normalizeItems(String item)
+    {
+        item = item.toLowerCase().trim().replaceAll(" ","");
+        item = item.replaceAll("\\p{Punct}", "");
+        return item;
+    }
+
+    public static boolean evalPalidrome(Stack s, Queue q, String item)
+    {
+        boolean isPalindrome = true;
+        int k = 0;
+        while(k < item.length())
+        {
+            String stackPop = s.pop().data;
+            String queueDequeue = q.dequeue().data;
+            if(isPalindrome && (stackPop.equals(queueDequeue)))
+                k++;
+            else if(isPalindrome && !((stackPop.equals(queueDequeue))))
+            {
+                isPalindrome = false;
+                return isPalindrome;
+            }
+        }
+        return isPalindrome;
+    }
+
 }
 
