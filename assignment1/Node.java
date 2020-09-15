@@ -26,22 +26,22 @@ public class Node {
     //Sets pointer of node to the next node in the linked list
     public void nextNode(Node n)
     {
-        this.reference = n;
+        reference = n;
     }
 }
 
 class Stack {
-    Node first;  //keeps track of first element that would leave stack
+    Node stackFirst;  //keeps track of first element that would leave stack
 
     public Stack()
     {
-        first = null; //stack is empty by default
+        stackFirst = null; //stack is empty by default
     }
 
     //Checks to see if stack is empty
     public boolean isEmpty()
     {
-        if (first == null)
+        if (stackFirst == null)
             return true;
         else
             return false;
@@ -51,9 +51,9 @@ class Stack {
     public void push(String s)
     {
         Node n = new Node(s);
-        Node oldTop = this.first;
+        Node oldTop = stackFirst;
         n.reference = oldTop;
-        this.first = n;
+        stackFirst = n;
     }
 
     //Pops top node off the stack
@@ -63,8 +63,8 @@ class Stack {
         if (this.isEmpty()) {
             System.out.print("Nothing to pop, stack is empty");
         } else {
-            returnValue = first;
-            first = first.reference;
+            returnValue = stackFirst;
+            stackFirst = stackFirst.reference;
         }
         return returnValue;
     }
