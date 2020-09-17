@@ -22,8 +22,7 @@ public class Assignment1
             //adds each magic items into the magic item list
             while (reader.hasNextLine())
             {
-                String item = reader.nextLine();
-                myMagicItems.add(item);
+                myMagicItems.add(reader.nextLine());
             }
 
             //one item at a time, creates a stack and queue and adds each character of the item onto it
@@ -63,9 +62,7 @@ public class Assignment1
     //turns all characters lowercase and removes whitespace and punctuation
     public static String normalizeItems(String item)
     {
-        item = item.toLowerCase().trim().replaceAll(" ","");
-        item = item.replaceAll("\\p{Punct}", "");
-        return item;
+        return item.toLowerCase().trim().replaceAll(" ","").replaceAll("\\p{Punct}", "");
     }
 
     //takes each character off the stack and queue one at a time and checks to see if equal
