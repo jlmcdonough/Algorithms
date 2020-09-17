@@ -76,7 +76,7 @@ public class Assignment1
             String queueDequeue = q.dequeue().data;
             if((stackPop.equals(queueDequeue)))
                 k++;
-            else if(!((stackPop.equals(queueDequeue))))
+            else if(!(stackPop.equals(queueDequeue)))
                 return false;
         }
         return true;
