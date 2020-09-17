@@ -15,7 +15,7 @@ public class Assignment1
     {
         try
         {
-            Scanner reader = new Scanner(getFile());
+            Scanner reader = new Scanner(new File("magicitems.txt"));
             ArrayList<String> myMagicItems = new ArrayList<String>();   //holds list of magic items as per text file
             ArrayList<String> myPalindromes = new ArrayList<String>();  //holds list of palidromes as they appear
 
@@ -59,13 +59,6 @@ public class Assignment1
 
     }
 
-    //Gets path of magicitems.txt and returns the file
-    public static File getFile()
-    {
-        URL path = Assignment1.class.getResource("magicitems.txt");
-        File magicFile = new File(path.getFile());
-        return magicFile;
-    }
 
     //turns all characters lowercase and removes whitespace and punctuation
     public static String normalizeItems(String item)
