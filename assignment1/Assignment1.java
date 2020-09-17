@@ -17,7 +17,7 @@ public class Assignment1
         {
             Scanner reader = new Scanner(new File("magicitems.txt"));
             ArrayList<String> myMagicItems = new ArrayList<String>();   //holds list of magic items as per text file
-            ArrayList<String> myPalindromes = new ArrayList<String>();  //holds list of palidromes as they appear
+            ArrayList<String> myPalindromes = new ArrayList<String>();  //holds list of palindromes as they appear
 
             //adds each magic items into the magic item list
             while (reader.hasNextLine())
@@ -41,12 +41,12 @@ public class Assignment1
                     itemQueue.enqueue(letter);
                 }
 
-                //checks to see if the word is a palindrome --> if it is, if = true and item get adds to palidrome list
-                if(evalPalidrome(itemStack, itemQueue, myMagicItems.get(i)))
+                //checks to see if the word is a palindrome --> if it is, if = true and item get adds to palindrome list
+                if(evalPalindrome(itemStack, itemQueue, myMagicItems.get(i)))
                     myPalindromes.add(myMagicItems.get(i));
             }
 
-            //prints out each palidrome
+            //prints out each palindrome
             for(String palindromes : myPalindromes )
                 System.out.println(palindromes);
         }
@@ -70,7 +70,7 @@ public class Assignment1
 
     //takes each character off the stack and queue one at a time and checks to see if equal
     //if stack pop = queue dequeue, then it still has a chance to be a palindrome, other cannot be
-    public static boolean evalPalidrome(Stack s, Queue q, String item)
+    public static boolean evalPalindrome(Stack s, Queue q, String item)
     {
         int k = 0;
         while(k < item.length())
