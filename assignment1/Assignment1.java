@@ -16,34 +16,36 @@ public class Assignment1
         try
         {
             Scanner reader = new Scanner(new File("magicitems.txt"));
-            ArrayList<String> myMagicItems = new ArrayList<String>();   //holds list of magic items as per text file
+            ArrayList<String> myMagicItemsNorm = new ArrayList<String>();   //holds list of magic items as per text file, after normalized for palindrome detection
+            ArrayList<String> myMagicItemsUnchanged = new ArrayList<String>();   //holds list of magic items as they appear in text file
             ArrayList<String> myPalindromes = new ArrayList<String>();  //holds list of palindromes as they appear
 
             //adds each magic items into the magic item list
             while (reader.hasNextLine())
             {
                 String item = reader.nextLine();
-                myMagicItems.add(normalizeItems(item));
+                myMagicItemsNorm.add(normalizeItems(item));
+                myMagicItemsUnchanged.add(item);
             }
 
             //one item at a time, creates a stack and queue and adds each character of the item onto it
-            for(int i = 0; i < myMagicItems.size(); i++)
+            for(int i = 0; i < myMagicItemsNorm.size(); i++)
             {
                 //each item is in its own stack/queue
                 Stack itemStack = new Stack();
                 Queue itemQueue = new Queue();
 
                 //puts each letter at the top/end of stack/queue
-                for(int j = 0; j < myMagicItems.get(i).length(); j++)
+                for(int j = 0; j < myMagicItemsNorm.get(i).length(); j++)
                 {
-                    String letter = Character.toString(myMagicItems.get(i).charAt(j));
+                    String letter = Character.toString(myMagicItemsNorm.get(i).charAt(j));
                     itemStack.push(letter);
                     itemQueue.enqueue(letter);
                 }
 
                 //checks to see if the word is a palindrome --> if it is, if = true and item get adds to palindrome list
-                if(evalPalindrome(itemStack, itemQueue, myMagicItems.get(i)))
-                    myPalindromes.add(myMagicItems.get(i));
+                if(evalPalindrome(itemStack, itemQueue, myMagicItemsNorm.get(i)))
+                    myPalindromes.add(myMagicItemsUnchanged.get(i));    //Both lists contain same elements, except one has items untouched <-- thats the one being printed
             }
 
             //prints out each palindrome
