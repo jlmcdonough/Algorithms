@@ -23,6 +23,10 @@ public class Assignment2
             {
                 myMagicItems.add(reader.nextLine());
             }
+
+            selectionSort(myMagicItems);
+            System.out.println(myMagicItems);
+            
         }
 
         //in the event file is not found, user is made aware and program cannot run
@@ -34,11 +38,28 @@ public class Assignment2
 
 
 
-    public static int selectionSort(ArrayList<String> items)
+    public static int selectionSort(ArrayList<String> itemList)
     {
         int comparisonCount = 0;
-
+        for(int i = 0; i < (itemList.size() - 2); i++)
+        {
+            int smallestPos = i;
+            for(int j = i + 1; j < itemList.size(); j++)
+            {
+                comparisonCount++;
+                if(itemList.get(smallestPos).compareToIgnoreCase(itemList.get(j)) > 0)
+                    smallestPos = j;
+            }
+            selectionSwap(itemList, i, smallestPos);
+        }
         return comparisonCount;
+    }
+
+    public static void selectionSwap(ArrayList<String> itemList, int lowestPos, int swaperPos)
+    {
+        String temp = itemList.get(lowestPos);
+        itemList.set(lowestPos, itemList.get(swaperPos));  //take what is in the higher spot, and put it at the lowest index
+        itemList.set(swaperPos, temp);   //take what used to be in lowestPos and put it in the higher spot
     }
 
     public static int insertionSort(ArrayList<String> items)
