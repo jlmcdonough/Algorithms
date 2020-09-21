@@ -24,8 +24,7 @@ public class Assignment2
                 myMagicItems.add(reader.nextLine());
             }
 
-            selectionSort(myMagicItems);
-            System.out.println(myMagicItems);
+            System.out.println(selectionSort(myMagicItems)); //prints comparison count
             
         }
 
