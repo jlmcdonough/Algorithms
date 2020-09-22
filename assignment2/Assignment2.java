@@ -16,16 +16,19 @@ public class Assignment2
         try
         {
             Scanner reader = new Scanner(new File("magicitems.txt"));
-            ArrayList<String> myMagicItems = new ArrayList<String>();   //holds list of magic items as per text file
-
+            ArrayList<String> myMagicItemsSelection = new ArrayList<String>();   //holds list of magic items as per text file
+            ArrayList<String> myMagicItemsInsertion = new ArrayList<String>();   //holds list of magic items as per text file
             //adds each magic items into the magic item list
             while (reader.hasNextLine())
             {
-                myMagicItems.add(reader.nextLine());
+                String item = reader.nextLine();
+                myMagicItemsSelection.add(item);
+                myMagicItemsInsertion.add(item);
             }
 
-            System.out.println(selectionSort(myMagicItems)); //prints comparison count
-            
+            System.out.println(selectionSort(myMagicItemsSelection)); //prints comparison count
+            System.out.println(insertionSort(myMagicItemsInsertion)); //prints comparison count
+
         }
 
         //in the event file is not found, user is made aware and program cannot run
@@ -49,23 +52,34 @@ public class Assignment2
                 if(itemList.get(smallestPos).compareToIgnoreCase(itemList.get(j)) > 0)
                     smallestPos = j;
             }
-            selectionSwap(itemList, i, smallestPos);
+            swap(itemList, i, smallestPos);
         }
         return comparisonCount;
     }
 
-    public static void selectionSwap(ArrayList<String> itemList, int lowestPos, int swaperPos)
+    public static int insertionSort(ArrayList<String> itemList)
+    {
+        int comparisonCount = 0;
+        for(int i = 1; i < itemList.size(); i++)
+        {
+            String currItem = itemList.get(i);
+            int j = i-1;
+            while(j >= 0 && (itemList.get(j).compareToIgnoreCase(currItem))>0)
+            {
+                comparisonCount++;
+                swap(itemList, j+1, j);
+                j--;
+            }
+            itemList.set(j+1, currItem);
+        }
+        return comparisonCount;
+    }
+
+    public static void insertionSwap(ArrayList<String> itemList, int lowestPos, int swaperPos)
     {
         String temp = itemList.get(lowestPos);
         itemList.set(lowestPos, itemList.get(swaperPos));  //take what is in the higher spot, and put it at the lowest index
         itemList.set(swaperPos, temp);   //take what used to be in lowestPos and put it in the higher spot
-    }
-
-    public static int insertionSort(ArrayList<String> items)
-    {
-        int comparisonCount = 0;
-
-        return comparisonCount;
     }
 
     public static int mergeSort(ArrayList<String> items)
@@ -81,4 +95,12 @@ public class Assignment2
 
         return comparisonCount;
     }
+
+    public static void swap(ArrayList<String> itemList, int lowestPos, int swaperPos)
+    {
+        String temp = itemList.get(lowestPos);
+        itemList.set(lowestPos, itemList.get(swaperPos));  //take what is in the higher spot, and put it at the lowest index
+        itemList.set(swaperPos, temp);   //take what used to be in lowestPos and put it in the higher spot
+    }
+
 }
