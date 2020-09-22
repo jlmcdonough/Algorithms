@@ -27,8 +27,9 @@ public class Assignment2
             }
 
             System.out.println(selectionSort(myMagicItemsSelection)); //prints comparison count
+            System.out.println(myMagicItemsSelection);
             System.out.println(insertionSort(myMagicItemsInsertion)); //prints comparison count
-
+            System.out.println(myMagicItemsInsertion);
         }
 
         //in the event file is not found, user is made aware and program cannot run
@@ -37,13 +38,12 @@ public class Assignment2
             System.out.println("File not found");
         }
     }
-
-
+    
 
     public static int selectionSort(ArrayList<String> itemList)
     {
         int comparisonCount = 0;
-        for(int i = 0; i < (itemList.size() - 2); i++)
+        for(int i = 0; i < (itemList.size() - 1); i++)
         {
             int smallestPos = i;
             for(int j = i + 1; j < itemList.size(); j++)
@@ -73,13 +73,6 @@ public class Assignment2
             itemList.set(j+1, currItem);
         }
         return comparisonCount;
-    }
-
-    public static void insertionSwap(ArrayList<String> itemList, int lowestPos, int swaperPos)
-    {
-        String temp = itemList.get(lowestPos);
-        itemList.set(lowestPos, itemList.get(swaperPos));  //take what is in the higher spot, and put it at the lowest index
-        itemList.set(swaperPos, temp);   //take what used to be in lowestPos and put it in the higher spot
     }
 
     public static int mergeSort(ArrayList<String> items)
