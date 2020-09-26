@@ -30,15 +30,21 @@ public class Assignment2
             }
 
 
-            System.out.println("Selection Count: " +selectionSort(myMagicItemsSelection)); //prints comparison count
+            System.out.println("\nSelection Count: " +selectionSort(myMagicItemsSelection)); //prints comparison count
             System.out.println( myMagicItemsSelection);
 
-            System.out.println("Insertion Count: " + insertionSort(myMagicItemsInsertion)); //prints comparison count
+            System.out.println("\nInsertion Count: " + insertionSort(myMagicItemsInsertion)); //prints comparison count
             System.out.println( myMagicItemsInsertion);
 
             String mergeArray[] = myMagicItemsMerge.toArray(new String[myMagicItemsMerge.size()]);
-            System.out.println("Merge Count: " + mergeSort(mergeArray,666)); //prints comparison count
-
+            System.out.println("\nMerge Count: " + mergeSort(mergeArray,666)); //prints comparison count
+            for(String s: mergeArray)
+            {
+                if(s.equals("Aerewens armor")) //want all arrays to look the same in the end
+                    System.out.print("[" + s + ", ");
+                else
+                    System.out.print(s + ", ");
+            }
         }
 
         //in the event file is not found, user is made aware and program cannot run
@@ -47,7 +53,7 @@ public class Assignment2
             System.out.println("File not found");
         }
     }
-    
+
 
     public static int selectionSort(ArrayList<String> itemList)
     {
@@ -86,37 +92,65 @@ public class Assignment2
 
     //txtbook pg 55
     static int mergeComparisonCount = 0;
-    public static int mergeSort(String[] items, int itemsSize) {
+    public static int mergeSort(String[] items, int itemsSize)
+    {
         if (itemsSize <= 1)
-        {
             return -9999;   //should do nothing
-        }
 
-        int mid = itemsSize / 2;
-        String[] l = new String[mid];
-        String[] r = new String[itemsSize - mid];
+        int midpoint = itemsSize / 2;
+        String[] leftItems = new String[midpoint];
+        String[] rightItems = new String[itemsSize - midpoint];
 
-        for (int i = 0; i < mid; i++)
+        for (int i = 0; i < midpoint; i++)
         {
-            System.out.println("left divide: " + (l[i] = items[i]));
+            leftItems[i] = items[i];
         }
 
-        for (int i = mid; i < itemsSize; i++)
+        for (int j = midpoint; j < itemsSize; j++)
         {
-            System.out.println("right divide: " + (r[i - mid] = items[i]));
+            rightItems[j - midpoint] = items[j];
 
         }
-        System.out.println("Left size: " + l.length);
-        System.out.println("Right size: " + r.length);
-        System.out.println(" ");
-        mergeSort(l, mid);
-        mergeSort(r, itemsSize - mid);
-        System.out.println("Left size: " + l.length);
-        System.out.println("Right size: " + r.length);
-        System.out.println(" ");
-        //merge(items, l, r, mid, itemsSize - mid);
+        mergeSort(leftItems, midpoint);
+        mergeSort(rightItems, itemsSize - midpoint);
+
+
+        merge(items, leftItems, rightItems, midpoint, itemsSize - midpoint);
 
         return mergeComparisonCount;
+    }
+
+    public static void merge(String[] temp, String[] leftItems, String[] rightItems, int left, int right) {
+
+        int leftInc = 0;  //keeps track of distance of middle (0 being farthest away)
+        int rightInc = 0; //keeps track of distance from end of array
+        int tempInc = 0; //keeps track of current variable in temp(sorted) array
+
+        while (leftInc < left && rightInc < right)
+        {
+            mergeComparisonCount++;
+
+            if (leftItems[leftInc].compareToIgnoreCase(rightItems[rightInc]) < 0)
+            {
+                temp[tempInc++] = leftItems[leftInc++];
+            }
+            else
+            {
+                temp[tempInc++] = rightItems[rightInc++];
+            }
+        }
+
+        while (leftInc < left)
+        {
+            mergeComparisonCount++;
+            temp[tempInc++] = leftItems[leftInc++];
+        }
+
+        while (rightInc < right)
+        {
+            mergeComparisonCount++;
+            temp[tempInc++] = rightItems[rightInc++];
+        }
     }
 
     public static int quickSort(ArrayList<String> items)
