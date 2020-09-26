@@ -18,18 +18,27 @@ public class Assignment2
             Scanner reader = new Scanner(new File("magicitems.txt"));
             ArrayList<String> myMagicItemsSelection = new ArrayList<String>();   //holds list of magic items as per text file
             ArrayList<String> myMagicItemsInsertion = new ArrayList<String>();   //holds list of magic items as per text file
+            ArrayList<String> myMagicItemsMerge = new ArrayList<String>();   //holds list of magic items as per text file
+
             //adds each magic items into the magic item list
             while (reader.hasNextLine())
             {
                 String item = reader.nextLine();
                 myMagicItemsSelection.add(item);
                 myMagicItemsInsertion.add(item);
+                myMagicItemsMerge.add(item);
             }
 
-            System.out.println(selectionSort(myMagicItemsSelection)); //prints comparison count
-            System.out.println(myMagicItemsSelection);
-            System.out.println(insertionSort(myMagicItemsInsertion)); //prints comparison count
-            System.out.println(myMagicItemsInsertion);
+
+            System.out.println("Selection Count: " +selectionSort(myMagicItemsSelection)); //prints comparison count
+            System.out.println( myMagicItemsSelection);
+
+            System.out.println("Insertion Count: " + insertionSort(myMagicItemsInsertion)); //prints comparison count
+            System.out.println( myMagicItemsInsertion);
+
+            String mergeArray[] = myMagicItemsMerge.toArray(new String[myMagicItemsMerge.size()]);
+            System.out.println("Merge Count: " + mergeSort(mergeArray,666)); //prints comparison count
+
         }
 
         //in the event file is not found, user is made aware and program cannot run
@@ -75,11 +84,39 @@ public class Assignment2
         return comparisonCount;
     }
 
-    public static int mergeSort(ArrayList<String> items)
-    {
-        int comparisonCount = 0;
+    //txtbook pg 55
+    static int mergeComparisonCount = 0;
+    public static int mergeSort(String[] items, int itemsSize) {
+        if (itemsSize <= 1)
+        {
+            return -9999;   //should do nothing
+        }
 
-        return comparisonCount;
+        int mid = itemsSize / 2;
+        String[] l = new String[mid];
+        String[] r = new String[itemsSize - mid];
+
+        for (int i = 0; i < mid; i++)
+        {
+            System.out.println("left divide: " + (l[i] = items[i]));
+        }
+
+        for (int i = mid; i < itemsSize; i++)
+        {
+            System.out.println("right divide: " + (r[i - mid] = items[i]));
+
+        }
+        System.out.println("Left size: " + l.length);
+        System.out.println("Right size: " + r.length);
+        System.out.println(" ");
+        mergeSort(l, mid);
+        mergeSort(r, itemsSize - mid);
+        System.out.println("Left size: " + l.length);
+        System.out.println("Right size: " + r.length);
+        System.out.println(" ");
+        //merge(items, l, r, mid, itemsSize - mid);
+
+        return mergeComparisonCount;
     }
 
     public static int quickSort(ArrayList<String> items)
