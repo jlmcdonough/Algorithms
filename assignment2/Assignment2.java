@@ -7,6 +7,7 @@ Professor Labouseur
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Assignment2
@@ -19,6 +20,7 @@ public class Assignment2
             ArrayList<String> myMagicItemsSelection = new ArrayList<String>();   //holds list of magic items as per text file
             ArrayList<String> myMagicItemsInsertion = new ArrayList<String>();   //holds list of magic items as per text file
             ArrayList<String> myMagicItemsMerge = new ArrayList<String>();   //holds list of magic items as per text file
+            ArrayList<String> myMagicItemsQuick = new ArrayList<String>();   //holds list of magic items as per text file
 
             //adds each magic items into the magic item list
             while (reader.hasNextLine())
@@ -27,6 +29,7 @@ public class Assignment2
                 myMagicItemsSelection.add(item);
                 myMagicItemsInsertion.add(item);
                 myMagicItemsMerge.add(item);
+                myMagicItemsQuick.add(item);
             }
 
 
@@ -45,6 +48,10 @@ public class Assignment2
                 else
                     System.out.print(s + ", ");
             }
+
+            System.out.println("\nQuick Count: " + quickSort(myMagicItemsQuick)); //prints comparison count
+            //System.out.println( myMagicItemsQuick);
+            System.out.println(sortedQuick);
         }
 
         //in the event file is not found, user is made aware and program cannot run
@@ -153,11 +160,50 @@ public class Assignment2
         }
     }
 
+    static int quickComparisonCount = 0;
+    static ArrayList<String> sortedQuick = new ArrayList<>();
     public static int quickSort(ArrayList<String> items)
     {
-        int comparisonCount = 0;
+        if (items.size() < 1)
+            return 999;   //should do nothing
 
-        return comparisonCount;
+        Random rand = new Random();
+        int pivotNumber = rand.nextInt(items.size());
+        String pivotItem = items.get(pivotNumber);
+
+        ArrayList<String> lesserItems = new ArrayList<>();
+        ArrayList<String> greaterItems = new ArrayList<>();
+        ArrayList<String> dupeItems = new ArrayList<>();
+
+        int lesserCount = 0;
+        int greaterCount = 0;
+
+        //System.out.println("\n" + pivotItem);
+
+        for(int i = 0; i < items.size(); i++)
+        {
+            String s = items.get(i);
+            quickComparisonCount++;
+            if(pivotItem.compareToIgnoreCase(s) > 0)
+                lesserItems.add(s);
+            if(pivotItem.compareToIgnoreCase(s) < 0)
+                greaterItems.add(s);
+
+           // System.out.println("S: " + s + " Comp: " + pivotItem.compareToIgnoreCase(s));
+        }
+
+        //System.out.println("\nLesser: " + lesserItems);
+        //System.out.println("Greater: " + greaterItems + "\n");
+
+       // System.out.println(sortedQuick);
+        quickSort(lesserItems);
+        sortedQuick.add(pivotItem);
+       // System.out.println("\n" + quickComparisonCount + " " + sortedQuick + "\n");
+       // quickComparisonCount++;
+        quickSort(greaterItems);
+
+        return quickComparisonCount;
+
     }
 
     public static void swap(ArrayList<String> itemList, int lowestPos, int swaperPos)
