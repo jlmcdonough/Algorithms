@@ -45,12 +45,13 @@ public class Assignment2
             {
                 if(s.equals("Aerewens armor")) //want all arrays to look the same in the end
                     System.out.print("[" + s + ", ");
+                else if(s.equals("Zales Might"))
+                    System.out.println(s + "]");
                 else
                     System.out.print(s + ", ");
             }
 
             System.out.println("\nQuick Count: " + quickSort(myMagicItemsQuick)); //prints comparison count
-            //System.out.println( myMagicItemsQuick);
             System.out.println(sortedQuick);
         }
 
@@ -178,8 +179,6 @@ public class Assignment2
         int lesserCount = 0;
         int greaterCount = 0;
 
-        //System.out.println("\n" + pivotItem);
-
         for(int i = 0; i < items.size(); i++)
         {
             String s = items.get(i);
@@ -188,22 +187,15 @@ public class Assignment2
                 lesserItems.add(s);
             if(pivotItem.compareToIgnoreCase(s) < 0)
                 greaterItems.add(s);
-
-           // System.out.println("S: " + s + " Comp: " + pivotItem.compareToIgnoreCase(s));
+            if(pivotItem.compareToIgnoreCase(s) == 0)
+                dupeItems.add(s);
         }
 
-        //System.out.println("\nLesser: " + lesserItems);
-        //System.out.println("Greater: " + greaterItems + "\n");
-
-       // System.out.println(sortedQuick);
         quickSort(lesserItems);
         sortedQuick.add(pivotItem);
-       // System.out.println("\n" + quickComparisonCount + " " + sortedQuick + "\n");
-       // quickComparisonCount++;
         quickSort(greaterItems);
 
         return quickComparisonCount;
-
     }
 
     public static void swap(ArrayList<String> itemList, int lowestPos, int swaperPos)
