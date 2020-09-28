@@ -194,6 +194,16 @@ public class Assignment2
         quickSort(greaterItems);
         System.out.println(sortedQuick);
 
+        /*
+            Conditions to be met:
+            1) If there are dupes
+            2) lesserItems is 0 --> meaning sort is down to 1 item elements
+            3) greaterItems is 0 --> " "
+            4) indexOf the first dupe occurrence is in sortedQuick array
+                --> This means that all items are already in the sortedQuick array (and only occurrence once)
+                    --> Basically ensures that each item (unique or has duplicates) is present in the array and dupes can be added
+                    --> Dupes get added to the index of the pre-existing element
+         */
         if(dupeItems.size() > 0 && lesserItems.size() == 0 && greaterItems.size() == 0 && sortedQuick.indexOf(dupeItems.get(0)) >= 0)
         {
             for(String s : dupeItems)
