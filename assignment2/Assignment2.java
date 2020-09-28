@@ -163,6 +163,7 @@ public class Assignment2
 
     static int quickComparisonCount = 0;
     static ArrayList<String> sortedQuick = new ArrayList<>();
+    static ArrayList<String> dupeItems = new ArrayList<>();
     public static int quickSort(ArrayList<String> items)
     {
         if (items.size() < 1)
@@ -174,10 +175,7 @@ public class Assignment2
 
         ArrayList<String> lesserItems = new ArrayList<>();
         ArrayList<String> greaterItems = new ArrayList<>();
-        ArrayList<String> dupeItems = new ArrayList<>();
 
-        int lesserCount = 0;
-        int greaterCount = 0;
 
         for(int i = 0; i < items.size(); i++)
         {
@@ -187,13 +185,24 @@ public class Assignment2
                 lesserItems.add(s);
             if(pivotItem.compareToIgnoreCase(s) < 0)
                 greaterItems.add(s);
-            if(pivotItem.compareToIgnoreCase(s) == 0)
+            if(pivotItem.compareToIgnoreCase(s) == 0 && i != pivotNumber)
                 dupeItems.add(s);
         }
 
         quickSort(lesserItems);
         sortedQuick.add(pivotItem);
         quickSort(greaterItems);
+        System.out.println(sortedQuick);
+
+        if(dupeItems.size() > 0 && lesserItems.size() == 0 && greaterItems.size() == 0 && sortedQuick.indexOf(dupeItems.get(0)) >= 0)
+        {
+            for(String s : dupeItems)
+            {
+                int index = sortedQuick.indexOf(s);
+                sortedQuick.add(index, s);
+            }
+            dupeItems.removeAll(dupeItems);
+        }
 
         return quickComparisonCount;
     }
