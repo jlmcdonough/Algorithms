@@ -39,7 +39,7 @@ public class Assignment2
             System.out.println("\nInsertion Count: " + insertionSort(myMagicItemsInsertion)); //prints comparison count
             System.out.println( myMagicItemsInsertion);
 
-            String mergeArray[] = myMagicItemsMerge.toArray(new String[myMagicItemsMerge.size()]);
+            /*String mergeArray[] = myMagicItemsMerge.toArray(new String[myMagicItemsMerge.size()]);
             System.out.println("\nMerge Count: " + mergeSort(mergeArray,666)); //prints comparison count
             for(String s: mergeArray)
             {
@@ -49,13 +49,16 @@ public class Assignment2
                     System.out.println(s + "]");
                 else
                     System.out.print(s + ", ");
-            }
+            } */
+            System.out.println("\nMerge Count: " + quickSort(myMagicItemsMerge)); //prints comparison count
+            System.out.println(myMagicItemsMerge);
 
             System.out.println("\nQuick Count: " + quickSort(myMagicItemsQuick)); //prints comparison count
             System.out.println(myMagicItemsQuick);
 
             //Test to make sure all lists are same (includes order)
             System.out.println(myMagicItemsInsertion.equals(myMagicItemsSelection));
+            System.out.println(myMagicItemsInsertion.equals(myMagicItemsMerge));
             System.out.println(myMagicItemsInsertion.equals(myMagicItemsQuick));
 
         }
@@ -105,35 +108,30 @@ public class Assignment2
 
     //txtbook pg 55
     static int mergeComparisonCount = 0;
-    public static int mergeSort(String[] items, int itemsSize)
+    public static int mergeSort(List<String> items, int itemsSize)
     {
-        if (itemsSize <= 1)
-            return -9999;   //should do nothing
-
-        int midpoint = itemsSize / 2;
-        String[] leftItems = new String[midpoint];
-        String[] rightItems = new String[itemsSize - midpoint];
-
-        for (int i = 0; i < midpoint; i++)
+        if (itemsSize > 1)
         {
-            leftItems[i] = items[i];
+            int midpoint = itemsSize / 2;
+            List<String> leftItems = new ArrayList<String>(midpoint);
+            List<String> rightItems = new ArrayList<String>(itemsSize - midpoint);
+
+            for (int i = 0; i < midpoint; i++)
+                leftItems.set(i, items.get(i));
+
+            for (int j = midpoint; j < itemsSize; j++)
+                rightItems.set(j - midpoint, items.get(j));
+
+            mergeSort(leftItems, midpoint);
+            mergeSort(rightItems, itemsSize - midpoint);
+
+            merge(items, leftItems, rightItems, midpoint, itemsSize - midpoint);
         }
-
-        for (int j = midpoint; j < itemsSize; j++)
-        {
-            rightItems[j - midpoint] = items[j];
-
-        }
-        mergeSort(leftItems, midpoint);
-        mergeSort(rightItems, itemsSize - midpoint);
-
-
-        merge(items, leftItems, rightItems, midpoint, itemsSize - midpoint);
 
         return mergeComparisonCount;
     }
 
-    public static void merge(String[] temp, String[] leftItems, String[] rightItems, int left, int right) {
+    public static void merge(List<String> temp, List<String> leftItems, List<String> rightItems, int left, int right) {
 
         int leftInc = 0;  //keeps track of distance of middle (0 being farthest away)
         int rightInc = 0; //keeps track of distance from end of array
@@ -143,26 +141,26 @@ public class Assignment2
         {
             mergeComparisonCount++;
 
-            if (leftItems[leftInc].compareToIgnoreCase(rightItems[rightInc]) < 0)
+            if (leftItems.get(leftInc).compareToIgnoreCase(rightItems.get(rightInc)) < 0)
             {
-                temp[tempInc++] = leftItems[leftInc++];
+                temp.set(tempInc++, leftItems.get(leftInc++));
             }
             else
             {
-                temp[tempInc++] = rightItems[rightInc++];
+                temp.set(tempInc++, rightItems.get(rightInc++));
             }
         }
 
         while (leftInc < left)
         {
             mergeComparisonCount++;
-            temp[tempInc++] = leftItems[leftInc++];
+            temp.set(tempInc++, leftItems.get(leftInc++));
         }
 
         while (rightInc < right)
         {
             mergeComparisonCount++;
-            temp[tempInc++] = rightItems[rightInc++];
+            temp.set(tempInc++, rightItems.get(rightInc++));
         }
     }
 
