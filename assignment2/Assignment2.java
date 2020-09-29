@@ -17,10 +17,10 @@ public class Assignment2
         try
         {
             Scanner reader = new Scanner(new File("magicitems.txt"));
-            ArrayList<String> myMagicItemsSelection = new ArrayList<String>();   //holds list of magic items as per text file
-            ArrayList<String> myMagicItemsInsertion = new ArrayList<String>();   //holds list of magic items as per text file
-            ArrayList<String> myMagicItemsMerge = new ArrayList<String>();   //holds list of magic items as per text file
-            ArrayList<String> myMagicItemsQuick = new ArrayList<String>();   //holds list of magic items as per text file
+            List<String> myMagicItemsSelection = new ArrayList<String>();   //holds list of magic items as per text file
+            List<String> myMagicItemsInsertion = new ArrayList<String>();   //holds list of magic items as per text file
+            List<String> myMagicItemsMerge = new ArrayList<String>();   //holds list of magic items as per text file
+            List<String> myMagicItemsQuick = new ArrayList<String>();   //holds list of magic items as per text file
 
             //adds each magic items into the magic item list
             while (reader.hasNextLine())
@@ -52,7 +52,11 @@ public class Assignment2
             }
 
             System.out.println("\nQuick Count: " + quickSort(myMagicItemsQuick)); //prints comparison count
-            System.out.println(sortedQuick);
+            System.out.println(myMagicItemsQuick);
+
+            System.out.println(myMagicItemsInsertion.equals(myMagicItemsSelection));
+            System.out.println(myMagicItemsInsertion.equals(myMagicItemsQuick));
+
         }
 
         //in the event file is not found, user is made aware and program cannot run
@@ -63,7 +67,7 @@ public class Assignment2
     }
 
 
-    public static int selectionSort(ArrayList<String> itemList)
+    public static int selectionSort(List<String> itemList)
     {
         int comparisonCount = 0;
         for(int i = 0; i < (itemList.size() - 1); i++)
@@ -80,7 +84,7 @@ public class Assignment2
         return comparisonCount;
     }
 
-    public static int insertionSort(ArrayList<String> itemList)
+    public static int insertionSort(List<String> itemList)
     {
         int comparisonCount = 0;
         for(int i = 1; i < itemList.size(); i++)
@@ -162,62 +166,34 @@ public class Assignment2
     }
 
     static int quickComparisonCount = 0;
-    static ArrayList<String> sortedQuick = new ArrayList<>();
-    static ArrayList<String> dupeItems = new ArrayList<>();
-    public static int quickSort(ArrayList<String> items)
+    public static int quickSort(List<String> items)
     {
-        if (items.size() < 1)
-            return 999;   //should do nothing
+        if (items.size() <= 1)
+            return -999999;   //should do nothing
 
         Random rand = new Random();
         int pivotNumber = rand.nextInt(items.size());
         String pivotItem = items.get(pivotNumber);
 
-        ArrayList<String> lesserItems = new ArrayList<>();
-        ArrayList<String> greaterItems = new ArrayList<>();
+        swap(items, 0, pivotNumber);
+        int k = 0;
 
-
-        for(int i = 0; i < items.size(); i++)
+        for(int i = 1; i < items.size(); i++)
         {
-            String s = items.get(i);
             quickComparisonCount++;
-            if(pivotItem.compareToIgnoreCase(s) > 0)
-                lesserItems.add(s);
-            if(pivotItem.compareToIgnoreCase(s) < 0)
-                greaterItems.add(s);
-            if(pivotItem.compareToIgnoreCase(s) == 0 && i != pivotNumber)
-                dupeItems.add(s);
-        }
-
-        quickSort(lesserItems);
-        sortedQuick.add(pivotItem);
-        quickSort(greaterItems);
-        System.out.println(sortedQuick);
-
-        /*
-            Conditions to be met:
-            1) If there are dupes
-            2) lesserItems is 0 --> meaning sort is down to 1 item elements
-            3) greaterItems is 0 --> " "
-            4) indexOf the first dupe occurrence is in sortedQuick array
-                --> This means that all items are already in the sortedQuick array (and only occurrence once)
-                    --> Basically ensures that each item (unique or has duplicates) is present in the array and dupes can be added
-                    --> Dupes get added to the index of the pre-existing element
-         */
-        if(dupeItems.size() > 0 && lesserItems.size() == 0 && greaterItems.size() == 0 && sortedQuick.indexOf(dupeItems.get(0)) >= 0)
-        {
-            for(String s : dupeItems)
+            if(items.get(0).compareToIgnoreCase(items.get(i)) > 0)
             {
-                int index = sortedQuick.indexOf(s);
-                sortedQuick.add(index, s);
+                swap(items, k, i);
+                swap(items, 0, k);
             }
-            dupeItems.removeAll(dupeItems);
         }
+        quickSort(items.subList(0,k));
+        quickSort(items.subList(k+1,items.size()));
 
         return quickComparisonCount;
     }
 
-    public static void swap(ArrayList<String> itemList, int lowestPos, int swaperPos)
+    public static void swap(List<String> itemList, int lowestPos, int swaperPos)
     {
         String temp = itemList.get(lowestPos);
         itemList.set(lowestPos, itemList.get(swaperPos));  //take what is in the higher spot, and put it at the lowest index
