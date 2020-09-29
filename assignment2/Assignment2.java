@@ -54,6 +54,7 @@ public class Assignment2
             System.out.println("\nQuick Count: " + quickSort(myMagicItemsQuick)); //prints comparison count
             System.out.println(myMagicItemsQuick);
 
+            //Test to make sure all lists are same (includes order)
             System.out.println(myMagicItemsInsertion.equals(myMagicItemsSelection));
             System.out.println(myMagicItemsInsertion.equals(myMagicItemsQuick));
 
@@ -168,27 +169,30 @@ public class Assignment2
     static int quickComparisonCount = 0;
     public static int quickSort(List<String> items)
     {
-        if (items.size() <= 1)
-            return -999999;   //should do nothing
-
-        Random rand = new Random();
-        int pivotNumber = rand.nextInt(items.size());
-        String pivotItem = items.get(pivotNumber);
-
-        swap(items, 0, pivotNumber);
-        int k = 0;
-
-        for(int i = 1; i < items.size(); i++)
+        if (items.size() > 1)
         {
-            quickComparisonCount++;
-            if(items.get(0).compareToIgnoreCase(items.get(i)) > 0)
+            Random rand = new Random();
+            int pivotNumber = rand.nextInt(items.size());
+            String pivotItem = items.get(pivotNumber);
+
+            swap(items, 0, pivotNumber);
+            int k = 0;
+
+            for (int i = 1; i < items.size(); i++)
             {
-                swap(items, k, i);
-                swap(items, 0, k);
+                quickComparisonCount++;
+                if (items.get(k).compareToIgnoreCase(items.get(i)) > 0)
+                {
+                    swap(items, k, i);
+                    k++;
+                    swap(items, k, i);
+
+                }
             }
+
+            quickSort(items.subList(0, k));
+            quickSort(items.subList(k + 1, items.size()));
         }
-        quickSort(items.subList(0,k));
-        quickSort(items.subList(k+1,items.size()));
 
         return quickComparisonCount;
     }
