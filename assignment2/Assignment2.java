@@ -39,27 +39,17 @@ public class Assignment2
             System.out.println("\nInsertion Count: " + insertionSort(myMagicItemsInsertion)); //prints comparison count
             System.out.println( myMagicItemsInsertion);
 
-            /*String mergeArray[] = myMagicItemsMerge.toArray(new String[myMagicItemsMerge.size()]);
-            System.out.println("\nMerge Count: " + mergeSort(mergeArray,666)); //prints comparison count
-            for(String s: mergeArray)
-            {
-                if(s.equals("Aerewens armor")) //want all arrays to look the same in the end
-                    System.out.print("[" + s + ", ");
-                else if(s.equals("Zales Might"))
-                    System.out.println(s + "]");
-                else
-                    System.out.print(s + ", ");
-            } */
-            System.out.println("\nMerge Count: " + quickSort(myMagicItemsMerge)); //prints comparison count
+            System.out.println("\nMerge Count: " + mergeSort(myMagicItemsMerge, myMagicItemsMerge.size())); //prints comparison count
             System.out.println(myMagicItemsMerge);
 
             System.out.println("\nQuick Count: " + quickSort(myMagicItemsQuick)); //prints comparison count
             System.out.println(myMagicItemsQuick);
 
             //Test to make sure all lists are same (includes order)
-            System.out.println(myMagicItemsInsertion.equals(myMagicItemsSelection));
-            System.out.println(myMagicItemsInsertion.equals(myMagicItemsMerge));
-            System.out.println(myMagicItemsInsertion.equals(myMagicItemsQuick));
+            System.out.println(" ");
+            System.out.println("Insertion and Selection: " + myMagicItemsInsertion.equals(myMagicItemsSelection));
+            System.out.println("Insertion and Merge: " + myMagicItemsInsertion.equals(myMagicItemsMerge));
+            System.out.println("Insertion and Quick: " + myMagicItemsInsertion.equals(myMagicItemsQuick));
 
         }
 
@@ -113,8 +103,8 @@ public class Assignment2
         if (itemsSize > 1)
         {
             int midpoint = itemsSize / 2;
-            List<String> leftItems = new ArrayList<String>(midpoint);
-            List<String> rightItems = new ArrayList<String>(itemsSize - midpoint);
+            List<String> leftItems = Arrays.asList(new String[midpoint]);
+            List<String> rightItems = Arrays.asList(new String[itemsSize - midpoint]);
 
             for (int i = 0; i < midpoint; i++)
                 leftItems.set(i, items.get(i));
@@ -142,13 +132,9 @@ public class Assignment2
             mergeComparisonCount++;
 
             if (leftItems.get(leftInc).compareToIgnoreCase(rightItems.get(rightInc)) < 0)
-            {
                 temp.set(tempInc++, leftItems.get(leftInc++));
-            }
             else
-            {
                 temp.set(tempInc++, rightItems.get(rightInc++));
-            }
         }
 
         while (leftInc < left)
