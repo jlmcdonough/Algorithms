@@ -32,7 +32,6 @@ public class Assignment2
                 myMagicItemsQuick.add(item);
             }
 
-
             System.out.println("\nSelection Count: " +selectionSort(myMagicItemsSelection)); //prints comparison count
             System.out.println( myMagicItemsSelection);
 
@@ -45,8 +44,14 @@ public class Assignment2
             System.out.println("\nQuick Count: " + quickSort(myMagicItemsQuick)); //prints comparison count
             System.out.println(myMagicItemsQuick);
 
+            System.out.println("\nSorted List Size");
+            System.out.println("Insertion: " + myMagicItemsInsertion.size());
+            System.out.println("Selection: " + myMagicItemsSelection.size());
+            System.out.println("Merge: " + myMagicItemsMerge.size());
+            System.out.println("Quick: " + myMagicItemsQuick.size());
+
             //Test to make sure all lists are same (includes order)
-            System.out.println(" ");
+            System.out.println("\nComparing Sorted Lists");
             System.out.println("Insertion and Selection: " + myMagicItemsInsertion.equals(myMagicItemsSelection));
             System.out.println("Insertion and Merge: " + myMagicItemsInsertion.equals(myMagicItemsMerge));
             System.out.println("Insertion and Quick: " + myMagicItemsInsertion.equals(myMagicItemsQuick));
@@ -60,16 +65,16 @@ public class Assignment2
         }
     }
 
-
+    
     public static int selectionSort(List<String> itemList)
     {
         int comparisonCount = 0;
-        for(int i = 0; i < (itemList.size() - 1); i++)
+        for(int i = 0; i < itemList.size(); i++)
         {
             int smallestPos = i;
             for(int j = i + 1; j < itemList.size(); j++)
             {
-                comparisonCount++;
+                comparisonCount++;   //if enable other comparison count, and make this one +2 instead of +1, it would equal n^2 at the end
                 if(itemList.get(smallestPos).compareToIgnoreCase(itemList.get(j)) > 0)
                     smallestPos = j;
             }
@@ -103,13 +108,13 @@ public class Assignment2
         if (itemsSize > 1)
         {
             int midpoint = itemsSize / 2;
-            List<String> leftItems = Arrays.asList(new String[midpoint]);
-            List<String> rightItems = Arrays.asList(new String[itemsSize - midpoint]);
+            List<String> leftItems = Arrays.asList(new String[midpoint]); //333 on first pass
+            List<String> rightItems = Arrays.asList(new String[itemsSize - midpoint]);  //666-333 = 333 on first pass
 
-            for (int i = 0; i < midpoint; i++)
+            for (int i = 0; i < midpoint; i++)      //[0,333) on first pass
                 leftItems.set(i, items.get(i));
 
-            for (int j = midpoint; j < itemsSize; j++)
+            for (int j = midpoint; j < itemsSize; j++)          //[333-666) on first pass
                 rightItems.set(j - midpoint, items.get(j));
 
             mergeSort(leftItems, midpoint);
