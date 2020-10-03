@@ -1,0 +1,266 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CMPT 435
+% Fall 2020
+% Lab 
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from: http://www.LaTeXTemplates.com
+% Original author: % Frits Wenneker (http://www.howtotex.com)
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Modified by Alan G. Labouseur  - alan@labouseur.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper, 10pt,DIV=13]{scrartcl} 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm,xfrac} % Math packages
+\usepackage{sectsty} % Allows customizing section commands
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,commentsnumbered]{algorithm2e}
+\usepackage{listings}
+\usepackage{parskip}
+\usepackage{lastpage}
+
+\allsectionsfont{\normalfont\scshape} % Make all section titles in default font and small caps.
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{page \thepage\ of \pageref{LastPage}} % Page numbering for right footer
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs.
+
+\binoppenalty=3000
+\relpenalty=3000
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+   \normalfont \normalsize 
+   \textsc{CMPT 435 - Fall 2020 - Dr. Labouseur} \\[10pt] % Header stuff.
+   \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
+   \huge Lab Two  \\     	    % Assignment title
+   \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
+}
+
+\author{Joseph McDonough \\ \normalsize Joseph.McDonough@marist.edu}
+
+\date{\normalize{October 2, 2020}}	% Due date.
+
+\begin{document}
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%   start PROBLEM ONE
+%----------------------------------------------------------------------------------------
+\section{Results}
+
+A file, titled magicitems, is a text file that has the name of 666 different items.  The items appear in the text file in a random order, such that it is not presorted in any way. 
+
+Upon running the string of items through four different sort types (selection, insertion, merge, and quick sort) the amount of comparisons were recorded.  A comparison is when one item in the list is directly put up against another and evaluated such that the sort can do its task to produce an ascending lexicographical order.  
+
+\begin{table}[h!]
+  \begin{center}
+    \caption{The 4 Sorts}
+    \label{tab:table}
+    \begin{tabular}{c|c|c}
+      \textbf{Sort Type} & \textbf{Comparison Count}\ & \textbf{Asymptotic Run-Time}\\
+      \hline
+      Selection & 221,445 & n^2 \\
+      Insertion & 114,309 & n^2\\
+      Merge & 6,302 & \n n(log_2 n) \\
+      Quick & \~\ 7,000 & \n n(log_2 n)\\
+    \end{tabular}
+  \end{center}
+\end{table}
+
+Following an analysis of Big O, the comparison count for all the sorts are within the order of magnitude and can be deemed appropriate results for a list of size 666.
+
+\section{Asymptotic Analysis} \\
+
+\subsection{Selection Sort}
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=71,stepnumber=1,escapeinside={\%}{\%}]
+int comparisonCount = 0;
+for(int i = 0; i < itemList.size(); i++)
+{
+    int smallestPos = i;
+    for(int j = i + 1; j < itemList.size(); j++)
+    {
+        comparisonCount++;
+        if(itemList.get(smallestPos).compareToIgnoreCase(itemList.get(j)) > 0)
+            smallestPos = j;
+    }
+    swap(itemList, i, smallestPos);
+}
+return comparisonCount;
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+Amongst the four types of sorts ran, selection sort underwent the most comparisons, and this is expected.  Selection sort does not alter or learn from the data.  It uses nested for-loops (lines 72 and 75) and ultimately compares each item against every other.  The first for-loop (line 72) starts with the very first item in the list and compares it to the remainder of the list (in this case 665 other items - line 75).  That first element is checked to see if there is a lower element present in the list (line 78).  If a lower element is found, it is swapped with the first (line 81).  Then selection sort moves to the second items and repeats.  
+
+Selection sort fails to keep track of any element except which is the lowest at any given point in time.  This lack of element tracking results in the same items getting passed over multiple times.  If the sort is being used to put strings in ascending lexicographic order (as in this assignment), and the list was sorted except for the first element, it would not matter.  A randomly sorted list (as in this assignment) has the exact same comparison count as an almost sorted list as long as the size is the same.  This is also why the asymptotic run-time of $n\textsuperscript{2}$ is also the expected run-time of a selection sort.  
+
+Ultimately this is the cause of selection sort taking the longest of all evaluated sorts.  Due to the use of nested for-loops, the asymptotic run-time of $n\textsuperscript{2}$ makes sense.  A loop peruses through an entire list, of size $n$, but since there are two loops to go through, the result is $n * n$, or $n\textsuperscript{2}$ (that is after removing the lesser orders and constant factors).  Finally resulting in a Big O($n\textsuperscript{2}$) for a selection sort.
+
+\subsection{Insertion Sort}
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=88,stepnumber=1,escapeinside={\%}{\%}]
+int comparisonCount = 0;
+for(int i = 1; i < itemList.size(); i++)
+{
+    String currItem = itemList.get(i);
+    int j = i-1;
+    while(j >= 0 && (itemList.get(j).compareToIgnoreCase(currItem))>0)
+    {
+        comparisonCount++;
+        swap(itemList, j+1, j);
+        j--;
+    }
+    itemList.set(j+1, currItem);
+}
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+        
+Insertion sort is similar to selection sort in the sense that it utilizes two loops (lines 89 and 93),  but is different in way it sort of adapts to the elements presented to it.  This sort swaps elements as they appear.  Once the insertion sort comes across a value that is less than the current value, it performs the swap (line 96).  Then after swapping, it keeps working its way towards to the beginning of the list.  
+
+The worst-case scenario, that is when the asymptotic run-time of $n\textsuperscript{2}$ is reached, is when the list in sorted in reverse.  This is because each element then would be swapped as it goes through the list due to every element it faces being lower.  In that case, it works like a selection sort, pitting each element against each other.  But because of the adaptive ability, insertion sort has the ability to be quicker, as seen in this assignment and a randomly sorted list.  Insertion sort's comparison counts differs on the way the elements are previously arranged.  On a list that is nearly sorted, insertion sort would work faster on the same list that was randomly sorted, meaning its understandable that its Big O($n\textsuperscript{2}$) is truly a worse case as it could in fact perform better than it.  
+
+Like selection sort, the use of two loops means the possibility that each item could be compared against every other, which is why the asymptotic run-time is $n\textsuperscript{2}$.    
+        
+\subsection{Merge Sort}
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=108,stepnumber=1,escapeinside={\%}{\%}]
+if (itemsSize > 1)
+{
+    int midpoint = itemsSize / 2;
+    List<String> leftItems = Arrays.asList(new String[midpoint]); 
+    List<String> rightItems = Arrays.asList(new String[itemsSize - midpoint]);  
+
+    for (int i = 0; i < midpoint; i++)      
+        leftItems.set(i, items.get(i));
+
+    for (int j = midpoint; j < itemsSize; j++)          
+        rightItems.set(j - midpoint, items.get(j));
+
+    mergeSort(leftItems, midpoint);
+    mergeSort(rightItems, itemsSize - midpoint);
+
+    merge(items, leftItems, rightItems, midpoint, itemsSize - midpoint);
+}
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+Merge sort's helper function - merge
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=131,stepnumber=1,escapeinside={\%}{\%}]
+int leftInc = 0;  
+int rightInc = 0; 
+int tempInc = 0; 
+
+while (leftInc < left && rightInc < right)
+{
+    mergeComparisonCount++;
+
+    if (leftItems.get(leftInc).compareToIgnoreCase(rightItems.get(rightInc)) < 0)
+        temp.set(tempInc++, leftItems.get(leftInc++));
+    else
+        temp.set(tempInc++, rightItems.get(rightInc++));
+}
+
+while (leftInc < left)
+{
+    mergeComparisonCount++;
+    temp.set(tempInc++, leftItems.get(leftInc++));
+}
+
+while (rightInc < right)
+{
+    mergeComparisonCount++;
+    temp.set(tempInc++, rightItems.get(rightInc++));
+}
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+Merge sort is the first sort in the group that has a different asymptotic run-time, which is $n({\log_2 n})$.  Merge sort does not follow the same outline as the previous two with its nested loops.  Instead merge sort abides by the divide and conquer strategy.  That is, it first divides the list into sub-lists of size 1 (lines 110-118).  It takes the starting list, and creates two sub-lists, a left and right half (lines 110-112).  The left and right halves get filled and the process repeats on both halves until every single element is in its own array (that is of size 1 - itself).  Once there are only sub-lists of size 1, the divide stage is complete and each list is considered sorted.  The divide stage works in ${\log_2 n}$ time.  The list gets divided in half each time, and ${\log_2 n}$ is the appropriate operation to show the amount of divisions done on a list of size $n$.    
+
+The helper function, merge, is what does the conquering. As the list is built back up to its original size, it is sorting the lists that are being fused together.  With this technique, the sorting begins with the first and ends with the last conquer.  The sorting is not saved until the very end, which means merge sort can sort in less comparisons than selection and insertion.  Due to the sorting being done on the way up, and in a recursive manner, it is the origin of the $n$ run-time as $n$ is the list size and all elements need to be fused back together. 
+
+As merge sort is a divide and conquer process, the run-time of the two process ought to be multiplied together, resulting in an overall asymptotic run-time of $n({\log_2 n})$.  Merge sort follows a recursive algorithm, much like quick sort, and is predictable in its run-time (like selection sort) because no matter how well or poorly the list was sorted prior to the algorithm, it's run-time will always be of $n({\log_2 n})$.
+
+\subsection{Quick Sort}
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=161,stepnumber=1,escapeinside={\%}{\%}]
+if (items.size() > 1)
+{
+    Random rand = new Random();
+    int pivotNumber = rand.nextInt(items.size());
+    String pivotItem = items.get(pivotNumber);
+
+    swap(items, 0, pivotNumber);
+    int k = 0;
+
+    for (int i = 1; i < items.size(); i++)
+    {
+        quickComparisonCount++;
+        if (items.get(k).compareToIgnoreCase(items.get(i)) > 0)
+        {
+            swap(items, k, i);
+            k++;
+            swap(items, k, i);
+
+        }
+    }
+
+    quickSort(items.subList(0, k));
+    quickSort(items.subList(k + 1, items.size()));
+}
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+Divide and conquer with the use of recursion is the process the quick sort algorithm follows.  Unlike merge sort, the divide and conquer is done at the same time, and is not done by splitting the list in half until there is nothing left to split.  Quick sort chooses a pivot point in the list.  This code was written in Java and makes use of the Random class to generate a random number to be selected as the pivot number (line 163-164).  The pivot element is then swapped with the first element in the list such that the pivot element is at the front.  After the pivot element is selected, the items that are of a lower lexicographical (that is closer to "A") are put to the left of the pivot (lines 173-177).  Since the pivot element starts at element 0, it is essentially being pushed back one place each time a lower element appears and is placed before it.  After all the items are compared against the pivot, the pivot element is considered to be in its final resting place and the recursive call repeats the process on both sides on the pivot.  
+
+The same process as stated above happens to the left and right half of the list and this goes on until every sub-list is of size 1.  Since the sorting (conquering) is going on as the list is being broken down (dividing), when each list is of size 1, the process is done.  No need to build back up to a complete list.  Because of divide and conquer and its similarities to merge sort, its Big O is also $n({\log_2 n})$.  The "dividing" of the lists until there is just one element per list of run-time ${\log_2 n}$ and the "conquering" process and a recursion use results in a run-time $n$ and an overall asymptotic run-time of $n({\log_2 n})$.
+
+\end{document}
