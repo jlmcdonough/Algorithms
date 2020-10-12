@@ -19,7 +19,7 @@ public class InfectionSimulation
     {
         getUserInput();
         verifyInput();
-
+        Boolean[] pop = createPopulation();
     }
 
     public static void getPopulationSize()
@@ -154,17 +154,36 @@ public class InfectionSimulation
         }
     }
 
-/*
-    public static void createPopulation(TAKE USER INPUT FOR GROUP STUFF)
+
+    public static Boolean[] createPopulation()
     {
-        //infectPopulation()
+        Random rand = new Random();
+        int[] cleanPop = new int[popSize];
+
+        for(int i = 0; i < cleanPop.length; i++)
+        {
+            cleanPop[i] = rand.nextInt(100) + 1;
+        }
+
+        return infectPopulation(cleanPop);
     }
 
-    public static void infectPopulation(TAKE INFO FROM ABOVE)
+    public static Boolean[] infectPopulation(int[] cleanPop)
     {
+        Boolean[] infectedPop = new Boolean[popSize];
 
+        for(int i = 0; i < infectedPop.length; i++)
+        {
+            if(cleanPop[i] <= infectionRate)
+                infectedPop[i] = true;
+            else
+                infectedPop[i] = false;
+        }
+
+        return infectedPop;
     }
 
+    /*
     public static void divideIntoGroups(TAKE FROM createPopulation)
     {
         //if population is not divisible by group size, round up or down so that it is
