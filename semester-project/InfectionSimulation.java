@@ -28,7 +28,7 @@ public class InfectionSimulation
 
         while(!myScanner.hasNextInt())
         {
-            System.out.println("Only numbers are accepted input");
+            System.out.println("Only whole numbers are accepted input");
             myScanner.next();
             System.out.print("Enter the population size: ");
         }
@@ -74,7 +74,7 @@ public class InfectionSimulation
 
         while(!myScanner.hasNextInt())
         {
-            System.out.println("Only numbers are accepted input");
+            System.out.println("Only whole numbers are accepted input");
             myScanner.next();
             System.out.print("Enter testing group size: ");
         }
