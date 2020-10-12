@@ -9,25 +9,120 @@ import java.util.*;
 
 public class InfectionSimulation
 {
+    static Scanner myScanner = new Scanner(System.in);
+    static int popSize;
+    static double infectionRate;
+    static int groupSize;
+    static double testAccuracy;
+
     public static void main(String args[])
     {
-        inputLoop();
+        getUserInput();
         verifyInput();
 
     }
 
+    public static void getPopulationSize()
+    {
+        System.out.print("Enter the population size: ");
+
+        while(!myScanner.hasNextInt())
+        {
+            System.out.println("Only numbers are accepted input");
+            myScanner.next();
+            System.out.print("Enter the population size: ");
+        }
+
+        int tempPopSize = myScanner.nextInt();
+
+        if(tempPopSize <= 0)
+        {
+            System.out.println("Population size must be greater than 0");
+            getPopulationSize();
+        }
+        else
+            popSize = tempPopSize;
+
+    }
+
+    public static void getInfectionRate()
+    {
+        System.out.print("Enter infection rate (as percentage - e.g. 90% is 90): ");
+
+        while(!myScanner.hasNextDouble())
+        {
+            System.out.println("Only numbers are accepted input");
+            myScanner.next();
+            System.out.print("Enter infection rate (as percentage - e.g. 90% is 90): ");
+        }
+
+        double tempInfectRate = myScanner.nextDouble();
+
+        if(tempInfectRate < 0 || tempInfectRate > 100)
+        {
+            System.out.println("Infection rate must be between 0 and 100");
+            getInfectionRate();
+        }
+        else
+            infectionRate = tempInfectRate;
+
+    }
+
+    public static void getGroupSize(int population)
+    {
+        System.out.print("Enter testing group size: ");
+
+        while(!myScanner.hasNextInt())
+        {
+            System.out.println("Only numbers are accepted input");
+            myScanner.next();
+            System.out.print("Enter testing group size: ");
+        }
+
+        int tempGroupSize = myScanner.nextInt();
+
+        if(tempGroupSize <= 0)
+        {
+            System.out.println("Group size must be greater than 0");
+            getGroupSize(population);
+        }
+        else if(tempGroupSize > population)
+        {
+            System.out.println("Group size must be less than or equal to population size of " + population);
+            getGroupSize(population);
+        }
+        else
+            groupSize = tempGroupSize;
+    }
+
+    public static void getTestAccuracy()
+    {
+        System.out.print("Enter test accuracy rate (as percentage - e.g. 90% is 90): ");
+
+        while(!myScanner.hasNextDouble())
+        {
+            System.out.println("Only numbers are accepted input");
+            myScanner.next();
+            System.out.print("Enter test accuracy rate (as percentage - e.g. 90% is 90): ");
+        }
+
+        double tempTestAccuracy = myScanner.nextDouble();
+
+        if(tempTestAccuracy < 0 || tempTestAccuracy > 100)
+        {
+            System.out.println("Test Accuracy rate must be between 0 and 100");
+            getTestAccuracy();
+        }
+        else
+            testAccuracy = tempTestAccuracy;
+    }
+
     public static void getUserInput()
     {
-        Scanner myScanner = new Scanner(System.in);
-        System.out.print("Enter the population size: ");
-        int popSize = myScanner.nextInt();
-        System.out.print("Enter infection rate (as percentage - e.g. 90% is 90): ");
-        double infectionRate = myScanner.nextDouble();
-        System.out.print("Enter testing group size: ");
-        int groupSize = myScanner.nextInt();
-        System.out.print("Enter test accuracy rate (as percentage - e.g. 90% is 90): ");
-        double testAccuracy = myScanner.nextInt();
-
+        getPopulationSize();
+        getInfectionRate();
+        getGroupSize(popSize);
+        getTestAccuracy();
         System.out.println("Population Size: " + popSize +
                 "\nInfection Rate: " + infectionRate + "%" +
                 "\nGroup Size: " + groupSize +
@@ -36,22 +131,6 @@ public class InfectionSimulation
         //myScanner.close();
     }
 
-    public static void inputLoop()
-    {
-        boolean haveData = false;
-        while(!haveData)
-        {
-            try
-            {
-                getUserInput();
-                haveData = true;
-            }
-            catch (Exception InputMismatchException)
-            {
-                System.out.println("Please only enter numbers");
-            }
-        }
-    }
 
     public static void verifyInput()
     {
@@ -62,10 +141,10 @@ public class InfectionSimulation
             System.out.print("Are these values correct (Y/N): ");
             String yesOrNo = myScanner.nextLine();
             if (yesOrNo.equalsIgnoreCase("N"))
-                inputLoop();
+                getUserInput();
             else if (yesOrNo.equalsIgnoreCase("Y"))
             {
-                System.out.println("Values Confirmed");
+                System.out.println("\nVALUES CONFIRMED");
                 verifiedInput = true;
             } else
               {
