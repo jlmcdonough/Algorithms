@@ -10,6 +10,7 @@ import java.util.*;
 public class InfectionSimulation
 {
     static Scanner myScanner = new Scanner(System.in);
+
     static int popSize;
     static double infectionRate;
     static int groupSize;
@@ -17,10 +18,10 @@ public class InfectionSimulation
 
     public static void main(String args[])
     {
-        getUserInput();
-        verifyInput();
-        Boolean[] pop = createPopulation();
-        divideIntoGroups();
+        gatherData();
+        boolean[] population  = gatherPopulation();
+        performTests(population);
+        System.out.println(infectionCount + " X " + testCount);
     }
 
     public static void getPopulationSize()
@@ -155,8 +156,13 @@ public class InfectionSimulation
         }
     }
 
+    public static void gatherData()
+    {
+        getUserInput();
+        verifyInput();
+    }
 
-    public static Boolean[] createPopulation()
+    public static boolean[] createPopulation()
     {
         Random rand = new Random();
         int[] cleanPop = new int[popSize];
@@ -169,9 +175,9 @@ public class InfectionSimulation
         return infectPopulation(cleanPop);
     }
 
-    public static Boolean[] infectPopulation(int[] cleanPop)
+    public static boolean[] infectPopulation(int[] cleanPop)
     {
-        Boolean[] infectedPop = new Boolean[popSize];
+        boolean[] infectedPop = new boolean[popSize];
 
         for(int i = 0; i < infectedPop.length; i++)
         {
@@ -184,14 +190,10 @@ public class InfectionSimulation
         return infectedPop;
     }
 
-
-    public static void divideIntoGroups()
+    public static void divideIntoGroups(boolean[] pop)
     {
         int difference = popSize % groupSize;
-        if(difference == 0 )
-            //createGroups();
-            System.out.println(difference);
-        else
+        if(difference != 0 )
         {
             int adjustment = groupSize - difference;
             popSize += adjustment;
@@ -199,6 +201,102 @@ public class InfectionSimulation
                                "the population size has been increased by " + adjustment + " to a " +
                                "total of " + popSize);
         }
+    }
+
+    public static boolean[] gatherPopulation()
+    {
+        boolean[] pop = createPopulation();
+        divideIntoGroups(pop);
+        return pop;
+    }
+
+
+
+
+    static int infectionCount = 0;
+    static int testCount = 0;
+
+    public static void performTests(boolean[] pop)
+    {
+        boolean infectionFound = false;
+        int whileIndex = 0;  //will increase by group size after a completed iteration
+
+        int divideLevel = getDivideLevel();
+        int currLevel = 0;
+
+        boolean[] evalPop = Arrays.copyOfRange(pop, 0, groupSize);
+
+        System.out.println("POP SIZE: " + popSize + "GROUP SIZE: " + groupSize);
+
+        while(whileIndex < popSize)   //does work only if no infections found in subgroup
+        {
+            System.out.println("WHILE INDEX: " + whileIndex + "GROUP SIZE: " + groupSize);
+            testCount++;
+
+            for(int j = 0; j < evalPop.length; j++)
+                System.out.println("OUTERMOST: " + j + " " + evalPop[j]);
+
+            for(int i = 0; i < groupSize; i++)
+            {
+                if(evalPop[i])
+                {
+                    infectionFound = true;
+                }
+            }
+
+            if(infectionFound)
+                performSubTests(evalPop, 0, divideLevel, groupSize);
+
+            whileIndex += groupSize;
+            evalPop = Arrays.copyOfRange(pop, 0 + whileIndex, groupSize + whileIndex);
+            infectionFound = false;
+        }
+    }
+
+    public static void performSubTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
+    {
+        currGroupSize /= 2;
+        boolean[] subGroup1 = Arrays.copyOfRange(subgroup, 0, currGroupSize );
+        boolean[] subGroup2 = Arrays.copyOfRange(subgroup, currGroupSize, currGroupSize * 2 );
+
+        for(int j = 0; j < subGroup1.length; j++)
+            System.out.println("SUBGROUP 1: " + j + " " + subGroup1[j]);
+        for(int j = 0; j < subGroup2.length; j++)
+            System.out.println("SUBGROUP 2: " + j + " " + subGroup2[j]);
+
+        testCount++;
+        for(int i = 0; i < subGroup1.length; i++)
+        {
+            if(subGroup1[i] && currGroupSize == 1)
+                infectionCount++;
+
+            if(subGroup1[i] && currGroupSize > 1)
+                performSubTests(subGroup1, currLevel++, divideLevel, currGroupSize/2);
+        }
+
+        testCount++;
+        for(int i = 0; i < subGroup2.length; i++)
+        {
+            if(subGroup2[i] && currGroupSize == 1)
+                infectionCount++;
+
+            if(subGroup2[i] && currGroupSize > 1)
+                performSubTests(subGroup2, currLevel++, divideLevel, currGroupSize/2);
+        }
+    }
+
+    public static int getDivideLevel()
+    {
+        int divideLevel = 0;
+        int tempGroupSize = groupSize;
+
+        while(tempGroupSize > 1)
+        {
+            tempGroupSize /= 2;
+            divideLevel++;
+        }
+        System.out.println("DIVIDE LEVEL COUNT: " + divideLevel);
+        return divideLevel;
     }
 
     public static String showResults()
