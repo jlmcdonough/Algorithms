@@ -20,6 +20,7 @@ public class InfectionSimulation
         getUserInput();
         verifyInput();
         Boolean[] pop = createPopulation();
+        divideIntoGroups();
     }
 
     public static void getPopulationSize()
@@ -144,7 +145,7 @@ public class InfectionSimulation
                 getUserInput();
             else if (yesOrNo.equalsIgnoreCase("Y"))
             {
-                System.out.println("\nVALUES CONFIRMED");
+                System.out.println("\nVALUES CONFIRMED\n");
                 verifiedInput = true;
             } else
               {
@@ -183,10 +184,21 @@ public class InfectionSimulation
         return infectedPop;
     }
 
-    /*
-    public static void divideIntoGroups(TAKE FROM createPopulation)
+
+    public static void divideIntoGroups()
     {
-        //if population is not divisible by group size, round up or down so that it is
+        int difference = popSize % groupSize;
+        if(difference == 0 )
+            //createGroups();
+            System.out.println(difference);
+        else
+        {
+            int adjustment = groupSize - difference;
+            popSize += adjustment;
+            System.out.println("\n*NOTE*\n In order for the population to be divided into even groups, " +
+                               "the population size has been increased by " + adjustment + " to a " +
+                               "total of " + popSize);
+        }
     }
 
     public static String showResults()
@@ -197,6 +209,7 @@ public class InfectionSimulation
         Case (3): 125 × 0.0004 = 0.05 round up to 1 instance requiring 11 tests
         ———————————————————————————————————————
         249 tests to screen a population of 1000 people for a disease with 2% infection rate.
-
-    } */
+        */
+        return "nothing";
+    }
 }
