@@ -21,7 +21,12 @@ public class InfectionSimulation
         gatherData();
         boolean[] population  = gatherPopulation();
         performTests(population);
-        System.out.println(infectionCount + " X " + testCount);
+        System.out.println("INFECTION COUNT: " + infectionCount);
+        System.out.println("TEST COUNT: " + testCount);
+        System.out.println("CASE ONE: " + caseOne);
+        System.out.println("CASE TWO: " + caseTwo);
+        System.out.println("CASE THREE: " + caseThree);
+
     }
 
     public static void getPopulationSize()
@@ -93,8 +98,23 @@ public class InfectionSimulation
             System.out.println("Group size must be less than or equal to population size of " + population);
             getGroupSize(population);
         }
+        else if(!powerOfTwo(tempGroupSize))
+        {
+            System.out.println("Testing is done using binary trees - please keep group size as a power of 2 (e.g. 2, 4, 8, 16");
+            getGroupSize(population);
+        }
         else
             groupSize = tempGroupSize;
+    }
+
+    public static boolean powerOfTwo(int value)
+    {
+        double result = (Math.log(value) / Math.log(2));
+        double resultAsInt = (double)(int)result;  //will turn all decimals into .0 <- if this equals original, original was whole number
+        if(result == resultAsInt)
+            return true;
+        else
+            return false;
     }
 
     public static void getTestAccuracy()
@@ -211,10 +231,11 @@ public class InfectionSimulation
     }
 
 
-
-
     static int infectionCount = 0;
     static int testCount = 0;
+    static int caseOne = 0;   //no parital tests (groups of 8)
+    static int caseTwo = 0;   //one partial tests (groups of 4)
+    static int caseThree = 0;  //individual tests (groups of 1)
 
     public static void performTests(boolean[] pop)
     {
@@ -231,10 +252,11 @@ public class InfectionSimulation
         while(whileIndex < popSize)   //does work only if no infections found in subgroup
         {
             System.out.println("WHILE INDEX: " + whileIndex + "GROUP SIZE: " + groupSize);
-            testCount++;
 
             for(int j = 0; j < evalPop.length; j++)
                 System.out.println("OUTERMOST: " + j + " " + evalPop[j]);
+            testCount++;
+            System.out.println("TEST COUNT: " + testCount);
 
             for(int i = 0; i < groupSize; i++)
             {
@@ -250,39 +272,97 @@ public class InfectionSimulation
             whileIndex += groupSize;
             evalPop = Arrays.copyOfRange(pop, 0 + whileIndex, groupSize + whileIndex);
             infectionFound = false;
+            caseOne++;
         }
     }
 
     public static void performSubTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
     {
-        currGroupSize /= 2;
-        boolean[] subGroup1 = Arrays.copyOfRange(subgroup, 0, currGroupSize );
-        boolean[] subGroup2 = Arrays.copyOfRange(subgroup, currGroupSize, currGroupSize * 2 );
-
-        for(int j = 0; j < subGroup1.length; j++)
-            System.out.println("SUBGROUP 1: " + j + " " + subGroup1[j]);
-        for(int j = 0; j < subGroup2.length; j++)
-            System.out.println("SUBGROUP 2: " + j + " " + subGroup2[j]);
-
-        testCount++;
-        for(int i = 0; i < subGroup1.length; i++)
+        if(currGroupSize == 4)
         {
-            if(subGroup1[i] && currGroupSize == 1)
-                infectionCount++;
-
-            if(subGroup1[i] && currGroupSize > 1)
-                performSubTests(subGroup1, currLevel++, divideLevel, currGroupSize/2);
+            performSingleTests(subgroup, currLevel, divideLevel, 4);
         }
-
-        testCount++;
-        for(int i = 0; i < subGroup2.length; i++)
+        else
         {
-            if(subGroup2[i] && currGroupSize == 1)
-                infectionCount++;
+            currGroupSize /= 2;
+            boolean[] subGroup1 = Arrays.copyOfRange(subgroup, 0, currGroupSize );
+            boolean[] subGroup2 = Arrays.copyOfRange(subgroup, currGroupSize, currGroupSize * 2 );
+            boolean subGroup1ToSingle = false;
+            boolean subGroup2ToSingle = false;
 
-            if(subGroup2[i] && currGroupSize > 1)
-                performSubTests(subGroup2, currLevel++, divideLevel, currGroupSize/2);
+            System.out.println("SUBGROUP 1 SIZE: " + subGroup1.length + " SUBGROUP 2 SIZE: " + subGroup2.length);
+            for(int j = 0; j < subGroup1.length; j++)
+                System.out.println("SUBGROUP 1: " + j + " " + subGroup1[j]);
+
+            testCount++;
+            System.out.println("TEST COUNT: " + testCount);
+
+            for(int i = 0; i < subGroup1.length; i++)
+            {
+
+                if(subGroup1[i] && currGroupSize == 1)
+                    infectionCount++;
+
+                if(subGroup1[i] && currGroupSize > 4)
+                    performSubTests(subGroup1, currLevel++, divideLevel, currGroupSize);
+
+                if(subGroup1[i] && currGroupSize == 4)
+                {
+                    performSingleTests(subGroup1, currLevel++, divideLevel, currGroupSize);
+                    subGroup1ToSingle = true;
+                }
+            }
+
+            for(int j = 0; j < subGroup2.length; j++)
+                System.out.println("SUBGROUP 2: " + j + " " + subGroup2[j]);
+
+            testCount++;
+            System.out.println("TEST COUNT: " + testCount);
+
+            for(int i = 0; i < subGroup2.length; i++)
+            {
+                if(subGroup2[i] && currGroupSize == 1)
+                    infectionCount++;
+
+                if(subGroup2[i] && currGroupSize > 4)
+                    performSubTests(subGroup2, currLevel++, divideLevel, currGroupSize/2);
+
+                if(subGroup2[i] && currGroupSize == 4)
+                {
+                    performSingleTests(subGroup2, currLevel++, divideLevel, currGroupSize);
+                    subGroup2ToSingle = true;
+                }
+            }
+
+            if(subGroup1ToSingle && subGroup2ToSingle) //if both are true, then it went to 11 tests, otherwise if only 1 is, went to 7 tests
+                caseThree++;
+            else
+                caseTwo++;
         }
+    }
+
+    public static void performSingleTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
+    {
+        boolean individual1 = subgroup[0];
+        boolean individual2 = subgroup[1];
+        boolean individual3 = subgroup[2];
+        boolean individual4 = subgroup[3];
+
+        System.out.println("IN INDIVIDUAL");
+        System.out.println(individual1 + " " + individual2 + " " + individual3 + " " + individual4);
+
+        if(individual1)
+            infectionCount++;
+        if(individual2)
+            infectionCount++;
+        if(individual3)
+            infectionCount++;
+        if(individual4)
+            infectionCount++;
+
+        testCount += 4;
+        System.out.println("TEST COUNT: " + testCount);
+
     }
 
     public static int getDivideLevel()
@@ -290,7 +370,7 @@ public class InfectionSimulation
         int divideLevel = 0;
         int tempGroupSize = groupSize;
 
-        while(tempGroupSize > 1)
+        while(tempGroupSize > 4)
         {
             tempGroupSize /= 2;
             divideLevel++;
