@@ -21,12 +21,7 @@ public class InfectionSimulation
         gatherData();
         boolean[] population  = gatherPopulation();
         performTests(population);
-        System.out.println("INFECTION COUNT: " + infectionCount);
-        System.out.println("TEST COUNT: " + testCount);
-        System.out.println("CASE ONE: " + caseOne);
-        System.out.println("CASE TWO: " + caseTwo);
-        System.out.println("CASE THREE: " + caseThree);
-
+        System.out.println(showResults());
     }
 
     public static void getPopulationSize()
@@ -145,7 +140,7 @@ public class InfectionSimulation
         getInfectionRate();
         getGroupSize(popSize);
         getTestAccuracy();
-        System.out.println("Population Size: " + popSize +
+        System.out.println("\nPopulation Size: " + popSize +
                 "\nInfection Rate: " + infectionRate + "%" +
                 "\nGroup Size: " + groupSize +
                 "\nTest Accuracy: " + testAccuracy + "%");
@@ -160,7 +155,7 @@ public class InfectionSimulation
         boolean verifiedInput = false;
         while (!verifiedInput)
         {
-            System.out.print("Are these values correct (Y/N): ");
+            System.out.print("\nAre these values correct (Y/N): ");
             String yesOrNo = myScanner.nextLine();
             if (yesOrNo.equalsIgnoreCase("N"))
                 getUserInput();
@@ -181,6 +176,8 @@ public class InfectionSimulation
         getUserInput();
         verifyInput();
     }
+
+
 
     public static boolean[] createPopulation()
     {
@@ -231,6 +228,7 @@ public class InfectionSimulation
     }
 
 
+
     static int infectionCount = 0;
     static int testCount = 0;
     static int caseOne = 0;   //no parital tests (groups of 8)
@@ -247,16 +245,11 @@ public class InfectionSimulation
 
         boolean[] evalPop = Arrays.copyOfRange(pop, 0, groupSize);
 
-        System.out.println("POP SIZE: " + popSize + "GROUP SIZE: " + groupSize);
 
         while(whileIndex < popSize)   //does work only if no infections found in subgroup
         {
-            System.out.println("WHILE INDEX: " + whileIndex + "GROUP SIZE: " + groupSize);
 
-            for(int j = 0; j < evalPop.length; j++)
-                System.out.println("OUTERMOST: " + j + " " + evalPop[j]);
             testCount++;
-            System.out.println("TEST COUNT: " + testCount);
 
             for(int i = 0; i < groupSize; i++)
             {
@@ -290,12 +283,7 @@ public class InfectionSimulation
             boolean subGroup1ToSingle = false;
             boolean subGroup2ToSingle = false;
 
-            System.out.println("SUBGROUP 1 SIZE: " + subGroup1.length + " SUBGROUP 2 SIZE: " + subGroup2.length);
-            for(int j = 0; j < subGroup1.length; j++)
-                System.out.println("SUBGROUP 1: " + j + " " + subGroup1[j]);
-
             testCount++;
-            System.out.println("TEST COUNT: " + testCount);
 
             for(int i = 0; i < subGroup1.length; i++)
             {
@@ -313,11 +301,7 @@ public class InfectionSimulation
                 }
             }
 
-            for(int j = 0; j < subGroup2.length; j++)
-                System.out.println("SUBGROUP 2: " + j + " " + subGroup2[j]);
-
             testCount++;
-            System.out.println("TEST COUNT: " + testCount);
 
             for(int i = 0; i < subGroup2.length; i++)
             {
@@ -348,9 +332,6 @@ public class InfectionSimulation
         boolean individual3 = subgroup[2];
         boolean individual4 = subgroup[3];
 
-        System.out.println("IN INDIVIDUAL");
-        System.out.println(individual1 + " " + individual2 + " " + individual3 + " " + individual4);
-
         if(individual1)
             infectionCount++;
         if(individual2)
@@ -361,8 +342,6 @@ public class InfectionSimulation
             infectionCount++;
 
         testCount += 4;
-        System.out.println("TEST COUNT: " + testCount);
-
     }
 
     public static int getDivideLevel()
@@ -375,19 +354,25 @@ public class InfectionSimulation
             tempGroupSize /= 2;
             divideLevel++;
         }
-        System.out.println("DIVIDE LEVEL COUNT: " + divideLevel);
+
         return divideLevel;
     }
 
     public static String showResults()
     {
-        /*
-        Case (1): 125 × 0.8500 = 106.25 instances requiring 107 tests (there are no partial tests)
-        Case (2): 125 × 0.1496 = 18.70 instances requiring 131 tests
-        Case (3): 125 × 0.0004 = 0.05 round up to 1 instance requiring 11 tests
-        ———————————————————————————————————————
-        249 tests to screen a population of 1000 people for a disease with 2% infection rate.
-        */
-        return "nothing";
+
+        String case1Results = "Case (1): " + caseOne + " - instances requiring no partial tests\n";
+
+        String case2Results = "Case (2): " + caseTwo + " - instances requiring six additional tests\n";
+
+        String case3Results = "Case (3): " + caseThree + " - instance requiring 11 tests\n";
+
+        String divider = "———————————————————————————————————————\n";
+
+        String infectionTotal = "Out of a population of " + popSize + " people, " + infectionCount + " tested positive for the infection.\n";
+
+        String testTotal = testCount + " tests to screen a population of " + popSize + " people for a disease with " + infectionRate + "% infection rate.";
+
+        return case1Results + case2Results + case3Results + divider + infectionTotal + testTotal;
     }
 }
