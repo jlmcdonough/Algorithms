@@ -20,25 +20,7 @@ public class InfectionSimulation
     {
         gatherData();
         boolean[] population  = gatherPopulation();
-
-        for(boolean b : population)
-            System.out.print(b + ", ");
-
-        boolean[] testPop = {false, false, false, false, false, false, false, false,        //all false //13 x 8 = 104                                            0+ tests
-                             false, true, false, false, false, false, false, false,         //subgroup1(sub1) has only true                                       6+ tests
-                             false, false, false, true, false, false, false, false,        //subgroup1(sub2) has only true                                        6+ tests
-                             true, false, true, false, false, false, false, false,         //subgroup1(sub1 and 2) has only true                                  6+ tests
-                             false, false, false, false, true, false, false, false,         //subgroup2(sub1) has only true                                       6+ tests
-                             false, false, false, false, false, false, true, false,         //subgroup2(sub2) has only true                                       6+ tests
-                             false, false, false, false, false, true, false, true,          //subgroup2(sub1 and 2) has only true                                 6+ tests
-                             true, false, false, false, false, true, false, true,           //subgroup1(sub1) and subgroup(sub1 and 2) has only true             11+ tests
-                             false, false, true, false, false, true, false, true,           //subgroup1(sub2) and subgroup(sub1 and 2) has only true             11+ tests
-                             true, false, true, false, false, true, false, true,            //subgroup1(sub1 and sub2) and subgroup(sub1 and 2) has only true    11+ tests
-                             true, true, true, true, false, false, false, false,            //subgroup1 all true                                                  6+ tests
-                             false, false, false, false, true, true, true, true,            //subgroup2 all true                                                  6+ tests
-                             true, true, true, true, true, true, true, true};               //all true                                                           11+ tests
-
-        performTests(testPop);
+        performTests(population);
         System.out.println(showResults());
     }
 
