@@ -448,7 +448,7 @@ public class InfectionSimulation
     //right now is not really useful as code hardcode to 2, but want this here when expand up to group size 16, 32, 64, etc.
     public static int getDivideLevel()
     {
-        int divideLevel = 0;
+        int divideLevel = 1;
         int tempGroupSize = groupSize;
 
         while(tempGroupSize > 4)
@@ -528,12 +528,16 @@ public class InfectionSimulation
 
         String case2Results = "Case (2): " + caseTwo + " - " + instance + " requiring five additional tests\n";
 
-        if(caseThree == 1)
-            instance = "instance";
-        else
-            instance = "instances";
+        String case3Results = "";
+        if(getDivideLevel() == 2)  //if divide level is 1, the group size must've been 4 and this could never have been triggered - guess could alternatively do if groupSize == 4 (might have to do that for all possible cases when implementing group 16, 32, 64)
+        {
+            if(caseThree == 1 && getDivideLevel() == 2)
+                instance = "instance";
+            else
+                instance = "instances";
 
-        String case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten tests\n";
+            case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten tests\n";
+        }
 
         String cases = case1Results + case2Results + case3Results;
 
