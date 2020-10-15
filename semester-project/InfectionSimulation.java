@@ -24,10 +24,19 @@ public class InfectionSimulation
         for(boolean b : population)
             System.out.print(b + ", ");
 
-        boolean[] testPop = {false, false, false, false, false, false, false, false,
-                             false, true, false, false, false, false, false, false,
-                             false, false, false, false, false, false, false, true,
-                             false, true, false, false, false, false, false, true};
+        boolean[] testPop = {false, false, false, false, false, false, false, false,        //all false //13 x 8 = 104                                            0+ tests
+                             false, true, false, false, false, false, false, false,         //subgroup1(sub1) has only true                                       6+ tests
+                             false, false, false, true, false, false, false, false,        //subgroup1(sub2) has only true                                        6+ tests
+                             true, false, true, false, false, false, false, false,         //subgroup1(sub1 and 2) has only true                                  6+ tests
+                             false, false, false, false, true, false, false, false,         //subgroup2(sub1) has only true                                       6+ tests
+                             false, false, false, false, false, false, true, false,         //subgroup2(sub2) has only true                                       6+ tests
+                             false, false, false, false, false, true, false, true,          //subgroup2(sub1 and 2) has only true                                 6+ tests
+                             true, false, false, false, false, true, false, true,           //subgroup1(sub1) and subgroup(sub1 and 2) has only true             11+ tests
+                             false, false, true, false, false, true, false, true,           //subgroup1(sub2) and subgroup(sub1 and 2) has only true             11+ tests
+                             true, false, true, false, false, true, false, true,            //subgroup1(sub1 and sub2) and subgroup(sub1 and 2) has only true    11+ tests
+                             true, true, true, true, false, false, false, false,            //subgroup1 all true                                                  6+ tests
+                             false, false, false, false, true, true, true, true,            //subgroup2 all true                                                  6+ tests
+                             true, true, true, true, true, true, true, true};               //all true                                                           11+ tests
 
         performTests(testPop);
         System.out.println(showResults());
@@ -305,7 +314,8 @@ public class InfectionSimulation
 
             testCount++;
 
-            for(int i = 0; i < subGroup1.length; i++)
+            int i = 0;
+            while(i < subGroup1.length && !subGroup1Positive)
             {
 
                 if(subGroup1[i] && currGroupSize > 4)
@@ -324,6 +334,7 @@ public class InfectionSimulation
                     subGroup1ToSingle = true;
                     subGroup1Positive = true;
                 }
+                i++;
             }
 
             if(!subGroup1Positive)
@@ -332,17 +343,18 @@ public class InfectionSimulation
             testCount++;
 
 
-            for(int i = 0; i < subGroup2.length; i++)
+            int j = 0;
+            while(j < subGroup2.length && !subGroup2Positive)
             {
 
-                if(subGroup2[i] && currGroupSize > 4)
+                if(subGroup2[j] && currGroupSize > 4)
                 {
                     System.out.println(testResults((currLevel), true));
                     performSubTests(subGroup2, (currLevel + 1), divideLevel, currGroupSize);
                     subGroup2Positive = true;
                 }
 
-                if(subGroup2[i] && currGroupSize == 4)
+                if(subGroup2[j] && currGroupSize == 4)
                 {
                     System.out.println(testResults((currLevel), true));
                     performSingleTests(subGroup2, (currLevel + 1), divideLevel, currGroupSize);
@@ -350,6 +362,8 @@ public class InfectionSimulation
                     subGroup2Positive = true;
                     currLevel--;
                 }
+
+                j++;
             }
 
             if(!subGroup2Positive)
@@ -383,7 +397,6 @@ public class InfectionSimulation
             infectionCount++;
 
         newInfect = infectionCount - infectPrevious;
-
         System.out.println(singleTestResults(currLevel, newInfect));
 
         testCount += 4;
@@ -434,6 +447,7 @@ public class InfectionSimulation
 
         return testIndent + testResults;
     }
+
     public static String showResults()
     {
 
