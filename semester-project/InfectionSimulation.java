@@ -20,11 +20,13 @@ public class InfectionSimulation
     {
         gatherData();
         boolean[] population  = gatherPopulation();
-        population = identifyFalseTests(population);
         performTests(population);
         System.out.println(showResults());
     }
 
+    //~~~~~~~~~~~~~~~USER ENTRY PART~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //takes int for population size as input
     public static void getPopulationSize()
     {
         System.out.print("Enter the population size: ");
@@ -48,6 +50,7 @@ public class InfectionSimulation
 
     }
 
+    //takes double for rate of infection as input
     public static void getInfectionRate()
     {
         System.out.print("Enter infection rate (as percentage - e.g. 90% is 90): ");
@@ -71,6 +74,8 @@ public class InfectionSimulation
 
     }
 
+    //takes int for group size as input
+    //must be smaller than group size and be a power of 2 - only size 8 works as intended
     public static void getGroupSize(int population)
     {
         System.out.print("Enter testing group size: ");
@@ -103,6 +108,7 @@ public class InfectionSimulation
             groupSize = tempGroupSize;
     }
 
+    //helper function to determine if desired group size is of power 2
     public static boolean powerOfTwo(int value)
     {
         double result = (Math.log(value) / Math.log(2));
@@ -113,6 +119,7 @@ public class InfectionSimulation
             return false;
     }
 
+    //takes double for test accuracy as input
     public static void getTestAccuracy()
     {
         System.out.print("Enter test accuracy rate (as percentage - e.g. 90% is 90): ");
@@ -135,6 +142,7 @@ public class InfectionSimulation
             testAccuracy = tempTestAccuracy;
     }
 
+    //function to perform all of the user input commands above and prints it to user
     public static void getUserInput()
     {
         getPopulationSize();
@@ -145,6 +153,16 @@ public class InfectionSimulation
         //myScanner.close();
     }
 
+    //prints the users entered data
+    public static String printInput()
+    {
+        return("\tPopulation Size: " + popSize +
+                "\n\tInfection Rate: " + infectionRate + "%" +
+                "\n\tGroup Size: " + groupSize +
+                "\n\tTest Accuracy: " + testAccuracy + "%");
+    }
+
+    //Gives user a chance to make sure all of their inputs are correct, if not, getUserInput runs and program basically starts over
     public static void verifyInput()
     {
         Scanner myScanner = new Scanner(System.in);
@@ -167,21 +185,35 @@ public class InfectionSimulation
         }
     }
 
+    //function to gather the input and verify (does all of the above functions in one call)
     public static void gatherData()
     {
         getUserInput();
         verifyInput();
     }
 
-    public static String printInput()
+    //concludes user entry part of simulation
+
+    //~~~~~~~~~~~~~~~POPULATION PART~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    //Program allows user to enter a group size that should be valid, but is not evenly divisible by the population size
+    // (i.e. group size 8 is acceptable, but not divisible by 15 or 17 - if 15, then 1 is added to population, if 17, then 7 added to population)
+    //this ensures that each group is full and there are no leftovers
+    public static void divideIntoGroups()
     {
-        return("\tPopulation Size: " + popSize +
-                "\n\tInfection Rate: " + infectionRate + "%" +
-                "\n\tGroup Size: " + groupSize +
-                "\n\tTest Accuracy: " + testAccuracy + "%");
+        int difference = popSize % groupSize;
+        if(difference != 0 )
+        {
+            int adjustment = groupSize - difference;
+            popSize += adjustment;
+            System.out.println("\n*NOTE*\n In order for the population to be divided into even groups, " +
+                    "the population size has been increased by " + adjustment + " to a " +
+                    "total of " + popSize);
+        }
     }
 
-
+    //give the user specification, creates an int array list, each int is a random number [1, 100]
+    //random number gets assigned to each individual - this population is pre-infect (deemed clean cause ignorance is bliss)
     public static boolean[] createPopulation()
     {
         Random rand = new Random();
@@ -195,6 +227,8 @@ public class InfectionSimulation
         return infectPopulation(cleanPop);
     }
 
+    //array of integers is taken as input and if the number is less than the infection rate, than that test is infected and marked true (for sick)
+    //if the number is greater than the infection rate, that test passed clean and is marked false
     public static boolean[] infectPopulation(int[] cleanPop)
     {
         boolean[] infectedPop = new boolean[popSize];
@@ -207,30 +241,13 @@ public class InfectionSimulation
                 infectedPop[i] = false;
         }
 
-        return infectedPop;
+        return identifyFalseTests(infectedPop);
     }
 
-    public static void divideIntoGroups(boolean[] pop)
-    {
-        int difference = popSize % groupSize;
-        if(difference != 0 )
-        {
-            int adjustment = groupSize - difference;
-            popSize += adjustment;
-            System.out.println("\n*NOTE*\n In order for the population to be divided into even groups, " +
-                               "the population size has been increased by " + adjustment + " to a " +
-                               "total of " + popSize);
-        }
-    }
-
-    public static boolean[] gatherPopulation()
-    {
-        boolean[] pop = createPopulation();
-        divideIntoGroups(pop);
-        return pop;
-    }
-
-
+    //function accounts for testing inaccuracy
+    //each test is compared to another random number [0.0, 99.999...] (because test accuracy 100 means impossible for it to fail)
+    //if that tests random number is greater than the testing inaccuracy, then the test is said to have given the wrong result and the boolean value flipped
+    //false positives and negatives are identified before any test is even run in this simulation
 
     static int falseNegative = 0;  //get negative when should've been positive  (true becomes false due to test inaccuracy)
     static int falsePositive = 0;  //get positive when should've been negative  (false becomes true due to test inaccuracy)
@@ -259,6 +276,21 @@ public class InfectionSimulation
 
         return falsePop;
     }
+
+
+
+    //function that gets the boolean array for the population after infected and false tests
+    //then adds whatever it needs to the population
+    public static boolean[] gatherPopulation()
+    {
+        divideIntoGroups();
+        boolean[] pop = createPopulation();
+        return pop;
+    }
+
+
+
+
 
     static int infectionCount = 0;
     static int testCount = 0;
@@ -424,8 +456,6 @@ public class InfectionSimulation
             tempGroupSize /= 2;
             divideLevel++;
         }
-
-        System.out.println(divideLevel);
 
         return divideLevel;
     }
