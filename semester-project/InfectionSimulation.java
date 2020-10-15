@@ -306,7 +306,7 @@ public class InfectionSimulation
         int whileIndex = 0;                   //will increase by group size after a completed iteration
         int divideLevel = getDivideLevel();   //at the moment, is only useful for indenting on the printed results
         boolean[] evalPop = Arrays.copyOfRange(pop, 0, groupSize);   //takes a subset of the population array that spans groupSize long
-        int currLevel = 0;
+        int currLevel = 1;
 
         while(whileIndex < popSize)   //does work only if no infections found in subgroup
         {
@@ -326,12 +326,12 @@ public class InfectionSimulation
             System.out.println(testResults(currLevel, infectionFound));
 
             if(infectionFound && groupSize > 4)
-                performSubTests(evalPop, 1, divideLevel, groupSize);
+                performSubTests(evalPop, 2, divideLevel, groupSize);
             else if(infectionFound && groupSize == 4)
-                performSingleTests(evalPop, 1, divideLevel, 4);
+                performSingleTests(evalPop, 2, divideLevel, 4);
             else
             {
-                currLevel = 0;
+                currLevel = 1;
                 caseOne++;
             }
 
@@ -348,7 +348,7 @@ public class InfectionSimulation
     public static void performSubTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
     {
             if(groupSize == 4)
-                performSingleTests(subgroup, (currLevel + 1), divideLevel, 4);
+                performSingleTests(subgroup, (currLevel), divideLevel, 4);
 
             currGroupSize /= 2;
             boolean[] subGroup1 = Arrays.copyOfRange(subgroup, 0, currGroupSize );                       //are splitting groups in half so this is first half
@@ -472,13 +472,13 @@ public class InfectionSimulation
         String testResults;
         String testIndent = "";
 
-        for(int i = 0; i < currLevel; i++)
+        for(int i = 1; i < currLevel; i++)
             testIndent+= "   ";
 
         if(!infectionFound)
-            testResults = "Level " + (currLevel + 1) + " - no infection found";
+            testResults = "Level " + (currLevel) + " - no infection found";
         else
-            testResults = "Level " + (currLevel + 1) + " - infection found, proceeding to next level of testing";
+            testResults = "Level " + (currLevel) + " - infection found, proceeding to next level of testing";
 
         return testIndent + testResults;
     }
@@ -490,13 +490,13 @@ public class InfectionSimulation
         String testResults = "";
         String testIndent = "";
 
-        for(int i = 0; i < currLevel; i++)
+        for(int i = 1; i < currLevel; i++)
             testIndent+= "   ";
 
         if(newInfect == 1)
-            testResults = "Level " + (currLevel + 1) + " - " + newInfect + " infection was found";
+            testResults = "Level " + (currLevel) + " - " + newInfect + " infection was found";
         else
-            testResults = "Level " + (currLevel + 1) + " - " + newInfect + " infections were found";
+            testResults = "Level " + (currLevel) + " - " + newInfect + " infections were found";
 
         return testIndent + testResults;
     }
