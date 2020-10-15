@@ -20,7 +20,16 @@ public class InfectionSimulation
     {
         gatherData();
         boolean[] population  = gatherPopulation();
-        performTests(population);
+
+        for(boolean b : population)
+            System.out.print(b + ", ");
+
+        boolean[] testPop = {false, false, false, false, false, false, false, false,
+                             false, true, false, false, false, false, false, false,
+                             false, false, false, false, false, false, false, true,
+                             false, true, false, false, false, false, false, true};
+
+        performTests(testPop);
         System.out.println(showResults());
     }
 
@@ -241,15 +250,17 @@ public class InfectionSimulation
         int whileIndex = 0;  //will increase by group size after a completed iteration
 
         int divideLevel = getDivideLevel();
-        int currLevel = 0;
 
         boolean[] evalPop = Arrays.copyOfRange(pop, 0, groupSize);
 
+        int currLevel = 0;
 
         while(whileIndex < popSize)   //does work only if no infections found in subgroup
         {
 
             testCount++;
+
+            System.out.println("\nConducting tests on patients " + (whileIndex + 1) + " through " + (whileIndex + groupSize) + "\n");
 
             for(int i = 0; i < groupSize; i++)
             {
@@ -259,13 +270,20 @@ public class InfectionSimulation
                 }
             }
 
+            System.out.println(testResults(currLevel, infectionFound));
+
             if(infectionFound)
-                performSubTests(evalPop, 0, divideLevel, groupSize);
+                performSubTests(evalPop, 1, divideLevel, groupSize);
+            else
+            {
+                currLevel = 0;
+                caseOne++;
+            }
 
             whileIndex += groupSize;
             evalPop = Arrays.copyOfRange(pop, 0 + whileIndex, groupSize + whileIndex);
             infectionFound = false;
-            caseOne++;
+
         }
     }
 
@@ -273,7 +291,7 @@ public class InfectionSimulation
     {
         if(currGroupSize == 4)
         {
-            performSingleTests(subgroup, currLevel, divideLevel, 4);
+            performSingleTests(subgroup, (currLevel + 1), divideLevel, 4);
         }
         else
         {
@@ -282,41 +300,60 @@ public class InfectionSimulation
             boolean[] subGroup2 = Arrays.copyOfRange(subgroup, currGroupSize, currGroupSize * 2 );
             boolean subGroup1ToSingle = false;
             boolean subGroup2ToSingle = false;
+            boolean subGroup1Positive = false;
+            boolean subGroup2Positive = false;
 
             testCount++;
 
             for(int i = 0; i < subGroup1.length; i++)
             {
 
-                if(subGroup1[i] && currGroupSize == 1)
-                    infectionCount++;
-
                 if(subGroup1[i] && currGroupSize > 4)
-                    performSubTests(subGroup1, currLevel++, divideLevel, currGroupSize);
+                {
+
+                    System.out.println(testResults((currLevel), true));
+                    performSubTests(subGroup1, (currLevel + 1), divideLevel, currGroupSize);
+                    subGroup1Positive = true;
+                    currLevel--;
+                }
 
                 if(subGroup1[i] && currGroupSize == 4)
                 {
-                    performSingleTests(subGroup1, currLevel++, divideLevel, currGroupSize);
+                    System.out.println(testResults((currLevel), true));
+                    performSingleTests(subGroup1, (currLevel + 1), divideLevel, currGroupSize);
                     subGroup1ToSingle = true;
+                    subGroup1Positive = true;
                 }
             }
+
+            if(!subGroup1Positive)
+                System.out.println(testResults((currLevel), false));
 
             testCount++;
 
+
             for(int i = 0; i < subGroup2.length; i++)
             {
-                if(subGroup2[i] && currGroupSize == 1)
-                    infectionCount++;
 
                 if(subGroup2[i] && currGroupSize > 4)
-                    performSubTests(subGroup2, currLevel++, divideLevel, currGroupSize/2);
+                {
+                    System.out.println(testResults((currLevel), true));
+                    performSubTests(subGroup2, (currLevel + 1), divideLevel, currGroupSize);
+                    subGroup2Positive = true;
+                }
 
                 if(subGroup2[i] && currGroupSize == 4)
                 {
-                    performSingleTests(subGroup2, currLevel++, divideLevel, currGroupSize);
+                    System.out.println(testResults((currLevel), true));
+                    performSingleTests(subGroup2, (currLevel + 1), divideLevel, currGroupSize);
                     subGroup2ToSingle = true;
+                    subGroup2Positive = true;
+                    currLevel--;
                 }
             }
+
+            if(!subGroup2Positive)
+                System.out.println(testResults((currLevel), false));
 
             if(subGroup1ToSingle && subGroup2ToSingle) //if both are true, then it went to 11 tests, otherwise if only 1 is, went to 7 tests
                 caseThree++;
@@ -327,10 +364,14 @@ public class InfectionSimulation
 
     public static void performSingleTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
     {
+
         boolean individual1 = subgroup[0];
         boolean individual2 = subgroup[1];
         boolean individual3 = subgroup[2];
         boolean individual4 = subgroup[3];
+
+        int infectPrevious = infectionCount;
+        int newInfect = 0;
 
         if(individual1)
             infectionCount++;
@@ -340,6 +381,10 @@ public class InfectionSimulation
             infectionCount++;
         if(individual4)
             infectionCount++;
+
+        newInfect = infectionCount - infectPrevious;
+
+        System.out.println(singleTestResults(currLevel, newInfect));
 
         testCount += 4;
     }
@@ -358,14 +403,45 @@ public class InfectionSimulation
         return divideLevel;
     }
 
+    public static String testResults(int currLevel, boolean infectionFound)
+    {
+        String testResults;
+        String testIndent = "";
+
+        for(int i = 0; i < currLevel; i++)
+            testIndent+= "   ";
+
+        if(!infectionFound)
+            testResults = "Level " + (currLevel + 1) + " - no infection found";
+        else
+            testResults = "Level " + (currLevel + 1) + " - infection found, proceeding to next level of testing";
+
+        return testIndent + testResults;
+    }
+
+    public static String singleTestResults(int currLevel, int newInfect)
+    {
+        String testResults = "";
+        String testIndent = "";
+
+        for(int i = 0; i < currLevel; i++)
+            testIndent+= "   ";
+
+        if(newInfect == 1)
+            testResults = "Level " + (currLevel + 1) + " - " + newInfect + " infection was found";
+        else
+            testResults = "Level " + (currLevel + 1) + " - " + newInfect + " infections were found";
+
+        return testIndent + testResults;
+    }
     public static String showResults()
     {
 
-        String case1Results = "Case (1): " + caseOne + " - instances requiring no partial tests\n";
+        String case1Results = "\nCase (1): " + caseOne + " - instances requiring no partial tests\n";
 
-        String case2Results = "Case (2): " + caseTwo + " - instances requiring six additional tests\n";
+        String case2Results = "Case (2): " + caseTwo + " - instances requiring five additional tests\n";
 
-        String case3Results = "Case (3): " + caseThree + " - instance requiring 11 tests\n";
+        String case3Results = "Case (3): " + caseThree + " - instances requiring ten tests\n";
 
         String divider = "———————————————————————————————————————\n";
 
