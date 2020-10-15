@@ -15,11 +15,12 @@ public class InfectionSimulation
     static double infectionRate;
     static int groupSize;
     static double testAccuracy;
-
+    static String divider = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     public static void main(String args[])
     {
         gatherData();
         boolean[] population  = gatherPopulation();
+        population = identifyFalseTests(population);
         performTests(population);
         System.out.println(showResults());
     }
@@ -140,14 +141,9 @@ public class InfectionSimulation
         getInfectionRate();
         getGroupSize(popSize);
         getTestAccuracy();
-        System.out.println("\nPopulation Size: " + popSize +
-                "\nInfection Rate: " + infectionRate + "%" +
-                "\nGroup Size: " + groupSize +
-                "\nTest Accuracy: " + testAccuracy + "%");
-
+        System.out.println("\n" + printInput());
         //myScanner.close();
     }
-
 
     public static void verifyInput()
     {
@@ -177,6 +173,13 @@ public class InfectionSimulation
         verifyInput();
     }
 
+    public static String printInput()
+    {
+        return("\tPopulation Size: " + popSize +
+                "\n\tInfection Rate: " + infectionRate + "%" +
+                "\n\tGroup Size: " + groupSize +
+                "\n\tTest Accuracy: " + testAccuracy + "%");
+    }
 
 
     public static boolean[] createPopulation()
@@ -229,9 +232,37 @@ public class InfectionSimulation
 
 
 
+    static int falseNegative = 0;  //get negative when should've been positive  (true becomes false due to test inaccuracy)
+    static int falsePositive = 0;  //get positive when should've been negative  (false becomes true due to test inaccuracy)
+
+    public static boolean[] identifyFalseTests(boolean[] falsePop)
+    {
+        Random rand = new Random();
+
+        for(int i = 0; i < popSize; i++)
+        {
+            int wholeRand = rand.nextInt(100);
+            double decimalRand = rand.nextDouble();
+            double falseNum = wholeRand + decimalRand;
+
+            if(falsePop[i] && falseNum > testAccuracy)
+            {
+                falsePop[i] = false;
+                falseNegative++;
+            }
+            else if(!falsePop[i] && falseNum > testAccuracy)
+            {
+                falsePop[i] = true;
+                falsePositive++;
+            }
+        }
+
+        return falsePop;
+    }
+
     static int infectionCount = 0;
     static int testCount = 0;
-    static int caseOne = 0;   //no parital tests (groups of 8)
+    static int caseOne = 0;   //no partial tests (groups of 8)
     static int caseTwo = 0;   //one partial tests (groups of 4)
     static int caseThree = 0;  //individual tests (groups of 1)
 
@@ -251,7 +282,7 @@ public class InfectionSimulation
 
             testCount++;
 
-            System.out.println("\nConducting tests on patients " + (whileIndex + 1) + " through " + (whileIndex + groupSize) + "\n");
+            System.out.println("\n" + divider + "\nConducting tests on patients " + (whileIndex + 1) + " through " + (whileIndex + groupSize) + "\n");
 
             for(int i = 0; i < groupSize; i++)
             {
@@ -280,10 +311,9 @@ public class InfectionSimulation
 
     public static void performSubTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
     {
+
         if(currGroupSize == 4)
-        {
             performSingleTests(subgroup, (currLevel + 1), divideLevel, 4);
-        }
         else
         {
             currGroupSize /= 2;
@@ -395,6 +425,8 @@ public class InfectionSimulation
             divideLevel++;
         }
 
+        System.out.println(divideLevel);
+
         return divideLevel;
     }
 
@@ -432,19 +464,61 @@ public class InfectionSimulation
 
     public static String showResults()
     {
+        String header1 = "INFECTION SIMULATION RESULTS\n";
+        String header2 = "\tInputted Values:\n";
+        String header3 = printInput();
+        String header = header1 + header2 + header3 + "\n\n";
 
-        String case1Results = "\nCase (1): " + caseOne + " - instances requiring no partial tests\n";
 
-        String case2Results = "Case (2): " + caseTwo + " - instances requiring five additional tests\n";
+        String instance = "instance";
 
-        String case3Results = "Case (3): " + caseThree + " - instances requiring ten tests\n";
+        if(caseOne == 1)
+            instance = "instance";
+        else
+            instance = "instances";
 
-        String divider = "———————————————————————————————————————\n";
+        String case1Results = "Case (1): " + caseOne + " - " + instance + " requiring no partial tests\n";
+
+        if(caseTwo == 1)
+            instance = "instance";
+        else
+            instance = "instances";
+
+        String case2Results = "Case (2): " + caseTwo + " - " + instance + " requiring five additional tests\n";
+
+        if(caseThree == 1)
+            instance = "instance";
+        else
+            instance = "instances";
+
+        String case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten tests\n";
+
+        String cases = case1Results + case2Results + case3Results;
+
+
+        String test = "test was";
+
+        if(falsePositive == 1)
+            test = "test was";
+        else
+            test = "tests were";
+
+        String falsePositiveResults = falsePositive + " false positive " + test + " identified due to the " + testAccuracy + "% test accuracy rate\n";
+
+        if(falseNegative == 1)
+            test = "test was";
+        else
+            test = "tests were";
+
+        String falseNegativeResults = falseNegative + " false negative " + test + " identified due to the " + testAccuracy + "% test accuracy rate\n";
+
+        String falseResults = falsePositiveResults + falseNegativeResults;
+
 
         String infectionTotal = "Out of a population of " + popSize + " people, " + infectionCount + " tested positive for the infection.\n";
 
         String testTotal = testCount + " tests to screen a population of " + popSize + " people for a disease with " + infectionRate + "% infection rate.";
 
-        return case1Results + case2Results + case3Results + divider + infectionTotal + testTotal;
+        return "\n\n" + divider + "\n" + header + cases + divider + "\n" + falseResults + divider + "\n" + infectionTotal + testTotal;
     }
 }
