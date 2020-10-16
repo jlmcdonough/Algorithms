@@ -13,13 +13,24 @@ public class Assignment3
 {
     public static void main(String args[]) throws FileNotFoundException
     {
-            ArrayList<String> myMagicItems = getAndSortList();
+            ArrayList<String> mySortedMagicItems = getAndSortList();
 
             ArrayList<String> myMagicRandom = new ArrayList<>();      //mutated by random items
-            myMagicRandom = (ArrayList)myMagicItems.clone();
+            myMagicRandom = (ArrayList)mySortedMagicItems.clone();
             String[] randomItems = generateRandomItems(myMagicRandom);
 
-            linearSortComplete(myMagicItems, randomItems);
+            linearSortComplete(mySortedMagicItems, randomItems);
+
+            List<String> temp = Arrays.asList( "alpha", "bravo", "charlie",
+                                                "delta", "echo", "foxtrot",
+                                                "golf", "hotel", "india");
+
+            ArrayList<String> tempItems = new ArrayList<>();
+
+            tempItems.addAll(temp);
+            System.out.println(tempItems.get(4));
+        ArrayList<Assignment3> temp3 = (binarySort(tempItems, "alpha", 0, tempItems.size(), binaryResultsGroup));
+            System.out.println(temp3.get(0).getCount());
     }
 
     //object that holds search item and counts taken to find it as a pair
@@ -69,7 +80,8 @@ public class Assignment3
         return randomItems;
     }
 
-    public static ArrayList<Assignment3> linearSort(List<String> myList, String item, ArrayList<Assignment3> linearCountArray)
+    //~~~~~~~~~~~~~~~~~LINEAR SORT~~~~~~~~~~~~~~~~~~~~~~~~~
+    public static ArrayList<Assignment3> linearSort(List<String> myList, String item, ArrayList<Assignment3> linearResultsGroup)
     {
         int i = 0;
         boolean found = false;
@@ -85,23 +97,53 @@ public class Assignment3
         }
 
         Assignment3 sortedPair = new Assignment3(item, linearSortCount);
-        linearCountArray.add(sortedPair);
-        return linearCountArray;
+        linearResultsGroup.add(sortedPair);
+        return linearResultsGroup;
     }
 
     public static void linearSortComplete(List<String> magicItems, String[] randomItems)
     {
-        ArrayList<Assignment3> linearSortedGroup = new ArrayList<Assignment3>();
+        ArrayList<Assignment3> linearResultsGroup = new ArrayList<Assignment3>();
         for(int j = 0; j < randomItems.length; j++)
         {
-            linearSortedGroup = linearSort(magicItems, randomItems[j], linearSortedGroup);
+            linearResultsGroup = linearSort(magicItems, randomItems[j], linearResultsGroup);
         }
 
         System.out.println("LINEAR SEARCH\n");
-        printSearchResults(linearSortedGroup);
+        printSearchResults(linearResultsGroup);
     }
 
+    //~~~~~~~~~~~~~~~~~~BINARY SORT~~~~~~~~~~~~~~~~~~~
+    static ArrayList<Assignment3> binaryResultsGroup = new ArrayList<Assignment3>();
+    static int binarySearchCount = 0;
+    public static ArrayList<Assignment3> binarySort(List<String> magicItems, String item, int startIndex, int stopIndex, ArrayList<Assignment3> binaryResultsGroup)
+    {
+        int middleIndex = (int)((startIndex + stopIndex) / 2);  //floor value of uneven splits
+        System.out.println(magicItems.get(middleIndex));
+        binarySearchCount++;
+        if(startIndex > stopIndex)
+            System.out.println("START OVER STOP");
+        else if(magicItems.get(middleIndex).equalsIgnoreCase(item))
+        {
+            binaryResultsGroup.add(new Assignment3(item, binarySearchCount));
+            binarySearchCount = 0;
+        }
+        else if(magicItems.get(middleIndex).compareToIgnoreCase(item) > 0) //search item is closer to aaaa then mid-item
+        {
+            System.out.println("UNDER " + binarySearchCount);
+            binarySort(magicItems, item, startIndex, middleIndex - 1, binaryResultsGroup);
+        }
+        else
+        {
+            System.out.println("OVER " + binarySearchCount);
+            binarySort(magicItems, item, middleIndex + 1, stopIndex, binaryResultsGroup);
 
+        }
+        return binaryResultsGroup;
+    }
+    
+    
+    
     public static void printSearchResults(List<Assignment3> sortList)
     {
         //longest item is 46 characters long, so ensured 1 padding on each side
