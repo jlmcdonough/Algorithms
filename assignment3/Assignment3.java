@@ -40,10 +40,17 @@ public class Assignment3
                 linearSortedGroup = linearSort(myMagicItems, randomItems[j], linearSortedGroup);
             }
 
+            //longest item is 46 characters long, so ensured 1 padding on each side
+            //largest number is 3 characters long, so ensured 1 padding on each side
+            System.out.println("LINEAR SEARCH\n");
+            System.out.format("%-48s%-5s%n", "ITEM", "COUNT");
+            int linearTotalCount = 0;
             for(int k = 0; k < linearSortedGroup.size(); k++)
-                System.out.println(linearSortedGroup.get(k).getItem() + " " + linearSortedGroup.get(k).getCount());
-
-
+            {
+                linearTotalCount += linearSortedGroup.get(k).getCount();
+                System.out.format("%-48s%-5d%n", linearSortedGroup.get(k).getItem(), linearSortedGroup.get(k).getCount());
+            }
+            System.out.println("AVERAGE SEARCH COUNT: " + (linearTotalCount/42));
         }
 
         catch (FileNotFoundException e)
@@ -87,7 +94,7 @@ public class Assignment3
 
             i++;
         }
-        
+
         Assignment3 sortedPair = new Assignment3(item, linearSortCount);
         linearCountArray.add(sortedPair);
         return linearCountArray;
