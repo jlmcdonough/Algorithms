@@ -21,16 +21,10 @@ public class Assignment3
 
             linearSortComplete(mySortedMagicItems, randomItems);
 
-            List<String> temp = Arrays.asList( "alpha", "bravo", "charlie",
-                                                "delta", "echo", "foxtrot",
-                                                "golf", "hotel", "india");
+            System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
-            ArrayList<String> tempItems = new ArrayList<>();
+            binarySortComplete(mySortedMagicItems, randomItems);
 
-            tempItems.addAll(temp);
-            System.out.println(tempItems.get(4));
-        ArrayList<Assignment3> temp3 = (binarySort(tempItems, "alpha", 0, tempItems.size(), binaryResultsGroup));
-            System.out.println(temp3.get(0).getCount());
     }
 
     //object that holds search item and counts taken to find it as a pair
@@ -114,34 +108,38 @@ public class Assignment3
     }
 
     //~~~~~~~~~~~~~~~~~~BINARY SORT~~~~~~~~~~~~~~~~~~~
-    static ArrayList<Assignment3> binaryResultsGroup = new ArrayList<Assignment3>();
     static int binarySearchCount = 0;
     public static ArrayList<Assignment3> binarySort(List<String> magicItems, String item, int startIndex, int stopIndex, ArrayList<Assignment3> binaryResultsGroup)
     {
         int middleIndex = (int)((startIndex + stopIndex) / 2);  //floor value of uneven splits
-        System.out.println(magicItems.get(middleIndex));
         binarySearchCount++;
+
         if(startIndex > stopIndex)
-            System.out.println("START OVER STOP");
+            System.out.print("ITEM NOT FOUND");
         else if(magicItems.get(middleIndex).equalsIgnoreCase(item))
         {
             binaryResultsGroup.add(new Assignment3(item, binarySearchCount));
             binarySearchCount = 0;
         }
         else if(magicItems.get(middleIndex).compareToIgnoreCase(item) > 0) //search item is closer to aaaa then mid-item
-        {
-            System.out.println("UNDER " + binarySearchCount);
             binarySort(magicItems, item, startIndex, middleIndex - 1, binaryResultsGroup);
-        }
         else
-        {
-            System.out.println("OVER " + binarySearchCount);
             binarySort(magicItems, item, middleIndex + 1, stopIndex, binaryResultsGroup);
 
-        }
         return binaryResultsGroup;
     }
-    
+
+    public static void binarySortComplete(List<String> magicItems, String[] randomItems)
+    {
+        ArrayList<Assignment3> binaryResultsGroup = new ArrayList<Assignment3>();
+        for(int j = 0; j < randomItems.length; j++)
+        {
+            binaryResultsGroup = binarySort(magicItems, randomItems[j], 0, magicItems.size(), binaryResultsGroup);
+        }
+
+        System.out.println("BINARY SEARCH\n");
+        printSearchResults(binaryResultsGroup);
+    }
     
     
     public static void printSearchResults(List<Assignment3> sortList)
