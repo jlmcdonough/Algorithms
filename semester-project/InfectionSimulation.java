@@ -169,7 +169,7 @@ public class InfectionSimulation
         boolean verifiedInput = false;
         while (!verifiedInput)
         {
-            System.out.print("\nAre these values correct (Y/N): ");
+            System.out.print("\nAre these values correct? (Y/N): ");
             String yesOrNo = myScanner.nextLine();
             if (yesOrNo.equalsIgnoreCase("N"))
                 getUserInput();
@@ -185,11 +185,36 @@ public class InfectionSimulation
         }
     }
 
+    static boolean userWantsCaseResults;
+    //asks user if they would like each group data to be printed or not
+    public static void wantData()
+    {
+        Scanner myScanner = new Scanner(System.in);
+        System.out.print("Would you like the results for each group to be printed in the report? (Y/N): ");
+        String yayOrNay = myScanner.nextLine();
+        if (yayOrNay.equalsIgnoreCase(("Y")))
+        {
+            userWantsCaseResults = true;
+            System.out.println("\nou have opted to view the data for all groups. Proceeding with the tests...");
+        }
+        else if (yayOrNay.equalsIgnoreCase(("N")))
+        {
+            userWantsCaseResults = false;
+            System.out.println("\nYou have opted to not to view the data for all groups. Proceeding with the tests...");
+        }
+        else
+        {
+            System.out.println("Please only enter 'Y' or 'N' ");
+            wantData();
+        }
+    }
+
     //function to gather the input and verify (does all of the above functions in one call)
     public static void gatherData()
     {
         getUserInput();
         verifyInput();
+        wantData();
     }
 
     //concludes user entry part of simulation
@@ -313,7 +338,8 @@ public class InfectionSimulation
 
             testCount++;
 
-            System.out.println("\n" + divider + "\nConducting tests on patients " + (whileIndex + 1) + " through " + (whileIndex + groupSize) + "\n");
+            if(userWantsCaseResults)
+                System.out.println("\n" + divider + "\nConducting tests on patients " + (whileIndex + 1) + " through " + (whileIndex + groupSize) + "\n");
 
             for(int i = 0; i < groupSize; i++)
             {
@@ -323,7 +349,7 @@ public class InfectionSimulation
                 }
             }
 
-            System.out.println(testResults(currLevel, infectionFound));
+            testResults(currLevel, infectionFound);
 
             if(infectionFound && groupSize > 4)
                 performSubTests(evalPop, 2, divideLevel, groupSize);
@@ -364,7 +390,7 @@ public class InfectionSimulation
 
                 if(subGroup1[i] && currGroupSize > 4)
                 {
-                    System.out.println(testResults((currLevel), true));            //need to print out results before this function gets put on stack so performSub
+                    testResults((currLevel), true);            //need to print out results before this function gets put on stack so performSub
                     performSubTests(subGroup1, (currLevel + 1), divideLevel, currGroupSize);   //splits group in half yet again and recursively calls this function
                     subGroup1Positive = true;
                     currLevel--;                                                               //gets called at the very end as functions are coming off the stack and needs to decrement to indicate going back towards clean stack
@@ -372,7 +398,7 @@ public class InfectionSimulation
 
                 if(subGroup1[i] && currGroupSize == 4)
                 {
-                    System.out.println(testResults((currLevel), true));
+                    testResults((currLevel), true);
                     performSingleTests(subGroup1, (currLevel + 1), divideLevel, currGroupSize);
                     subGroup1Positive = true;
                 }
@@ -380,7 +406,7 @@ public class InfectionSimulation
             }
 
             if(!subGroup1Positive)                                                         //if no infection was found on subgroup1, then print results
-                System.out.println(testResults((currLevel), false));
+                testResults((currLevel), false);
 
 
             testCount++;   //for subgroup2
@@ -391,14 +417,14 @@ public class InfectionSimulation
 
                 if(subGroup2[j] && currGroupSize > 4)
                 {
-                    System.out.println(testResults((currLevel), true));
+                    testResults((currLevel), true);
                     performSubTests(subGroup2, (currLevel + 1), divideLevel, currGroupSize);
                     subGroup2Positive = true;
                 }
 
                 if(subGroup2[j] && currGroupSize == 4)
                 {
-                    System.out.println(testResults((currLevel), true));
+                    testResults((currLevel), true);
                     performSingleTests(subGroup2, (currLevel + 1), divideLevel, currGroupSize);
                     subGroup2Positive = true;
                     currLevel--;
@@ -408,7 +434,7 @@ public class InfectionSimulation
             }
 
             if(!subGroup2Positive)
-                System.out.println(testResults((currLevel), false));
+                testResults((currLevel), false);
 
             if(subGroup1Positive && subGroup2Positive) //if both are true, then it went to 11 tests, otherwise if only 1 is, went to 7 tests
                 caseThree++;
@@ -439,7 +465,7 @@ public class InfectionSimulation
             infectionCount++;
 
         newInfect = infectionCount - infectPrevious;                   //want to print out how many positive tests were found here
-        System.out.println(singleTestResults(currLevel, newInfect));
+        singleTestResults(currLevel, newInfect);
 
         testCount += 4;                                                //4 individual tests done so much increment by 4
     }
@@ -467,38 +493,44 @@ public class InfectionSimulation
     //takes current level and whether an infection was found as parameters
     //if infection was found, message states moving onto next level to find it
     //if no infection, thats it and lets user know that pool was clean
-    public static String testResults(int currLevel, boolean infectionFound)
+    public static void testResults(int currLevel, boolean infectionFound)
     {
-        String testResults;
-        String testIndent = "";
+        if(userWantsCaseResults)
+        {
+            String testResults;
+            String testIndent = "";
 
-        for(int i = 1; i < currLevel; i++)
-            testIndent+= "   ";
+            for(int i = 1; i < currLevel; i++)
+                testIndent+= "   ";
 
-        if(!infectionFound)
-            testResults = "Level " + (currLevel) + " - no infection found";
-        else
-            testResults = "Level " + (currLevel) + " - infection found, proceeding to next level of testing";
+            if(!infectionFound)
+                testResults = "Level " + (currLevel) + " - no infection found";
+            else
+                testResults = "Level " + (currLevel) + " - infection found, proceeding to next level of testing";
 
-        return testIndent + testResults;
+            System.out.println(testIndent + testResults);
+        }
     }
 
     //takes currentLevel and the amount of new infections
     //since this is single tests, know that there has to be at least 1, take number so can let user know how many
-    public static String singleTestResults(int currLevel, int newInfect)
+    public static void singleTestResults(int currLevel, int newInfect)
     {
-        String testResults = "";
-        String testIndent = "";
+        if(userWantsCaseResults)
+        {
+            String testResults = "";
+            String testIndent = "";
 
-        for(int i = 1; i < currLevel; i++)
-            testIndent+= "   ";
+            for(int i = 1; i < currLevel; i++)
+                testIndent+= "   ";
 
-        if(newInfect == 1)
-            testResults = "Level " + (currLevel) + " - " + newInfect + " infection was found";
-        else
-            testResults = "Level " + (currLevel) + " - " + newInfect + " infections were found";
+            if(newInfect == 1)
+                testResults = "Level " + (currLevel) + " - " + newInfect + " infection was found";
+            else
+                testResults = "Level " + (currLevel) + " - " + newInfect + " infections were found";
 
-        return testIndent + testResults;
+            System.out.println(testIndent + testResults);
+        }
     }
 
     //final results method
@@ -536,7 +568,7 @@ public class InfectionSimulation
             else
                 instance = "instances";
 
-            case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten tests\n";
+            case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten additional tests\n";
         }
 
         String cases = case1Results + case2Results + case3Results;
