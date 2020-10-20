@@ -577,7 +577,7 @@ public class InfectionSimulation
             instance = "instance";
         else
             instance = "instances";
-        case3Results = "Case (3): " + caseThree + " - " + instance + " requiring eleven additional tests\n";
+        case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten additional tests\n";
 
         String cases = case1Results + case2Results + case3Results;
 
