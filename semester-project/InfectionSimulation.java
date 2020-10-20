@@ -628,7 +628,7 @@ public class InfectionSimulation
     public static void decision()
     {
         Scanner myScanner = new Scanner(System.in);
-        System.out.print("\nWould you like to run the simulation again? (Y/N/SAME - Same uses the same input as previous): ");
+        System.out.print("\nWould you like to run the simulation again? (Y/N/SAME - Y allows for different input, SAME runs automatically with same input as previous): ");
         String decision = myScanner.nextLine();
         if(decision.equalsIgnoreCase("Y"))
             simulation();
@@ -659,6 +659,7 @@ public class InfectionSimulation
     public static void sameSimulation()
     {
         resetStatic();
+        wantData();
         boolean[] population  = gatherPopulation();
         performTests(population);
         System.out.println(showResults());
