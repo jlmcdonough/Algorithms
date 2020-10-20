@@ -628,12 +628,14 @@ public class InfectionSimulation
     public static void decision()
     {
         Scanner myScanner = new Scanner(System.in);
-        System.out.print("\nWould you like to run the simulation again? (Y/N): ");
+        System.out.print("\nWould you like to run the simulation again? (Y/N/SAME - Same uses the same input as previous): ");
         String decision = myScanner.nextLine();
         if(decision.equalsIgnoreCase("Y"))
             simulation();
         else if(decision.equalsIgnoreCase("N"))
             System.out.println("Simulation Over");
+        else if(decision.equalsIgnoreCase("SAME"))
+            sameSimulation();
         else
         {
             System.out.println("\nPlease only enter 'Y' or 'N'");
@@ -641,8 +643,32 @@ public class InfectionSimulation
         }
     }
 
+    //resets all static variables prior to running simulation again
+    public static void resetStatic()
+    {
+        infectionCount = 0;
+        testCount = 0;
+        caseOne = 0;
+        caseTwo = 0;
+        caseThree = 0;
+        falseNegative = 0;
+        falsePositive = 0;
+    }
+
+    //will run if user decides to run the simulation again using the same input as the previous one
+    public static void sameSimulation()
+    {
+        resetStatic();
+        boolean[] population  = gatherPopulation();
+        performTests(population);
+        System.out.println(showResults());
+        decision();
+    }
+
+    //function to run initial simulation and any simulation after in which the user wants new input
     public static void simulation()
     {
+        resetStatic();
         gatherData();
         boolean[] population  = gatherPopulation();
         performTests(population);
