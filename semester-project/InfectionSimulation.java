@@ -19,10 +19,7 @@ public class InfectionSimulation
     static String divider = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     public static void main(String args[])
     {
-        gatherData();
-        boolean[] population  = gatherPopulation();
-        performTests(population);
-        System.out.println(showResults());
+        simulation();
     }
 
     //~~~~~~~~~~~~~~~USER ENTRY PART~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -130,7 +127,7 @@ public class InfectionSimulation
                                 "A testing group size must be bigger enough such that the division amounts can be done evenly and end with a whole number greater than 1.\n");
             getDivideLevel();
         }
-        else if(tempDivideCount == -888)
+        else if(tempDivideCount == -111)
             getGroupSize(popSize);
         else if(doesItDivide(groupSize, tempDivideCount))
         {
@@ -152,13 +149,13 @@ public class InfectionSimulation
             {
                 doesItDivide = false;
                 System.out.println("Your desired divide amount does not go evenly into the selected group size. Please try again.");
-                System.out.println("\nYou can enter '-888' to go back to adjust your group size first.");
+                System.out.println("\nYou can enter '-111' to go back to adjust your group size first.");
             }
             else if((tempGroup /= 2) == 1)
             {
                 doesItDivide = false;
                 System.out.println("The divide amount cannot send the groups to group size 1, the individual tests will be performed after the amount of division you have requested are met.  Please choose a smaller division amount.");
-                System.out.println("\nYou can enter '-888' to go back to adjust your group size first.");
+                System.out.println("\nYou can enter '-111' to go back to adjust your group size first.");
             }
             else
                 group /= 2;
@@ -423,8 +420,8 @@ public class InfectionSimulation
     //for initial group size 8, this is level 2 - case 2 but could progress to case 3 if subgroup1 and subgroup2 are infected
     public static void performSubTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
     {
-            if(groupSize == 4)
-                performSingleTests(subgroup, (currLevel), divideLevel, 4);
+            if(currLevel == divideLevel)
+                performSingleTests(subgroup, (currLevel), divideLevel, currGroupSize);
 
             currGroupSize /= 2;
             boolean[] subGroup1 = Arrays.copyOfRange(subgroup, 0, currGroupSize );                       //are splitting groups in half so this is first half
@@ -497,27 +494,23 @@ public class InfectionSimulation
     //takes same parameters as performSubTests
     public static void performSingleTests(boolean[] subgroup, int currLevel, int divideLevel, int currGroupSize)
     {
-        boolean individual1 = subgroup[0];
-        boolean individual2 = subgroup[1];
-        boolean individual3 = subgroup[2];
-        boolean individual4 = subgroup[3];
-
         int infectPrevious = infectionCount;
         int newInfect = 0;
+        ArrayList<Boolean> singleTest = new ArrayList<Boolean>();
 
-        if(individual1)
-            infectionCount++;
-        if(individual2)
-            infectionCount++;
-        if(individual3)
-            infectionCount++;
-        if(individual4)
-            infectionCount++;
+        for(boolean b : subgroup)
+            singleTest.add(b);
+
+        for(int i = 0; i < singleTest.size(); i++)
+        {
+            if(singleTest.get(i))
+                infectionCount++;
+        }
 
         newInfect = infectionCount - infectPrevious;                   //want to print out how many positive tests were found here
         singleTestResults(currLevel, newInfect);
 
-        testCount += 4;                                                //4 individual tests done so much increment by 4
+        testCount += singleTest.size();                                                //4 individual tests done so much increment by 4
     }
 
 
@@ -629,5 +622,31 @@ public class InfectionSimulation
         String testTotal = testCount + " tests to screen a population of " + popSize + " people for a disease with " + infectionRate + "% infection rate.";
 
         return "\n\n" + divider + "\n" + header + cases + divider + "\n" + falseResults + divider + "\n" + infectionTotal + testTotal;
+
+    }
+
+    public static void decision()
+    {
+        Scanner myScanner = new Scanner(System.in);
+        System.out.print("\nWould you like to run the simulation again? (Y/N): ");
+        String decision = myScanner.nextLine();
+        if(decision.equalsIgnoreCase("Y"))
+            simulation();
+        else if(decision.equalsIgnoreCase("N"))
+            System.out.println("Simulation Over");
+        else
+        {
+            System.out.println("\nPlease only enter 'Y' or 'N'");
+            decision();
+        }
+    }
+
+    public static void simulation()
+    {
+        gatherData();
+        boolean[] population  = gatherPopulation();
+        performTests(population);
+        System.out.println(showResults());
+        decision();
     }
 }
