@@ -14,6 +14,7 @@ public class InfectionSimulation
     static int popSize;
     static double infectionRate;
     static int groupSize;
+    static int divideCount;
     static double testAccuracy;
     static String divider = "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
     public static void main(String args[])
@@ -99,24 +100,72 @@ public class InfectionSimulation
             System.out.println("Group size must be less than or equal to population size of " + population);
             getGroupSize(population);
         }
-        else if(!powerOfTwo(tempGroupSize))
-        {
-            System.out.println("Testing is done using binary trees - please keep group size as a power of 2 (e.g. 2, 4, 8, 16");
-            getGroupSize(population);
-        }
         else
             groupSize = tempGroupSize;
     }
 
-    //helper function to determine if desired group size is of power 2
-    public static boolean powerOfTwo(int value)
+    //identifies how many divides are needed before single tests (i.e. group size 4)
+    //right now is not really useful as code hardcode to 2, but want this here when expand up to group size 16, 32, 64, etc.
+    public static void getDivideLevel()
     {
-        double result = (Math.log(value) / Math.log(2));
-        double resultAsInt = (double)(int)result;  //will turn all decimals into .0 <- if this equals original, original was whole number
-        if(result == resultAsInt)
-            return true;
+        System.out.print("Enter testing group division amounts (or '-999' for explanation'): ");
+
+        while(!myScanner.hasNextInt())
+        {
+            System.out.println("Only whole numbers are accepted input");
+            myScanner.next();
+            System.out.print("Enter testing group division amounts: ");
+        }
+
+        int tempDivideCount = myScanner.nextInt();
+
+        if(tempDivideCount == -999)
+        {
+            System.out.println("This variable determines how many times the groups are cut in half before individual tests are performed.\n" +
+                                "Examples:\n" +
+                                "\tGroup size 16 with division amount of 3: 16 --> 8 --> 4 --> 2 --> 1\n" +
+                                "\tGroup size 16 with division amount of 2: 16 --> 8 --> 4 --> 1\n" +
+                                "\tGroup size 16 with division amount of 1: 16 --> 8 --> 1\n" +
+                                "\tGroup size 16 with division amount of 4: 16 --> 8 --> 4 --> 2 --> 1 --> ERROR because can't go any further than group size 1 \n" +
+                                "A testing group size must be bigger enough such that the division amounts can be done evenly and end with a whole number greater than 1.\n");
+            getDivideLevel();
+        }
+        else if(tempDivideCount == -888)
+            getGroupSize(popSize);
+        else if(doesItDivide(groupSize, tempDivideCount))
+        {
+            divideCount = tempDivideCount;
+        }
         else
-            return false;
+            getDivideLevel();
+    }
+
+    public static boolean doesItDivide(int group, int divide)
+    {
+        int i = divide;
+        boolean doesItDivide = true;
+        int tempGroup = group;    //in the while statement, the second if will divide group by 2, but don't want that value after the check, so this separate value takes care of it
+
+        while(i > 0 && doesItDivide)
+        {
+            if((group % 2) != 0)
+            {
+                doesItDivide = false;
+                System.out.println("Your desired divide amount does not go evenly into the selected group size. Please try again.");
+                System.out.println("\nYou can enter '-888' to go back to adjust your group size first.");
+            }
+            else if((tempGroup /= 2) == 1)
+            {
+                doesItDivide = false;
+                System.out.println("The divide amount cannot send the groups to group size 1, the individual tests will be performed after the amount of division you have requested are met.  Please choose a smaller division amount.");
+                System.out.println("\nYou can enter '-888' to go back to adjust your group size first.");
+            }
+            else
+                group /= 2;
+            i--;
+        }
+
+        return doesItDivide;
     }
 
     //takes double for test accuracy as input
@@ -148,6 +197,7 @@ public class InfectionSimulation
         getPopulationSize();
         getInfectionRate();
         getGroupSize(popSize);
+        getDivideLevel();
         getTestAccuracy();
         System.out.println("\n" + printInput());
         //myScanner.close();
@@ -329,7 +379,7 @@ public class InfectionSimulation
     {
         boolean infectionFound = false;
         int whileIndex = 0;                   //will increase by group size after a completed iteration
-        int divideLevel = getDivideLevel();   //at the moment, is only useful for indenting on the printed results
+        int divideLevel = divideCount;   //at the moment, is only useful for indenting on the printed results
         boolean[] evalPop = Arrays.copyOfRange(pop, 0, groupSize);   //takes a subset of the population array that spans groupSize long
         int currLevel = 1;
 
@@ -470,21 +520,6 @@ public class InfectionSimulation
         testCount += 4;                                                //4 individual tests done so much increment by 4
     }
 
-    //identifies how many divides are needed before single tests (i.e. group size 4)
-    //right now is not really useful as code hardcode to 2, but want this here when expand up to group size 16, 32, 64, etc.
-    public static int getDivideLevel()
-    {
-        int divideLevel = 1;
-        int tempGroupSize = groupSize;
-
-        while(tempGroupSize > 4)
-        {
-            tempGroupSize /= 2;
-            divideLevel++;
-        }
-
-        return divideLevel;
-    }
 
     //concludes test part
 
@@ -561,15 +596,11 @@ public class InfectionSimulation
         String case2Results = "Case (2): " + caseTwo + " - " + instance + " requiring five additional tests\n";
 
         String case3Results = "";
-        if(getDivideLevel() == 2)  //if divide level is 1, the group size must've been 4 and this could never have been triggered - guess could alternatively do if groupSize == 4 (might have to do that for all possible cases when implementing group 16, 32, 64)
-        {
-            if(caseThree == 1 && getDivideLevel() == 2)
-                instance = "instance";
-            else
-                instance = "instances";
-
-            case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten additional tests\n";
-        }
+        if(caseThree == 1 && divideCount == 2)
+            instance = "instance";
+        else
+            instance = "instances";
+        case3Results = "Case (3): " + caseThree + " - " + instance + " requiring ten additional tests\n";
 
         String cases = case1Results + case2Results + case3Results;
 
