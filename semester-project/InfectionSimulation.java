@@ -37,8 +37,12 @@ public class InfectionSimulation
         }
 
         int tempPopSize = myScanner.nextInt();
-
-        if(tempPopSize <= 0)
+        if(tempPopSize == -555)
+        {
+            helpMenu();
+            getPopulationSize();
+        }
+        else if(tempPopSize <= 0)
         {
             System.out.println("Population size must be greater than 0");
             getPopulationSize();
@@ -61,8 +65,12 @@ public class InfectionSimulation
         }
 
         double tempInfectRate = myScanner.nextDouble();
-
-        if(tempInfectRate < 0 || tempInfectRate > 100)
+        if(tempInfectRate == -555)
+        {
+        helpMenu();
+        getInfectionRate();
+        }
+        else if(tempInfectRate < 0 || tempInfectRate > 100)
         {
             System.out.println("Infection rate must be between 0 and 100");
             getInfectionRate();
@@ -87,7 +95,12 @@ public class InfectionSimulation
 
         int tempGroupSize = myScanner.nextInt();
 
-        if(tempGroupSize <= 0)
+        if(tempGroupSize == -555)
+        {
+            helpMenu();
+            getGroupSize(population);
+        }
+        else if(tempGroupSize <= 0)
         {
             System.out.println("Group size must be greater than 0");
             getGroupSize(population);
@@ -98,14 +111,17 @@ public class InfectionSimulation
             getGroupSize(population);
         }
         else
+        {
             groupSize = tempGroupSize;
+            getDivideLevel();
+        }
     }
 
     //identifies how many divides are needed before single tests (i.e. group size 4)
     //right now is not really useful as code hardcode to 2, but want this here when expand up to group size 16, 32, 64, etc.
     public static void getDivideLevel()
     {
-        System.out.print("Enter testing group division amounts (or '-999' for explanation'): ");
+        System.out.print("Enter testing group division amounts: ");
 
         while(!myScanner.hasNextInt())
         {
@@ -116,21 +132,18 @@ public class InfectionSimulation
 
         int tempDivideCount = myScanner.nextInt();
 
-        if(tempDivideCount == -999)
+        if(tempDivideCount == -555)
         {
-            System.out.println("This variable determines how many times the groups are cut in half before individual tests are performed.\n" +
-                                "Examples:\n" +
-                                "\tGroup size 16 with division amount of 3: 16 --> 8 --> 4 --> 2 --> 1\n" +
-                                "\tGroup size 16 with division amount of 2: 16 --> 8 --> 4 --> 1\n" +
-                                "\tGroup size 16 with division amount of 1: 16 --> 8 --> 1\n" +
-                                "\tGroup size 16 with division amount of 0: 16 --> 1\n" +
-                                "\tGroup size 16 with division amount of 4: 16 --> 8 --> 4 --> 2 --> 1 --> .5 ERROR because can't go any further than group size 1 \n" +
-                                "\tGroup size 15 with division amount of 2: 15 --> 7.5 ERROR because 15 does not divide evenly \n" +
-                                "A testing group size must be bigger enough such that the division amounts can be done evenly and end with a whole number greater than 1.\n");
+            helpMenu();
             getDivideLevel();
         }
         else if(tempDivideCount == -111)
             getGroupSize(popSize);
+        else if(tempDivideCount < 0)
+        {
+            System.out.println("Group division amount must be greater than 0");
+            getDivideLevel();
+        }
         else if(doesItDivide(groupSize, tempDivideCount))
         {
             divideCount = tempDivideCount;
@@ -151,13 +164,13 @@ public class InfectionSimulation
             {
                 doesItDivide = false;
                 System.out.println("Your desired divide amount does not go evenly into the selected group size. Please try again.");
-                System.out.println("\nYou can enter '-111' to go back to adjust your group size first.");
+                System.out.println("You can enter '-111' to go back to adjust your group size first.");
             }
             else if((tempGroup /= 2) == 1)
             {
                 doesItDivide = false;
                 System.out.println("The divide amount cannot send the groups to group size 1, the individual tests will be performed after the amount of division you have requested are met.  Please choose a smaller division amount.");
-                System.out.println("\nYou can enter '-111' to go back to adjust your group size first.");
+                System.out.println("You can enter '-111' to go back to adjust your group size first.");
             }
             else
                 group /= 2;
@@ -181,7 +194,12 @@ public class InfectionSimulation
 
         double tempTestAccuracy = myScanner.nextDouble();
 
-        if(tempTestAccuracy < 0 || tempTestAccuracy > 100)
+        if(tempTestAccuracy == -555)
+        {
+            helpMenu();
+            getTestAccuracy();
+        }
+        else if(tempTestAccuracy < 0 || tempTestAccuracy > 100)
         {
             System.out.println("Test Accuracy rate must be between 0 and 100");
             getTestAccuracy();
@@ -190,13 +208,45 @@ public class InfectionSimulation
             testAccuracy = tempTestAccuracy;
     }
 
+    public static void helpMenu()
+    {
+        String header = ("~~~~~~~~~~~~~\n" + "  HELP MENU\n" + "~~~~~~~~~~~~~\n");
+
+        String pop = ("\nPopulation Size: this is the amount of people that will be tested." +
+                            "\n\tIf it does not divide evenly by the group size, more will be added, " +
+                            "\n\tsuch that for a population of 15 and a group size of 8, 1 person would be added to population, totaling 16" +
+                            "\n\tINPUT - whole number greater than 0.");
+
+        String infect = ("\n\nInfection Rate: this is the percentage of people that will be infected, on average. " +
+                         "\n\tINPUT - whole or decimal value between 0.0 (inclusive) and 100.0 (inclusive).");
+
+        String groupSize = ("\n\nGroup Size: this is the amount of people belonging to a testing group, as each individual does not necessarily have to be tested in a pooled testing simulation." +
+                            "\n\tINPUT - whole number greater than 0 but less than or equal to the population.");
+
+        String groupDivision = ("\n\nGroup Division: this is the amount of times the groups will be split in half if a positive case is found up until individual tests are requested." +
+                                "\n\tIf it does not divide evenly into the group size, must pick a new division amount or enter '-111' to go back and adjust the group size first." +
+                                "\n\tINPUT - whole number between 0 (inclusive) and log base 2 of group size - 1 (inclusive)." +
+                                    "\n\tExamples:" +
+                                    "\n\t\tGroup size 16 with division amount of 3: 16 --> 8 --> 4 --> 2 --> 1" +
+                                    "\n\t\tGroup size 16 with division amount of 2: 16 --> 8 --> 4 --> 1" +
+                                    "\n\t\tGroup size 16 with division amount of 1: 16 --> 8 --> 1" +
+                                    "\n\t\tGroup size 16 with division amount of 0: 16 --> 1" +
+                                    "\n\t\tGroup size 16 with division amount of 4: 16 --> 8 --> 4 --> 2 --> 1 --> .5 ERROR because can't go any further than group size 1 " +
+                                    "\n\t\tGroup size 15 with division amount of 2: 15 --> 7.5 ERROR because 15 does not divide evenly ");
+
+        String testAccuracy = ("\n\nTest Accuracy: this is the percentage that represents how accurate the test is, such that 0% means all tests are inaccurate and 100% means every tests is accurate." +
+                                "\n\tINPUT - whole or decimal value between 0.0 (inclusive) and 100.0 (inclusive).");
+
+        String helpMenu = header + pop + infect + groupSize + groupDivision + testAccuracy;
+        System.out.println(helpMenu + "\n");
+    }
+
     //function to perform all of the user input commands above and prints it to user
     public static void getUserInput()
     {
         getPopulationSize();
         getInfectionRate();
         getGroupSize(popSize);
-        getDivideLevel();
         getTestAccuracy();
         System.out.println("\n" + printInput());
         //myScanner.close();
@@ -637,6 +687,7 @@ public class InfectionSimulation
         caseThree = 0;
         falseNegative = 0;
         falsePositive = 0;
+        System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~\n" + "  Infection Simulation\n" + "~~~~~~~~~~~~~~~~~~~~~~~~\n" + "Enter '-555' at any time for help\n");
     }
 
     //will run if user decides to run the simulation again using the same input as the previous one
