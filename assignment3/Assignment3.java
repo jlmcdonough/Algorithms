@@ -9,7 +9,7 @@ import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
 
-public class Assignment3
+public class Assignment3 extends Queue
 {
     public static void main(String args[]) throws FileNotFoundException
     {
@@ -24,6 +24,26 @@ public class Assignment3
             System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
             binarySortComplete(mySortedMagicItems, randomItems);
+
+            createHashTable();
+            loadHashTable(mySortedMagicItems);
+            Queue one = myHashTable.get(0);
+            System.out.println(one.peek());
+
+            for(int i = 0; i < 250; i++)
+            {
+                Queue thisQueue = myHashTable.get(i);
+                if(thisQueue.isEmpty())
+                    System.out.println("Is empty");
+                else
+                {
+                    System.out.println(i);
+                    while(!thisQueue.tempPeek().equalsIgnoreCase("-9988778899"))
+                        System.out.println(thisQueue.peek());
+                }
+
+                System.out.println("~~~~~~~~");
+            }
 
     }
 
@@ -74,7 +94,7 @@ public class Assignment3
         return randomItems;
     }
 
-    //~~~~~~~~~~~~~~~~~LINEAR SORT~~~~~~~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~LINEAR SEARCH~~~~~~~~~~~~~~~~~~~
     public static ArrayList<Assignment3> linearSort(List<String> myList, String item, ArrayList<Assignment3> linearResultsGroup)
     {
         int i = 0;
@@ -107,7 +127,7 @@ public class Assignment3
         printSearchResults(linearResultsGroup);
     }
 
-    //~~~~~~~~~~~~~~~~~~BINARY SORT~~~~~~~~~~~~~~~~~~~
+    //~~~~~~~~~~~~~~~~~~BINARY SEARCH~~~~~~~~~~~~~~~~~~~
     static int binarySearchCount = 0;
     public static ArrayList<Assignment3> binarySort(List<String> magicItems, String item, int startIndex, int stopIndex, ArrayList<Assignment3> binaryResultsGroup)
     {
@@ -140,8 +160,9 @@ public class Assignment3
         System.out.println("BINARY SEARCH\n");
         printSearchResults(binaryResultsGroup);
     }
-    
-    
+
+
+    //~~~~~~~~~~~~~~~~~~PRINT RESULTS~~~~~~~~~~~~~~~~~~~
     public static void printSearchResults(List<Assignment3> sortList)
     {
         //longest item is 46 characters long, so ensured 1 padding on each side
@@ -157,8 +178,58 @@ public class Assignment3
     }
 
 
+    //~~~~~~~~~~~~~~~~~~HASHING~~~~~~~~~~~~~~~~~~~
+    private static ArrayList<Queue> myHashTable = new ArrayList<>();
+    private static int HASH_TABLE_SIZE = 250;
+
+    public static void createHashTable()
+    {
+        for(int i = 0; i < 250; i++)
+        {
+            Queue tempQueue = new Queue();
+            myHashTable.add(tempQueue);
+        }
+    }
+
+    //function taken from assignment and copied directly
+    public static int makeHashCode(String str)
+    {
+        str = str.toUpperCase();
+        int length = str.length();
+        int letterTotal = 0;
+
+        // Iterate over all letters in the string, totalling their ASCII values.
+        for (int i = 0; i < length; i++)
+        {
+            char thisLetter = str.charAt(i);
+            int thisValue = (int)thisLetter;
+            letterTotal = letterTotal + thisValue;
+        }
+
+        // Scale letterTotal to fit in HASH_TABLE_SIZE.
+        int hashCode = (letterTotal * 1) % HASH_TABLE_SIZE;
+        System.out.println(str + " " + hashCode);
+        return hashCode;
+    }
+
+    public static void loadHashTable(ArrayList<String> fileItems)
+    {
+        for(String item : fileItems)
+        {
+            int toGoIndex = makeHashCode(item);
+            System.out.println(toGoIndex + " " + item);
+            if(myHashTable.get(toGoIndex) == null)
+            {
+                Queue tempQueue = new Queue();
+                tempQueue.enqueue(item);
+            }
+            else
+                myHashTable.get(toGoIndex).enqueue(item);
+        }
+    }
 
 
+    //~~~~~~~~~~~~~~~~~~MERGE SORT~~~~~~~~~~~~~~~~~~~
 
     //since merge sort performed the least amount of comparisons in assignment2, will use it here to sort
     public static List<String> mergeSort(List<String> items, int itemsSize)
