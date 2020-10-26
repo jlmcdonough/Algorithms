@@ -25,14 +25,9 @@ public class Assignment3 extends Queue
 
             binarySortComplete(mySortedMagicItems, randomItems);
 
-            createHashTable();
-            loadHashTable(mySortedMagicItems);
+            System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
-            System.out.println(findElement("Towgar's Armor of the Heavens"));
-            System.out.println(findElement("Coffin of Blessing"));
-
-
-
+            hashTableComplete(mySortedMagicItems, randomItems);
     }
 
     //object that holds search item and counts taken to find it as a pair
@@ -150,22 +145,6 @@ public class Assignment3 extends Queue
     }
 
 
-    //~~~~~~~~~~~~~~~~~~PRINT RESULTS~~~~~~~~~~~~~~~~~~~
-    public static void printSearchResults(List<Assignment3> sortList)
-    {
-        //longest item is 46 characters long, so ensured 1 padding on each side
-        //largest number is 3 characters long, so ensured 1 padding on each side
-        System.out.format("%-48s%-5s%n", "ITEM", "COUNT");
-        int totalCount = 0;
-        for(int k = 0; k < sortList.size(); k++)
-        {
-            totalCount += sortList.get(k).getCount();
-            System.out.format("%-48s%-5d%n", sortList.get(k).getItem(), sortList.get(k).getCount());
-        }
-        System.out.println("AVERAGE SEARCH COUNT: " + (totalCount/42));
-    }
-
-
     //~~~~~~~~~~~~~~~~~~HASHING~~~~~~~~~~~~~~~~~~~
     private static ArrayList<Queue> myHashTable = new ArrayList<>();
     private static int HASH_TABLE_SIZE = 250;
@@ -199,7 +178,7 @@ public class Assignment3 extends Queue
         return hashCode;
     }
 
-    public static void loadHashTable(ArrayList<String> fileItems)
+    public static void loadHashTable(List<String> fileItems)
     {
         for(String item : fileItems)
         {
@@ -242,6 +221,37 @@ public class Assignment3 extends Queue
         return count;
     }
 
+    public static void hashTableComplete(List<String> magicItems, String[] randomItems)
+    {
+        createHashTable();
+        loadHashTable(magicItems);
+        ArrayList<Assignment3> hashResultsGroup = new ArrayList<Assignment3>();
+        for(int k = 0; k < randomItems.length; k++)
+        {
+            int searchCount = findElement(randomItems[k]);
+            hashResultsGroup.add(new Assignment3(randomItems[k], searchCount));
+        }
+
+        System.out.println("HASH TABLE SEARCH\n");
+        printSearchResults(hashResultsGroup);
+
+    }
+
+
+    //~~~~~~~~~~~~~~~~~~PRINT RESULTS~~~~~~~~~~~~~~~~~~~
+    public static void printSearchResults(List<Assignment3> sortList)
+    {
+        //longest item is 46 characters long, so ensured 1 padding on each side
+        //largest number is 3 characters long, so ensured 1 padding on each side
+        System.out.format("%-48s%-5s%n", "ITEM", "COUNT");
+        int totalCount = 0;
+        for(int k = 0; k < sortList.size(); k++)
+        {
+            totalCount += sortList.get(k).getCount();
+            System.out.format("%-48s%-5d%n", sortList.get(k).getItem(), sortList.get(k).getCount());
+        }
+        System.out.println("AVERAGE SEARCH COUNT: " + (totalCount/42));
+    }
 
     //~~~~~~~~~~~~~~~~~~MERGE SORT~~~~~~~~~~~~~~~~~~~
 
