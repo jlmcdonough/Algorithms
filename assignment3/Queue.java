@@ -49,38 +49,4 @@ public class Queue extends Node
         return returnValue;
     }
 
-    public String peek()
-    {
-        Node returnValue = nodeEvaluate;
-        String result;
-        if(returnValue == null)
-            result = "-9988778899";
-        else if (!this.isEmpty())
-        {
-            result = returnValue.data;
-            nodeEvaluate = nodeEvaluate.reference;
-        }
-        else
-            result = "-9988778899";
-
-        return result;
-    }
-
-    public String tempPeek()
-    {
-        Node returnValue = nodeEvaluate;
-        String result;
-
-        if(returnValue == null)
-            result = "-9988778899";
-        else if (!this.isEmpty())
-        {
-            returnValue = nodeEvaluate;
-            result = returnValue.data;
-        }
-        else
-            result = "-9988778899";
-
-        return result;
-    }
 }

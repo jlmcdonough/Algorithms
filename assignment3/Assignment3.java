@@ -27,23 +27,11 @@ public class Assignment3 extends Queue
 
             createHashTable();
             loadHashTable(mySortedMagicItems);
-            Queue one = myHashTable.get(0);
-            System.out.println(one.peek());
 
-            for(int i = 0; i < 250; i++)
-            {
-                Queue thisQueue = myHashTable.get(i);
-                if(thisQueue.isEmpty())
-                    System.out.println("Is empty");
-                else
-                {
-                    System.out.println(i);
-                    while(!thisQueue.tempPeek().equalsIgnoreCase("-9988778899"))
-                        System.out.println(thisQueue.peek());
-                }
+            System.out.println(findElement("Towgar's Armor of the Heavens"));
+            System.out.println(findElement("Coffin of Blessing"));
 
-                System.out.println("~~~~~~~~");
-            }
+
 
     }
 
@@ -208,7 +196,6 @@ public class Assignment3 extends Queue
 
         // Scale letterTotal to fit in HASH_TABLE_SIZE.
         int hashCode = (letterTotal * 1) % HASH_TABLE_SIZE;
-        System.out.println(str + " " + hashCode);
         return hashCode;
     }
 
@@ -217,7 +204,7 @@ public class Assignment3 extends Queue
         for(String item : fileItems)
         {
             int toGoIndex = makeHashCode(item);
-            System.out.println(toGoIndex + " " + item);
+
             if(myHashTable.get(toGoIndex) == null)
             {
                 Queue tempQueue = new Queue();
@@ -226,6 +213,33 @@ public class Assignment3 extends Queue
             else
                 myHashTable.get(toGoIndex).enqueue(item);
         }
+    }
+
+    public static int findElement(String item)
+    {
+        int count = 0;
+        boolean found = false;
+        int location = makeHashCode(item);
+        Queue hashQueue = myHashTable.get(location);
+
+        if(hashQueue.isEmpty())
+            System.out.println("EMPTY");
+        else
+        {
+            Node nodeEval = hashQueue.queueFirst;
+            while(!found)
+            {
+                if(nodeEval.data.equalsIgnoreCase(item))
+                    found = true;
+                else
+                    nodeEval = nodeEval.reference;
+                count++;
+            }
+        }
+        if(!found)
+            count = -1;  //want to let user know item was not found (cannot be found in negative searches normally
+
+        return count;
     }
 
 
