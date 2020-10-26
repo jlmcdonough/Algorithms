@@ -19,11 +19,11 @@ public class Assignment3 extends Queue
             myMagicRandom = (ArrayList)mySortedMagicItems.clone();
             String[] randomItems = generateRandomItems(myMagicRandom);
 
-            linearSortComplete(mySortedMagicItems, randomItems);
+            linearSearchComplete(mySortedMagicItems, randomItems);
 
             System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
-            binarySortComplete(mySortedMagicItems, randomItems);
+            binarySearchComplete(mySortedMagicItems, randomItems);
 
             System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
@@ -50,6 +50,7 @@ public class Assignment3 extends Queue
         return this.searchCount;
     }
 
+    //does the work of the previous assignment of reading and sorting file
     public static ArrayList<String> getAndSortList() throws FileNotFoundException
     {
         Scanner reader = new Scanner(new File("magicitems.txt"));
@@ -63,6 +64,7 @@ public class Assignment3 extends Queue
         return myMagicItems;
     }
 
+    //randomly selected the 42 items for the searches to work on
     public static String[] generateRandomItems(List<String> inputList)
     {
         String[] randomItems = new String[42];
@@ -78,7 +80,7 @@ public class Assignment3 extends Queue
     }
 
     //~~~~~~~~~~~~~~~~~~LINEAR SEARCH~~~~~~~~~~~~~~~~~~~
-    public static ArrayList<Assignment3> linearSort(List<String> myList, String item, ArrayList<Assignment3> linearResultsGroup)
+    public static ArrayList<Assignment3> linearSearch(List<String> myList, String item, ArrayList<Assignment3> linearResultsGroup)
     {
         int i = 0;
         boolean found = false;
@@ -98,12 +100,12 @@ public class Assignment3 extends Queue
         return linearResultsGroup;
     }
 
-    public static void linearSortComplete(List<String> magicItems, String[] randomItems)
+    public static void linearSearchComplete(List<String> magicItems, String[] randomItems)
     {
         ArrayList<Assignment3> linearResultsGroup = new ArrayList<Assignment3>();
         for(int j = 0; j < randomItems.length; j++)
         {
-            linearResultsGroup = linearSort(magicItems, randomItems[j], linearResultsGroup);
+            linearResultsGroup = linearSearch(magicItems, randomItems[j], linearResultsGroup);
         }
 
         System.out.println("LINEAR SEARCH\n");
@@ -112,7 +114,7 @@ public class Assignment3 extends Queue
 
     //~~~~~~~~~~~~~~~~~~BINARY SEARCH~~~~~~~~~~~~~~~~~~~
     static int binarySearchCount = 0;
-    public static ArrayList<Assignment3> binarySort(List<String> magicItems, String item, int startIndex, int stopIndex, ArrayList<Assignment3> binaryResultsGroup)
+    public static ArrayList<Assignment3> binarySearch(List<String> magicItems, String item, int startIndex, int stopIndex, ArrayList<Assignment3> binaryResultsGroup)
     {
         int middleIndex = (int)((startIndex + stopIndex) / 2);  //floor value of uneven splits
         binarySearchCount++;
@@ -125,19 +127,19 @@ public class Assignment3 extends Queue
             binarySearchCount = 0;
         }
         else if(magicItems.get(middleIndex).compareToIgnoreCase(item) > 0) //search item is closer to aaaa then mid-item
-            binarySort(magicItems, item, startIndex, middleIndex - 1, binaryResultsGroup);
+            binarySearch(magicItems, item, startIndex, middleIndex - 1, binaryResultsGroup);
         else
-            binarySort(magicItems, item, middleIndex + 1, stopIndex, binaryResultsGroup);
+            binarySearch(magicItems, item, middleIndex + 1, stopIndex, binaryResultsGroup);
 
         return binaryResultsGroup;
     }
 
-    public static void binarySortComplete(List<String> magicItems, String[] randomItems)
+    public static void binarySearchComplete(List<String> magicItems, String[] randomItems)
     {
         ArrayList<Assignment3> binaryResultsGroup = new ArrayList<Assignment3>();
         for(int j = 0; j < randomItems.length; j++)
         {
-            binaryResultsGroup = binarySort(magicItems, randomItems[j], 0, magicItems.size(), binaryResultsGroup);
+            binaryResultsGroup = binarySearch(magicItems, randomItems[j], 0, magicItems.size(), binaryResultsGroup);
         }
 
         System.out.println("BINARY SEARCH\n");
@@ -178,6 +180,7 @@ public class Assignment3 extends Queue
         return hashCode;
     }
 
+    //take each item in the file, hash it, and put at the proper index in hash table in form of queue at each index
     public static void loadHashTable(List<String> fileItems)
     {
         for(String item : fileItems)
@@ -194,9 +197,10 @@ public class Assignment3 extends Queue
         }
     }
 
+    //hash the item again to see what index to look at, then go through that queue looking for value
     public static int findElement(String item)
     {
-        int count = 0;
+        int count = 1;   //takes 1 just to go to the right index in the array
         boolean found = false;
         int location = makeHashCode(item);
         Queue hashQueue = myHashTable.get(location);
@@ -234,7 +238,6 @@ public class Assignment3 extends Queue
 
         System.out.println("HASH TABLE SEARCH\n");
         printSearchResults(hashResultsGroup);
-
     }
 
 
