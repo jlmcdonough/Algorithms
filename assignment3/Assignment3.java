@@ -206,7 +206,7 @@ public class Assignment3 extends Queue
         Queue hashQueue = myHashTable.get(location);
 
         if(hashQueue.isEmpty())
-            System.out.println("EMPTY");
+            count = -1;
         else
         {
             Node nodeEval = hashQueue.queueFirst;
