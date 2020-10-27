@@ -84,19 +84,19 @@ public class Assignment3 extends Queue
     {
         int i = 0;
         boolean found = false;
-        int linearSortCount = 0;
+        int linearSearchCount = 0;
 
         while(i < myList.size() && !found)
         {
-            linearSortCount++;
+            linearSearchCount++;
             if(myList.get(i).equalsIgnoreCase(item))
                 found = true;
 
             i++;
         }
 
-        Assignment3 sortedPair = new Assignment3(item, linearSortCount);
-        linearResultsGroup.add(sortedPair);
+        Assignment3 searchedPair = new Assignment3(item, linearSearchCount);
+        linearResultsGroup.add(searchedPair);
         return linearResultsGroup;
     }
 
