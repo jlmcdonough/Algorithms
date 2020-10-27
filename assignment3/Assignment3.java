@@ -200,7 +200,7 @@ public class Assignment3 extends Queue
     //hash the item again to see what index to look at, then go through that queue looking for value
     public static int findElement(String item)
     {
-        int count = 1;   //takes 1 just to go to the right index in the array
+        int count = 0;   //going to the queue in the array is deemed "free"
         boolean found = false;
         int location = makeHashCode(item);
         Queue hashQueue = myHashTable.get(location);
