@@ -8,8 +8,8 @@ Professor Labouseur
 public class Tree extends Node
 {
     Node root;
-    Node left;
-    Node right;
+    Tree left;
+    Tree right;
     Node parent;
 
     public Tree()
@@ -20,7 +20,7 @@ public class Tree extends Node
         this.right = null;
     }
 
-    public void treeInsert(Tree t, Node n)
+    public static void treeInsert(Tree t, Node n)
     {
         Node trailingParent = null;
         Node currNode = t.root;
@@ -39,9 +39,26 @@ public class Tree extends Node
         if(trailingParent == null)
             t.root = n;
         else if(n.data.compareToIgnoreCase(trailingParent.data) < 0)
+        {
             trailingParent.left = n;
+            System.out.println("LEFT" + n.data);
+        }
+
         else
+        {
             trailingParent.right = n;
+            System.out.println("RIGHT" + n.data);
+        }
+    }
+
+    public Tree treeSearch(Tree t, String item)
+    {
+        if(t == null || t.data.equalsIgnoreCase(item))
+            return t;
+        else if(item.compareToIgnoreCase(t.data) < 0)
+            return treeSearch(t.left, item);
+        else
+            return treeSearch(t.right, item);
     }
 
 }
