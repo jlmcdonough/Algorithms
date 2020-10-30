@@ -1,0 +1,230 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CMPT xxx
+% Fall 2020
+% Lab One
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from: http://www.LaTeXTemplates.com
+% Original author: % Frits Wenneker (http://www.howtotex.com)
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Modified by Alan G. Labouseur  - alan@labouseur.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper, 10pt,DIV=13]{scrartcl} 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm,xfrac} % Math packages
+\usepackage{sectsty} % Allows customizing section commands
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,commentsnumbered]{algorithm2e}
+\usepackage{listings}
+\usepackage{parskip}
+\usepackage{lastpage}
+\usepackage{siunitx}
+
+\allsectionsfont{\normalfont\scshape} % Make all section titles in default font and small caps.
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{page \thepage\ of \pageref{LastPage}} % Page numbering for right footer
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs.
+
+\binoppenalty=3000
+\relpenalty=3000
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+   \normalfont \normalsize 
+   \textsc{CMPT 435 - Fall 2020 - Dr. Labouseur} \\[10pt] % Header stuff.
+   \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
+   \huge Lab Three  \\     	    % Assignment title
+   \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
+}
+
+\author{Joseph McDonough \\ \normalsize Joseph.McDonough1@marist.edu}
+
+\date{\normalize{October 30, 2020}}	% Due date.
+
+\begin{document}
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%   start PROBLEM ONE
+%----------------------------------------------------------------------------------------
+\section{Results}
+A file, titled magicitems, is a text file that has the name of 666 different items.  The items appear in the text file in a random order, such that it is not presorted in any way. 
+
+Upon running the string of items through a sort, a random selection of 42 items (the same 42 for each search) were searched for using linear search, binary search, and the use of a hashing table.
+
+\begin{table}[h!]
+  \begin{center}
+    \caption{The 3 Searches}
+    \label{tab:table}
+    \begin{tabular}{c|c|c}
+      \textbf{Search Type} & \textbf{Comparison Count}\ & \textbf{Asymptotic Run-Time}\\
+      \hline
+      Linear & \~333 & $n$ \\
+      Binary & 8 & log_2 n\\
+      Hashing & 2 & \n 1 \\
+    \end{tabular}
+  \end{center}
+\end{table}
+
+Following an analysis of Big O, the comparison count for all the searches are within the order of magnitude and can be deemed appropriate results for a list of size 666.
+
+\section{Asymptotic Analysis} \\
+
+\subsection{Linear Search}
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=85,stepnumber=1,escapeinside={\%}{\%}]
+int i = 0;
+boolean found = false;
+int linearSearchCount = 0;
+
+while(i < myList.size() && !found)
+{
+    linearSearchCount++;
+    if(myList.get(i).equalsIgnoreCase(item))
+        found = true;
+    
+    i++;
+}
+
+Assignment3 searchedPair = new Assignment3(item, linearSearchCount);
+linearResultsGroup.add(searchedPair);
+return linearResultsGroup;
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+Linear search starts at the first element of the list and goes through the entire list (line 89) until either the item is found (line 92) or the entire list has been exhausted.  The search is performed on a sorted list so if the desired item is first alphabetically, it will be found in one pass, but if the element is the last alphabetically, the sort will have to go through the entire list (in this case 666 times) before it finds it.  And if the item is not in the list at all, it will still have to go through the whole list until the end is reached to truly return item not found.  In theory, there could also be a check to see if the item should have appeared already in a sorted list (i.e. it would be known item "alpha" is not in the list if the current element is "bravo") but that is not a truly linear search.  
+
+While running the search multiple times for differing sets of 42 random items, the average search count was always in or around the range of 320 - 350 searches before the item was found.  This makes sense as the average run-time for a list of size 666 would be about 333, that is half of the elements in the list.  
+
+Therefore, the expected run-time is $n/2$ but in calculating Big-O notation, constants are dropped, resulting in just O($n$), which is what truly happened in this scenario.
+
+\subsection{Binary Search}
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=119,stepnumber=1,escapeinside={\%}{\%}]
+int middleIndex = (int)((startIndex + stopIndex) / 2);  
+binarySearchCount++;
+
+if(startIndex > stopIndex)
+    System.out.print("ITEM NOT FOUND");
+else if(magicItems.get(middleIndex).equalsIgnoreCase(item))
+{
+    binaryResultsGroup.add(new Assignment3(item, binarySearchCount));
+    binarySearchCount = 0;
+}
+else if(magicItems.get(middleIndex).compareToIgnoreCase(item) > 0) 
+    binarySearch(magicItems, item, startIndex, middleIndex - 1, binaryResultsGroup);
+else
+    binarySearch(magicItems, item, middleIndex + 1, stopIndex, binaryResultsGroup);
+
+return binaryResultsGroup;
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+Binary search starts at the middle of the entire list.  It is important to note that binary search is only effective on a sorted list.  If the desired element so happens to be at the middle of the list, the search is complete (line 124).  If not, it is then determined if the item is closer to the top or bottom of the alphabet.  If it is closer to the top (i.e. "A"), then the function is ran again on the part of the list that starts at the beginning and ends one less than the middle element (line 129).  The same occurs if the item is closer to the bottom (i.e. "Z").  The binary search function is ran on the remainder of the list that is one greater than the midpoint all the way to the end.  This recursive function works until the element is ultimately the midpoint and is found, or there are no more midpoints to be had and the element is not present.
+
+The equation of $\log_2 n$ makes sense because binary search follows the same procedure as a divide and conquer algorithm (e.g. merge sort).  It recursively is splitting the list in half, but there is no need to build back up.  $\log_2 n$ is an accurate equation to determine the number of divides that could happen on a given list of size $n$.
+
+After running binary search on numerous sets of 42 randomly selected items, the average count was 8 nearly every time.  This is expected as the average run-time for a binary search is $\log_2 n$ , and for a list of size 666, that comes out to be ~9.3.  The result of 8 is within an order of magnitude of ~9.3 and is an acceptable outcome.
+
+\subsection{Hashing Search}
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=203,stepnumber=1,escapeinside={\%}{\%}]
+int count = 0;
+boolean found = false;
+int location = makeHashCode(item);
+Queue hashQueue = myHashTable.get(location);
+
+if(hashQueue.isEmpty())
+    count = -1;
+else
+{
+    Node nodeEval = hashQueue.queueFirst;
+    while(!found)
+    {
+        if(nodeEval.data.equalsIgnoreCase(item))
+            found = true;
+        else
+            nodeEval = nodeEval.reference;
+        count++;
+    }
+}
+if(!found)
+    count = -1;  
+        
+return count;
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+A search performed using a hashing table performed the fasted out of the three searches, and that was mainly due to the hashing algorithm not allowing for many collisions.  The hashing search itself works by taking the hash of the item that is being searched for (line 205).  The hash table uses chaining to handle collisions and the chaining is done with the use of a queue.  Using the hash of the searched item, the function goes to that index of the hash table and takes the queue that resides there (line 206).  If the queue is empty, then there is no way the item is present and there is no need to look any further (line 208).  Otherwise, the function goes through the queue evaluating each node until the item is found.  If the item is found, the while loop is exited (line 215).  If the item is never found, it's the same as having an empty queue, -1 is returned.  Since a -1 search count could never be achieved, this is a way of letting the user know the item is not found.
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=166,stepnumber=1,escapeinside={\%}{\%}]
+str = str.toUpperCase();
+int length = str.length();
+int letterTotal = 0;
+
+
+for (int i = 0; i < length; i++)
+{
+    char thisLetter = str.charAt(i);
+    int thisValue = (int)thisLetter;
+    letterTotal = letterTotal + thisValue;
+}
+
+
+int hashCode = (letterTotal * 1) modulo HASH_TABLE_SIZE;
+        
+return count;
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+The hashing algorithm sets all the letters to uppercase (line 166) and then adds the ASCII number for all those characters (line 175).  The hash table size is predetermined to be of size 250, so the modulus operator (\%) is performed on the sum of the ASCII values and the 250 table size (line 179).  The result is floored and serves as the hash value.  This algorithm with this list of 666 items does a good enough job to keep collisions to a low and spreads the elements across most of the possible 250 hash value outcomes.  
+
+In most scenarios, a hash search works in constant time.  It takes O(1) to perform the hash function on the desired item, then it takes another O(1) to get to the proper index in the hash table.  Then the function has to go through the chain, which could technically be O(n) for a situation where the hashing algorithm resulted in all the hashes having the same value, but does not often happen.  As in the case with this scenario, it would take a maximum of around 5 searches before the item was found.  For a carefully selected algorithm to match the expected input, the expected search time on the chain is O(1).  As a result, hashing is expected to take O(1) + O(1) + O(1).  This results in an asymptotic run-time of O(1), which was the result and makes it the fastest of the three.     
+\end{document}
