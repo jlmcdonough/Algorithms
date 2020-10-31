@@ -15,24 +15,11 @@ public class Assignment4 extends Tree
     {
         ArrayList<String> myMagicItems = getList();
         String[] myRandomItems = generateRandomItems(myMagicItems);
-        Tree myBinaryTree = new Tree();
 
-        for(int i = 0; i < myMagicItems.size(); i++)
-        {
-            myBinaryTree.treeInsert(myBinaryTree, new Node(myMagicItems.get(i)));
-        }
-
-        ArrayList<Assignment4> binaryTreeResults = new ArrayList<Assignment4>();
-        for(String s : myRandomItems)
-        {
-            myBinaryTree.treeSearch(myBinaryTree.root, s);
-            binaryTreeResults.add(new Assignment4(s, count));
-            count = 0;
-        }
-
-        printSearchResults(binaryTreeResults);
+        binaryTreeComplete(myMagicItems, myRandomItems);
     }
 
+    //~~~~~~~~~~~~~~~~~ASSIGNMENT VARIABLES AND RESULT CONSTRUCTOR~~~~~~~~~
     private int searchCount;
     private String searchItem;
     public Assignment4(String item, int count)
@@ -51,6 +38,7 @@ public class Assignment4 extends Tree
         return this.searchCount;
     }
 
+    //~~~~~~~~~~~~~~~~~~READ FILE AND GET RANDOM ITEMS~~~~~~~~~~~~~~~~~~~~~~
     //does the work of the previous assignment of reading the file
     public static ArrayList<String> getList() throws FileNotFoundException
     {
@@ -76,6 +64,39 @@ public class Assignment4 extends Tree
         }
 
         return randomItems;
+    }
+
+    //~~~~~~~~~~~~~~~~~~BINARY TREE~~~~~~~~~~~~~~~~~~~~~
+    public static Tree createAndFillTree(List<String> magicItems)
+    {
+        Tree myBinaryTree = new Tree();
+
+        for(int i = 0; i < magicItems.size(); i++)
+        {
+            myBinaryTree.treeInsert(myBinaryTree, new Node(magicItems.get(i)));
+        }
+
+        return myBinaryTree;
+    }
+
+    public static ArrayList<Assignment4> searchTree(Tree myBinaryTree, String[] randomItems)
+    {
+        ArrayList<Assignment4> binaryTreeResults = new ArrayList<Assignment4>();
+        for(String s : randomItems)
+        {
+            myBinaryTree.treeSearch(myBinaryTree.root, s);
+            binaryTreeResults.add(new Assignment4(s, count));
+            count = 0;
+        }
+
+        return binaryTreeResults;
+    }
+
+    public static void binaryTreeComplete(List<String> magicItems, String[] randomItems)
+    {
+        Tree myBinaryTree = createAndFillTree(magicItems);
+        ArrayList<Assignment4> results = searchTree(myBinaryTree, randomItems);
+        printSearchResults(results);
     }
 
     //~~~~~~~~~~~~~~~~~~PRINT RESULTS~~~~~~~~~~~~~~~~~~~
