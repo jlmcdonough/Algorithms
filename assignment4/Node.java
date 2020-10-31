@@ -13,6 +13,7 @@ public class Node
     Node left;
     Node right;
     Node parent;
+    Node root;
 
     //Creates node that holds no data
     public Node()

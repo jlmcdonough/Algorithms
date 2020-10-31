@@ -19,20 +19,39 @@ public class Assignment4 extends Tree
 
         for(int i = 0; i < myMagicItems.size(); i++)
         {
-            Node temp = new Node(myMagicItems.get(i));
-            treeInsert(myBinaryTree, temp);
+            myBinaryTree.treeInsert(myBinaryTree, new Node(myMagicItems.get(i)));
         }
 
-        System.out.println(myBinaryTree.root.data + " <- root ");                             //Hectorius's Twin Rings
-        System.out.println(myBinaryTree.root.left.data + " <- left of root");                 //Armatha's long sword
-        System.out.println(myBinaryTree.root.left.left.data + " <- left left of root");       //Amulet of mighty fists +4
-        System.out.println(myBinaryTree.root.left.right.data + " <- left right of root");     //Gauntlets of Warrior Might
-        System.out.println(myBinaryTree.root.right.data + " <- right of root");               //Teleport Ribbon
-        System.out.println(myBinaryTree.root.right.left.data + " <- right left of root");     //Pearl of power, two spells
-        System.out.println(myBinaryTree.root.right.right.data + " <- right right  of root");  //White sword
+        ArrayList<Assignment4> binaryTreeResults = new ArrayList<Assignment4>();
+        for(String s : myRandomItems)
+        {
+            myBinaryTree.treeSearch(myBinaryTree.root, s);
+            binaryTreeResults.add(new Assignment4(s, count));
+            count = 0;
+        }
+
+        printSearchResults(binaryTreeResults);
     }
 
-    //does the work of the previous assignment of reading and sorting file
+    private int searchCount;
+    private String searchItem;
+    public Assignment4(String item, int count)
+    {
+        searchItem = item;
+        searchCount = count;
+    }
+
+    public String getItem()
+    {
+        return this.searchItem;
+    }
+
+    public int getCount()
+    {
+        return this.searchCount;
+    }
+
+    //does the work of the previous assignment of reading the file
     public static ArrayList<String> getList() throws FileNotFoundException
     {
         Scanner reader = new Scanner(new File("magicitems.txt"));
@@ -59,7 +78,19 @@ public class Assignment4 extends Tree
         return randomItems;
     }
 
-    //~~~~~~~~~~~~~~~~~~~~~~BINARY SEARCH TREE~~~~~~~~~~~~~~~~~~~~~~~~
-    //public static void treeInsert()
+    //~~~~~~~~~~~~~~~~~~PRINT RESULTS~~~~~~~~~~~~~~~~~~~
+    public static void printSearchResults(List<Assignment4> sortList)
+    {
+        //longest item is 46 characters long, so ensured 1 padding on each side
+        //largest number is 3 characters long, so ensured 1 padding on each side
+        System.out.format("%-48s%-5s%n", "ITEM", "COUNT");
+        int totalCount = 0;
+        for(int k = 0; k < sortList.size(); k++)
+        {
+            totalCount += sortList.get(k).getCount();
+            System.out.format("%-48s%-5d%n", sortList.get(k).getItem(), sortList.get(k).getCount());
+        }
+        System.out.println("AVERAGE SEARCH COUNT: " + (totalCount/42));
+    }
 
 }
