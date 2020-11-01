@@ -20,35 +20,10 @@ public class Assignment4 extends Tree
         binaryTreeComplete(myMagicItems, myRandomItems);
 
         System.out.println(" ");
-        
-        ArrayList<String> graphFile = readGraphFile();
-        ArrayList<Graph> myGraphs = createGraphs(graphFile);
 
-
-
-        for(Graph f : myGraphs)
-        {
-        //    System.out.println("");
-        //    System.out.println(f);
-        //    System.out.println(f.name);
-        //    System.out.println(f.vertex);
-            printMatrix(f);
-            System.out.println(" ");
-            printAdjacencyList(f);
-        }
-
-
-
+        graphComplete();
 
     }
-
-
-
-
-
-
-
-
 
 
     //~~~~~~~~~~~~~~~~~ASSIGNMENT VARIABLES AND RESULT CONSTRUCTOR~~~~~~~~~
@@ -232,7 +207,7 @@ public class Assignment4 extends Tree
     public static void printMatrix(Graph myGraph)
     {
         int startingIndex;
-        if(myGraph.name.contains("Zork"))
+        if(myGraph.name.contains("Zork"))   //Zork has starting vertex of 0, rest at 1
             startingIndex = 0;
         else
             startingIndex = 1;
@@ -242,7 +217,7 @@ public class Assignment4 extends Tree
         {
             if(j == -1)  //to keep everything in line
                 System.out.print("\t");
-            else if(j == 0 && !myGraph.name.contains("Zork"))
+            else if(j == 0 && !myGraph.name.contains("Zork"))  //same as above, but for non-Zork graphs
                 System.out.print("\t");
             else
                 System.out.print("\t" + j + "|");
@@ -282,6 +257,24 @@ public class Assignment4 extends Tree
             for(int j = 0; j < theseEdges.size(); j++)
                 results += ("\t" + theseEdges.get(j));
             System.out.println(results);
+        }
+    }
+
+
+    public static void graphComplete() throws FileNotFoundException
+    {
+        ArrayList<String> graphFile = readGraphFile();
+        ArrayList<Graph> myGraphs = createGraphs(graphFile);
+
+        for(Graph f : myGraphs)
+        {
+            //    System.out.println("");
+            //    System.out.println(f);
+            //    System.out.println(f.name);
+            //    System.out.println(f.vertex);
+            printMatrix(f);
+            System.out.println(" ");
+            printAdjacencyList(f);
         }
     }
 
