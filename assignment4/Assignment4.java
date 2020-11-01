@@ -19,8 +19,8 @@ public class Assignment4 extends Tree
 
         binaryTreeComplete(myMagicItems, myRandomItems);
 
-
-
+        System.out.println(" ");
+        
         ArrayList<String> graphFile = readGraphFile();
         ArrayList<Graph> myGraphs = createGraphs(graphFile);
 
@@ -28,12 +28,18 @@ public class Assignment4 extends Tree
 
         for(Graph f : myGraphs)
         {
-            System.out.println("");
-            System.out.println(f);
-            System.out.println(f.name);
-            System.out.println(f.vertex);
+        //    System.out.println("");
+        //    System.out.println(f);
+        //    System.out.println(f.name);
+        //    System.out.println(f.vertex);
             printMatrix(f);
+            System.out.println(" ");
+            printAdjacencyList(f);
         }
+
+
+
+
     }
 
 
@@ -231,6 +237,7 @@ public class Assignment4 extends Tree
         else
             startingIndex = 1;
 
+        System.out.println("Matrix for " + myGraph.name);
         for(int j = startingIndex - 1; j < myGraph.vertex.size(); j++)
         {
             if(j == -1)  //to keep everything in line
@@ -256,6 +263,25 @@ public class Assignment4 extends Tree
                     System.out.print("\tE");
             }
             System.out.println("");
+        }
+    }
+
+    public static void printAdjacencyList(Graph myGraph)
+    {
+        int startingIndex;
+        if(myGraph.name.contains("Zork"))
+            startingIndex = 0;
+        else
+            startingIndex = 1;
+
+        System.out.println("Adjacency List for " + myGraph.name);
+        for(int i = startingIndex; i < myGraph.vertex.size(); i++)
+        {
+            String results = "[" + i + "] ";
+            ArrayList<Integer> theseEdges = myGraph.vertex.get(i);
+            for(int j = 0; j < theseEdges.size(); j++)
+                results += ("\t" + theseEdges.get(j));
+            System.out.println(results);
         }
     }
 
