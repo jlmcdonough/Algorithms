@@ -22,96 +22,18 @@ public class Assignment4 extends Tree
 
 
         ArrayList<String> graphFile = readGraphFile();
+        ArrayList<Graph> myGraphs = createGraphs(graphFile);
 
-        System.out.println(graphFile.get(0).substring(0,2));
-        System.out.println(graphFile.get(10).substring(0,8));
-        ArrayList<Graph> myGraphs = new ArrayList<Graph>();
 
-        Boolean isVertex = (graphFile.get(4).substring(0,10).equalsIgnoreCase("add vertex"));
-
-        Boolean isEdge = (graphFile.get(11).substring(0,8).equalsIgnoreCase("add edge"));
-
-        if(isVertex)
-        {
-            String vertex = graphFile.get(4).substring(11);
-            System.out.println("V:" + vertex);
-        }
-
-        if(isEdge)
-        {
-            String edgeCombo = graphFile.get(11).substring(9);
-            String[] edges = edgeCombo.split(" - ");
-            int edge1 = Integer.parseInt(edges[0]);
-            int edge2 = Integer.parseInt(edges[1]);;
-            System.out.println("E1:" + edge1 + "E2:" + edge2);
-        }
-
-        int i = 0;
-        boolean inGraph = false;
-        while(i < graphFile.size())
-        {
-
-            if(graphFile.get(i).substring(0,2).equalsIgnoreCase("--"))
-            {
-                inGraph = true;
-                ArrayList<ArrayList<Integer>> vertex = new ArrayList<ArrayList<Integer>>();
-                if(!graphFile.get(i).contains("Zork"))
-                    vertex.add(null);   //vertices all start at value 1, so going to make index 0 null such that they can start at one, except in Zork graph
-                ArrayList<Integer> edge = new ArrayList<Integer>();
-                String graphName = graphFile.get(i).substring(3);
-
-                i++;
-
-                while(inGraph && i <= graphFile.size())
-                {
-                    if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))
-                    {
-                        inGraph = false;
-                        myGraphs.add(new Graph(graphName ,vertex));
-                    }
-                    else if(graphFile.get(i).equalsIgnoreCase("new graph"))
-                        System.out.println("Creating new graph");
-                    else if(graphFile.get(i).substring(0,10).equalsIgnoreCase("add vertex"))
-                    {
-                        vertex.add(new ArrayList<Integer>());
-                    }
-                    else if(graphFile.get(i).substring(0,8).equalsIgnoreCase("add edge"))
-                    {
-                        String edgeCombo = graphFile.get(i).substring(9);
-                        String[] edges = edgeCombo.split(" - ");
-                        int edge1 = Integer.parseInt(edges[0]);
-                        int edge2 = Integer.parseInt(edges[1]);
-
-                        System.out.println("E1:" + edge1 + "E2:" + edge2);
-
-                        ArrayList<Integer> temp1 = vertex.get(edge1);
-                        ArrayList<Integer> temp2 = vertex.get(edge2);
-
-                        System.out.println(temp1);
-                        System.out.println(temp2);
-
-                        temp1.add(edge2);
-                        temp2.add(edge1);
-                    }
-
-                    i++;
-
-                }
-            }
-
-        }
 
         for(Graph f : myGraphs)
         {
+            System.out.println("");
+            System.out.println(f);
             System.out.println(f.name);
             System.out.println(f.vertex);
+            printMatrix(f);
         }
-
-
-
-
-
-
     }
 
 
@@ -221,17 +143,6 @@ public class Assignment4 extends Tree
 
 
     //~~~~~~~~~~~~GRAPH STUFF~~~~~~~~~~~~~~~~~~
-
-    public static ArrayList<String> readGraphFile() throws FileNotFoundException
-    {
-        Scanner in = new Scanner(new File("graphs1.txt"));
-        ArrayList<String> graph1Data = new ArrayList<String>();
-        while(in.hasNextLine())
-            graph1Data.add(in.nextLine());
-
-        return graph1Data;
-    }
-
     static class Graph
     {
         private ArrayList<ArrayList<Integer>> vertex;
@@ -243,7 +154,109 @@ public class Assignment4 extends Tree
             this.name = n;
             this.vertex = v;
         }
-        
 
     }
+
+    public static ArrayList<String> readGraphFile() throws FileNotFoundException
+    {
+        Scanner in = new Scanner(new File("graphs1.txt"));
+        ArrayList<String> graph1Data = new ArrayList<String>();
+        while(in.hasNextLine())
+            graph1Data.add(in.nextLine());
+
+        return graph1Data;
+    }
+
+    public static ArrayList<Graph> createGraphs(ArrayList<String> graphFile)
+    {
+        ArrayList<Graph> myGraphs = new ArrayList<Graph>();
+        int i = 0;
+        boolean inGraph = false;
+        while(i < graphFile.size())
+        {
+
+            if(graphFile.get(i).substring(0,2).equalsIgnoreCase("--"))
+            {
+                inGraph = true;
+                ArrayList<ArrayList<Integer>> vertex = new ArrayList<ArrayList<Integer>>();
+                if(!graphFile.get(i).contains("Zork"))
+                    vertex.add(null);   //vertices all start at value 1, so going to make index 0 null such that they can start at one, except in Zork graph
+                ArrayList<Integer> edge = new ArrayList<Integer>();
+                String graphName = graphFile.get(i).substring(3);
+
+                i++;
+
+                while(inGraph && i <= graphFile.size())
+                {
+                    if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))
+                    {
+                        inGraph = false;
+                        myGraphs.add(new Graph(graphName ,vertex));
+                    }
+                    else if(graphFile.get(i).equalsIgnoreCase("new graph"))
+                    {
+                    }
+                    else if(graphFile.get(i).substring(0,10).equalsIgnoreCase("add vertex"))
+                    {
+                        vertex.add(new ArrayList<Integer>());
+                    }
+                    else if(graphFile.get(i).substring(0,8).equalsIgnoreCase("add edge"))
+                    {
+                        String edgeCombo = graphFile.get(i).substring(9);
+                        String[] edges = edgeCombo.split(" - ");
+                        int edge1 = Integer.parseInt(edges[0]);
+                        int edge2 = Integer.parseInt(edges[1]);
+
+                        ArrayList<Integer> temp1 = vertex.get(edge1);
+                        ArrayList<Integer> temp2 = vertex.get(edge2);
+
+                        temp1.add(edge2);
+                        temp2.add(edge1);
+                    }
+
+                    i++;
+
+                }
+            }
+        }
+
+        return myGraphs;
+    }
+
+    public static void printMatrix(Graph myGraph)
+    {
+        int startingIndex;
+        if(myGraph.name.contains("Zork"))
+            startingIndex = 0;
+        else
+            startingIndex = 1;
+
+        for(int j = startingIndex - 1; j < myGraph.vertex.size(); j++)
+        {
+            if(j == -1)  //to keep everything in line
+                System.out.print("\t");
+            else if(j == 0 && !myGraph.name.contains("Zork"))
+                System.out.print("\t");
+            else
+                System.out.print("\t" + j + "|");
+            for(int k = startingIndex; k <  myGraph.vertex.size(); k++)
+            {
+                ArrayList<Integer> theseEdges = myGraph.vertex.get(k);
+                if(j == -1)  //for header
+                    System.out.print("\t" + k);
+                else if(j == 0 && !myGraph.name.contains("Zork"))
+                    System.out.print("\t" + k);
+                else if(j == k)
+                    System.out.print("\t-");
+                else if(theseEdges.contains(j))
+                    System.out.print("\t1");
+                else if(!theseEdges.contains(j))
+                    System.out.print("\t0");
+                else
+                    System.out.print("\tE");
+            }
+            System.out.println("");
+        }
+    }
+
 }
