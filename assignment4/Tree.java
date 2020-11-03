@@ -14,6 +14,11 @@ class Tree extends Node
         root = null;
     }
 
+    public Node getRoot()
+    {
+        return this.root;
+    }
+
     public void treeInsert(Tree t, Node n )
     {
         Node trailingParent = null;
@@ -38,17 +43,17 @@ class Tree extends Node
     }
 
     public static int count = 0;
-    public Node treeSearch(Node root, String key)
+    public Node findTreeElement(Node root, String key)
     {
         count++;
 
         if (root==null || key.compareToIgnoreCase(root.data) == 0)
             return root;
         else if (key.compareToIgnoreCase(root.data) < 0)
-            return treeSearch(root.left, key);
+            return findTreeElement(root.left, key);
 
         else
-            return treeSearch(root.right, key);
+            return findTreeElement(root.right, key);
 
     }
 }
