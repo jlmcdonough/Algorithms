@@ -20,7 +20,7 @@ public class Assignment4 extends Tree
         binaryTreeComplete(myMagicItems, myRandomItems);
 
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-
+        
         graphComplete();
 
     }
@@ -28,12 +28,12 @@ public class Assignment4 extends Tree
 
     //~~~~~~~~~~~~~~~~~CLASSES USED FOR AID~~~~~~~~~
     //used to help store tree count and item pairs
-    static class treePair
+    static class TreePair
     {
         private int searchCount;
         private String searchItem;
 
-        public treePair(String item, int count)
+        public TreePair(String item, int count)
         {
             searchItem = item;
             searchCount = count;
@@ -53,14 +53,14 @@ public class Assignment4 extends Tree
     //used to hold a graph which contains an ArrayList of vertexs where each index is an arraylist of edges
     static class Graph
     {
-        private ArrayList<ArrayList<Integer>> vertex;
+        private Vertex vertex;
         private ArrayList<Integer> edge;
         private String name;
 
-        public Graph(String n, ArrayList<ArrayList<Integer>> v)
+        public Graph(String n, Vertex v)
         {
-            this.name = n;
             this.vertex = v;
+            this.name = n;
         }
 
         public String getName()
@@ -68,9 +68,32 @@ public class Assignment4 extends Tree
             return this.name;
         }
 
-        public ArrayList<ArrayList<Integer>> getVertex()
+        public Vertex getVertex()
         {
             return this.vertex;
+        }
+
+    }
+
+    static class Vertex
+    {
+        private ArrayList<ArrayList<Integer>> edges;
+        private boolean processed;
+
+        public Vertex(ArrayList<ArrayList<Integer>> e)
+        {
+            this.edges = e;
+            this.processed = false;
+        }
+
+        public ArrayList<ArrayList<Integer>> getEdges()
+        {
+            return this.edges;
+        }
+
+        public boolean getProcessed()
+        {
+            return this.processed;
         }
 
     }
@@ -117,13 +140,13 @@ public class Assignment4 extends Tree
     }
 
     //search the tree for all items in the random items list, using findTreeElement from Tree class to find each individual
-    public static ArrayList<treePair> searchTree(Tree myBinaryTree, String[] randomItems)
+    public static ArrayList<TreePair> searchTree(Tree myBinaryTree, String[] randomItems)
     {
-        ArrayList<treePair> binaryTreeResults = new ArrayList<treePair>();
+        ArrayList<TreePair> binaryTreeResults = new ArrayList<TreePair>();
         for(String s : randomItems)
         {
             myBinaryTree.findTreeElement(myBinaryTree.getRoot(), s);
-            binaryTreeResults.add(new treePair(s, count));
+            binaryTreeResults.add(new TreePair(s, count));
             count = 0;
         }
 
@@ -133,12 +156,12 @@ public class Assignment4 extends Tree
     public static void binaryTreeComplete(List<String> magicItems, String[] randomItems)
     {
         Tree myBinaryTree = createAndFillTree(magicItems);
-        ArrayList<treePair> results = searchTree(myBinaryTree, randomItems);
+        ArrayList<TreePair> results = searchTree(myBinaryTree, randomItems);
         printSearchResults(results);
     }
 
     //~~~~~~~~~~~~~~~~~~PRINT RESULTS~~~~~~~~~~~~~~~~~~~
-    public static void printSearchResults(List<treePair> sortList)
+    public static void printSearchResults(List<TreePair> sortList)
     {
         //longest item is 46 characters long, so ensured 1 padding on each side
         //largest number is 3 characters long, so ensured 1 padding on each side
@@ -193,7 +216,7 @@ public class Assignment4 extends Tree
                     if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))
                     {
                         inGraph = false;
-                        myGraphs.add(new Graph(graphName ,vertex));
+                        myGraphs.add(new Graph(graphName , new Vertex(vertex)));
                     }
 
                     //since graphs are created on the line beginning with the name, this means nothing
@@ -251,7 +274,7 @@ public class Assignment4 extends Tree
         //outer loop prints the vertical numbers while inner loop goes horizontal
             //inner loop is what also does the comparisons
             //since each index is the actual vertex point, can compare indexes instead of getting data
-        for(int j = startingIndex - 1; j < myGraph.getVertex().size(); j++)
+        for(int j = startingIndex - 1; j < myGraph.getVertex().getEdges().size(); j++)
         {
             if(j == -1)  //to keep everything in line
                 System.out.print("\t");
@@ -260,9 +283,9 @@ public class Assignment4 extends Tree
             else
                 System.out.print("\t" + j + "|");
 
-            for(int k = startingIndex; k <  myGraph.getVertex().size(); k++)
+            for(int k = startingIndex; k <  myGraph.getVertex().getEdges().size(); k++)
             {
-                ArrayList<Integer> theseEdges = myGraph.getVertex().get(k);
+                ArrayList<Integer> theseEdges = myGraph.getVertex().getEdges().get(k);
                 if(j == -1)  //for header
                     System.out.print("\t" + k);
                 else if(j == 0 && !myGraph.getName().contains("Zork"))
@@ -295,10 +318,10 @@ public class Assignment4 extends Tree
 
         System.out.println("Adjacency List for " + myGraph.name);
         //goes through each vertex and prints it prior to checking to see if any edges
-        for(int i = startingIndex; i < myGraph.getVertex().size(); i++)
+        for(int i = startingIndex; i < myGraph.getVertex().getEdges().size(); i++)
         {
             String results = "[" + i + "] ";
-            ArrayList<Integer> theseEdges = myGraph.getVertex().get(i);
+            ArrayList<Integer> theseEdges = myGraph.getVertex().getEdges().get(i);
 
             //if edges do exist for this vertex, print them out here
             for(int j = 0; j < theseEdges.size(); j++)
@@ -306,6 +329,11 @@ public class Assignment4 extends Tree
 
             System.out.println(results);
         }
+    }
+
+    public static void depthFirstSearch(ArrayList<ArrayList<Integer>> fromVertex)
+    {
+
     }
 
 
