@@ -14,14 +14,24 @@ public class Assignment4 extends Tree
 {
     public static void main(String args[]) throws FileNotFoundException
     {
+
+       /*
         ArrayList<String> myMagicItems = getList();
         String[] myRandomItems = generateRandomItems(myMagicItems);
 
         binaryTreeComplete(myMagicItems, myRandomItems);
 
-        System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        
+        System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"); */
+
+        ArrayList<String> graphFile = readGraphFile();
+        ArrayList<Graph> myGraphs = createGraphs(graphFile);
+        Graph g = myGraphs.get(0);
+        System.out.println(g.getVertices().get(0).getId());
+        System.out.println(g.getVertices().get(0).edges.size());
+
+
         graphComplete();
+
 
     }
 
@@ -53,13 +63,12 @@ public class Assignment4 extends Tree
     //used to hold a graph which contains an ArrayList of vertexs where each index is an arraylist of edges
     static class Graph
     {
-        private Vertex vertex;
-        private ArrayList<Integer> edge;
+        private ArrayList<Vertex> vertices;
         private String name;
 
-        public Graph(String n, Vertex v)
+        public Graph(String n, ArrayList<Vertex> v)
         {
-            this.vertex = v;
+            this.vertices = v;
             this.name = n;
         }
 
@@ -68,25 +77,27 @@ public class Assignment4 extends Tree
             return this.name;
         }
 
-        public Vertex getVertex()
+        public ArrayList<Vertex> getVertices()
         {
-            return this.vertex;
+            return this.vertices;
         }
 
     }
 
     static class Vertex
     {
-        private ArrayList<ArrayList<Integer>> edges;
+        private ArrayList<Integer> edges;
         private boolean processed;
+        private int id;
 
-        public Vertex(ArrayList<ArrayList<Integer>> e)
+        public Vertex(ArrayList<Integer> e, int i)
         {
             this.edges = e;
             this.processed = false;
+            this.id = i;
         }
 
-        public ArrayList<ArrayList<Integer>> getEdges()
+        public ArrayList<Integer> getEdges()
         {
             return this.edges;
         }
@@ -94,6 +105,16 @@ public class Assignment4 extends Tree
         public boolean getProcessed()
         {
             return this.processed;
+        }
+
+        public int getId()
+        {
+            return this.id;
+        }
+
+        public void setProcessed(boolean bool)
+        {
+            this.processed = bool;
         }
 
     }
@@ -198,13 +219,15 @@ public class Assignment4 extends Tree
             if(graphFile.get(i).substring(0,2).equalsIgnoreCase("--"))
             {
                 inGraph = true;
-                ArrayList<ArrayList<Integer>> vertex = new ArrayList<ArrayList<Integer>>();
+                ArrayList<ArrayList<Integer>> tempVertex = new ArrayList<ArrayList<Integer>>();
+                int vertexStart = 0;
 
                 //vertices all start at value 1, so going to make index 0 null such that they can start at one, except in Zork graph
                 if(!graphFile.get(i).contains("Zork"))
-                    vertex.add(null);
-
-                ArrayList<Integer> edge = new ArrayList<Integer>();
+                {
+                    tempVertex.add(null);
+                    vertexStart = 1;
+                }
 
                 String graphName = graphFile.get(i).substring(3);  //name starts after the 3 character in the -- line
 
@@ -216,7 +239,12 @@ public class Assignment4 extends Tree
                     if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))
                     {
                         inGraph = false;
-                        myGraphs.add(new Graph(graphName , new Vertex(vertex)));
+                        ArrayList<Vertex> tempVertices = new ArrayList<>();
+                        for(int k = vertexStart; k < tempVertex.size(); k++)
+                        {
+                            tempVertices.add(new Vertex(tempVertex.get(k), k));
+                        }
+                        myGraphs.add(new Graph(graphName , tempVertices));
                     }
 
                     //since graphs are created on the line beginning with the name, this means nothing
@@ -229,7 +257,7 @@ public class Assignment4 extends Tree
                     //this function creates a spot for it in the vertex arraylist whose index matches the vertex number
                     else if(graphFile.get(i).substring(0,10).equalsIgnoreCase("add vertex"))
                     {
-                        vertex.add(new ArrayList<Integer>());
+                        tempVertex.add(new ArrayList<Integer>());
                     }
 
                     //add edge appears in the first 8 characters with the number coming after
@@ -243,8 +271,8 @@ public class Assignment4 extends Tree
                         int edge1 = Integer.parseInt(edges[0]);
                         int edge2 = Integer.parseInt(edges[1]);
 
-                        ArrayList<Integer> temp1 = vertex.get(edge1);
-                        ArrayList<Integer> temp2 = vertex.get(edge2);
+                        ArrayList<Integer> temp1 = tempVertex.get(edge1);
+                        ArrayList<Integer> temp2 = tempVertex.get(edge2);
 
                         temp1.add(edge2);
                         temp2.add(edge1);
@@ -262,44 +290,50 @@ public class Assignment4 extends Tree
     //prints the matrix where 1 means there is an edge between the 2 vertices, 0 means none, and - means it's itself and cannot have edge with itself
     public static void printMatrix(Graph myGraph)
     {
-        int startingIndex;
-        if(myGraph.name.contains("Zork"))   //Zork has starting vertex of 0, rest at 1
-            startingIndex = 0;
-        else
-            startingIndex = 1;
-
         System.out.println("Matrix for " + myGraph.getName());
+
+        int zorkModifier = 0;
+
+        if(!myGraph.getName().contains("Zork"))
+        {
+            zorkModifier = 1;
+        }
 
         //starts one behind starting index so can get a row on-top with the vertices
         //outer loop prints the vertical numbers while inner loop goes horizontal
             //inner loop is what also does the comparisons
             //since each index is the actual vertex point, can compare indexes instead of getting data
-        for(int j = startingIndex - 1; j < myGraph.getVertex().getEdges().size(); j++)
+        for(int j = -1 ; j < myGraph.getVertices().size() + zorkModifier; j++)
         {
             if(j == -1)  //to keep everything in line
                 System.out.print("\t");
-            else if(j == 0 && !myGraph.getName().contains("Zork"))  //same as above, but for non-Zork graphs
-                System.out.print("\t");
+            else if(j == 0 && zorkModifier == 1)
+            {
+            }
             else
                 System.out.print("\t" + j + "|");
 
-            for(int k = startingIndex; k <  myGraph.getVertex().getEdges().size(); k++)
+            for(int k = 0 + zorkModifier; k <  myGraph.getVertices().size() + zorkModifier; k++)
             {
-                ArrayList<Integer> theseEdges = myGraph.getVertex().getEdges().get(k);
+                ArrayList<Integer> theseEdges;
+                if(zorkModifier == 0)
+                    theseEdges = myGraph.getVertices().get(k).getEdges();
+                else
+                    theseEdges = myGraph.getVertices().get(k - 1).getEdges();
+
                 if(j == -1)  //for header
                     System.out.print("\t" + k);
-                else if(j == 0 && !myGraph.getName().contains("Zork"))
-                    System.out.print("\t" + k);
+                else if(j == 0 && zorkModifier == 1)
+                {
+                }
                 //if they are the same vertex, denote with "-"
                 else if(j == k)
                     System.out.print("\t-");
-                //if edge is present at between these two vertices, marked it with a "1"
+                //if the value of the vertex is
                 else if(theseEdges.contains(j))
                     System.out.print("\t1");
-                //if edge is not present between these two vertices, mark it with a "0"
                 else if(!theseEdges.contains(j))
                     System.out.print("\t0");
-                //print E if there is some sort of error so it can be fixed (never seen occur)
                 else
                     System.out.print("\tE");
             }
@@ -310,18 +344,14 @@ public class Assignment4 extends Tree
     //print the adjacency list for all vertices, regardless if they have edges
     public static void printAdjacencyList(Graph myGraph)
     {
-        int startingIndex;
-        if(myGraph.name.contains("Zork"))
-            startingIndex = 0;
-        else
-            startingIndex = 1;
 
         System.out.println("Adjacency List for " + myGraph.name);
         //goes through each vertex and prints it prior to checking to see if any edges
-        for(int i = startingIndex; i < myGraph.getVertex().getEdges().size(); i++)
+        for(int i = 0; i < myGraph.getVertices().size(); i++)
         {
-            String results = "[" + i + "] ";
-            ArrayList<Integer> theseEdges = myGraph.getVertex().getEdges().get(i);
+            int vertexName = myGraph.getVertices().get(i).getId();
+            String results = "[" + vertexName + "] ";
+            ArrayList<Integer> theseEdges = myGraph.getVertices().get(i).getEdges();
 
             //if edges do exist for this vertex, print them out here
             for(int j = 0; j < theseEdges.size(); j++)
@@ -331,9 +361,13 @@ public class Assignment4 extends Tree
         }
     }
 
-    public static void depthFirstSearch(ArrayList<ArrayList<Integer>> fromVertex)
+    public static void depthFirstSearch(Vertex fromVertex)
     {
-
+        if(!fromVertex.getProcessed())
+        {
+            System.out.println(fromVertex.getId());
+            fromVertex.setProcessed(true);
+        }
     }
 
 
@@ -353,5 +387,6 @@ public class Assignment4 extends Tree
             printAdjacencyList(f);
         }
     }
+
 
 }
