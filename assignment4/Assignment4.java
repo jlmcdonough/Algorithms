@@ -85,11 +85,12 @@ public class Assignment4 extends Tree
             return null;
         }
 
+        ArrayList<String> dFSResults = new ArrayList<String>();
         public void depthFirstSearch(Vertex fromVertex)
         {
             if(!fromVertex.getProcessed())
             {
-                System.out.println(fromVertex.getId());
+                dFSResults.add(String.valueOf(fromVertex.getId()));
                 fromVertex.setProcessed(true);
             }
 
@@ -103,16 +104,22 @@ public class Assignment4 extends Tree
             }
         }
 
+        public ArrayList<String> getDFSResults()
+        {
+            return dFSResults;
+        }
+
         public void breadthFirstSearch(Vertex fromVertex)
         {
             Queue myQueue = new Queue();
             myQueue.enqueue(String.valueOf(fromVertex.getId()));   //passing the vertex id as a string into queue
             fromVertex.setProcessed(true);
+            ArrayList<String> results = new ArrayList<>();
 
             while(!myQueue.isEmpty())
             {
                 Node currIndex = myQueue.dequeue();      //dequeue returns a Node whose data is the string of vertex id
-                System.out.println(currIndex.data);
+                results.add(currIndex.data);
                 Vertex currentVertex = this.getThisVertex(Integer.parseInt(currIndex.data));    //turn the String id into an Int and then get the vertex with that id as a name
 
                 for(int i = 0; i < currentVertex.getEdges().size(); i++)
@@ -127,6 +134,10 @@ public class Assignment4 extends Tree
                     }
                 }
             }
+
+            for(int s = 0; s < results.size() - 1; s++)
+                System.out.print(results.get(s) + ", ");
+            System.out.print(results.get(results.size() - 1));
         }
 
     }
@@ -402,6 +413,13 @@ public class Assignment4 extends Tree
             v.setProcessed(false);
     }
 
+    public static void getAndPrintDFS(Graph f)
+    {
+        ArrayList<String> results =  f.getDFSResults();
+        for(int s = 0; s < results.size() - 1; s++)
+            System.out.print(results.get(s) + ", ");
+        System.out.print(results.get(results.size() - 1));
+    }
 
     public static void graphComplete() throws FileNotFoundException
     {
@@ -412,14 +430,21 @@ public class Assignment4 extends Tree
         {
             printMatrix(f);
             System.out.println(" ");
+
             printAdjacencyList(f);
             System.out.println(" ");
+
             System.out.println("Depth First Search for " + f.name);
             f.depthFirstSearch(f.getVertices().get(0));
+            getAndPrintDFS(f);
             System.out.println(" ");
+
             resetProcessed(f);
+
             System.out.println("Breadth First Search for " + f.name);
             f.breadthFirstSearch(f.getVertices().get(0));
+            System.out.println(" ");
+
             System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
     }
