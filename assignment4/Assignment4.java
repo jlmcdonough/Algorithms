@@ -23,14 +23,15 @@ public class Assignment4 extends Tree
 
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"); */
 
+        /*
         ArrayList<String> graphFile = readGraphFile();
         ArrayList<Graph> myGraphs = createGraphs(graphFile);
-        Graph g = myGraphs.get(0);
+        Graph g = myGraphs.get(1);
         System.out.println(g.getVertices().get(0).getId());
         System.out.println(g.getVertices().get(0).edges.size());
-        g.depthFirstSearch(g.vertices.get(0));
-
-      //  graphComplete();
+        g.depthFirstSearch(g.getVertices().get(0));
+        */
+         graphComplete();
 
 
     }
@@ -431,6 +432,9 @@ public class Assignment4 extends Tree
             printMatrix(f);
             System.out.println(" ");
             printAdjacencyList(f);
+            System.out.println(" ");
+            f.depthFirstSearch(f.getVertices().get(0));
+
         }
     }
 
