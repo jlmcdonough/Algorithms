@@ -166,6 +166,11 @@ public class Assignment4 extends Tree
             this.processed = bool;
         }
 
+        public void addEdge(int e)
+        {
+            this.edges.add(e);
+        }
+
     }
 
     //~~~~~~~~~~~~~~~~~~READ FILE AND GET RANDOM ITEMS~~~~~~~~~~~~~~~~~~~~~~
@@ -268,16 +273,7 @@ public class Assignment4 extends Tree
             if(graphFile.get(i).substring(0,2).equalsIgnoreCase("--"))
             {
                 inGraph = true;
-                ArrayList<ArrayList<Integer>> tempVertex = new ArrayList<ArrayList<Integer>>();
-                int vertexStart = 0;
-
-                //vertices all start at value 1, so going to make index 0 null such that they can start at one, except in Zork graph
-                if(!graphFile.get(i).contains("Zork"))
-                {
-                    tempVertex.add(null);
-                    vertexStart = 1;
-                }
-
+                ArrayList<Vertex> tempVertex = new ArrayList<Vertex>();
                 String graphName = graphFile.get(i).substring(3);  //name starts after the 3 character in the -- line
 
                 i++;
@@ -288,12 +284,7 @@ public class Assignment4 extends Tree
                     if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))
                     {
                         inGraph = false;
-                        ArrayList<Vertex> tempVertices = new ArrayList<>();
-                        for(int k = vertexStart; k < tempVertex.size(); k++)
-                        {
-                            tempVertices.add(new Vertex(tempVertex.get(k), k));
-                        }
-                        myGraphs.add(new Graph(graphName , tempVertices));
+                        myGraphs.add(new Graph(graphName , tempVertex));
                     }
 
                     //since graphs are created on the line beginning with the name, this means nothing
@@ -306,7 +297,7 @@ public class Assignment4 extends Tree
                     //this function creates a spot for it in the vertex arraylist whose index matches the vertex number
                     else if(graphFile.get(i).substring(0,10).equalsIgnoreCase("add vertex"))
                     {
-                        tempVertex.add(new ArrayList<Integer>());
+                        tempVertex.add(new Vertex(new ArrayList<Integer>(), Integer.parseInt(graphFile.get(i).substring(11))));
                     }
 
                     //add edge appears in the first 8 characters with the number coming after
@@ -319,12 +310,23 @@ public class Assignment4 extends Tree
                         String[] edges = edgeCombo.split(" - ");
                         int edge1 = Integer.parseInt(edges[0]);
                         int edge2 = Integer.parseInt(edges[1]);
+                        Vertex temp1 = null;
+                        Vertex temp2 = null;
 
-                        ArrayList<Integer> temp1 = tempVertex.get(edge1);
-                        ArrayList<Integer> temp2 = tempVertex.get(edge2);
+                        for(int v1 = 0; v1 < tempVertex.size(); v1++)
+                        {
+                            if(tempVertex.get(v1).getId() == edge1)
+                                temp1 = tempVertex.get(v1);
+                        }
 
-                        temp1.add(edge2);
-                        temp2.add(edge1);
+                        for(int v2 = 0; v2 < tempVertex.size(); v2++)
+                        {
+                            if(tempVertex.get(v2).getId() == edge2)
+                                temp2 = tempVertex.get(v2);
+                        }
+
+                        temp1.addEdge(edge2);
+                        temp2.addEdge(edge1);
                     }
 
                     i++;
@@ -340,38 +342,31 @@ public class Assignment4 extends Tree
     {
         System.out.println("Matrix for " + myGraph.getName());
 
-        int zorkModifier = 0;
+        ArrayList<Vertex> theseVertices = myGraph.getVertices();
 
-        if(!myGraph.getName().contains("Zork"))
-        {
-            zorkModifier = 1;
-        }
-
-        //starts one behind starting index so can get a row on-top with the vertices
+        //Prints upper row of matrix
+        System.out.print("\t");
+        for(int header = 0; header < theseVertices.size(); header++)
+            System.out.print("\t" + theseVertices.get(header).getId());
+        System.out.println();
         //outer loop prints the vertical numbers while inner loop goes horizontal
-            //inner loop is what also does the comparisons
-            //since each index is the actual vertex point, can compare indexes instead of getting data
-        for(int j = -1 ; j < myGraph.getVertices().size() + zorkModifier; j++)
+        //inner loop is what also does the comparisons
+        //since each index is the actual vertex point, can compare indexes instead of getting data
+        for(int j = 0 ; j < theseVertices.size(); j++)
         {
-            if(j == -1)  //to keep everything in line
-                System.out.print("\t");
-            else if(j == 0 && zorkModifier == 1)
-            {
-            }
-            else
-                System.out.print("\t" + j + "|");
+            System.out.print("\t" + theseVertices.get(j).getId() + "|");
 
-            for(int k = 0 + zorkModifier; k <  myGraph.getVertices().size() + zorkModifier; k++)
+            for(int k = 0; k <  theseVertices.size(); k++)
             {
                 ArrayList<Integer> theseEdges;
-                if(zorkModifier == 0)
+                if(0 == 0)
                     theseEdges = myGraph.getVertices().get(k).getEdges();
                 else
                     theseEdges = myGraph.getVertices().get(k - 1).getEdges();
 
                 if(j == -1)  //for header
                     System.out.print("\t" + k);
-                else if(j == 0 && zorkModifier == 1)
+                else if(j == 0 && 1 == 1)
                 {
                 }
                 //if they are the same vertex, denote with "-"
