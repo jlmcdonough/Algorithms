@@ -23,15 +23,13 @@ public class Assignment4 extends Tree
 
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"); */
 
-        /*
+
         ArrayList<String> graphFile = readGraphFile();
         ArrayList<Graph> myGraphs = createGraphs(graphFile);
-        Graph g = myGraphs.get(1);
-        System.out.println(g.getVertices().get(0).getId());
-        System.out.println(g.getVertices().get(0).edges.size());
-        g.depthFirstSearch(g.getVertices().get(0));
-        */
-         graphComplete();
+        Graph g = myGraphs.get(0);
+        g.breadthFirstSearch(g.getVertices().get(0));
+
+         //graphComplete();
 
 
     }
@@ -62,7 +60,7 @@ public class Assignment4 extends Tree
     }
 
     //used to hold a graph which contains an ArrayList of vertexs where each index is an arraylist of edges
-    static class Graph
+    static class Graph extends Queue
     {
         private ArrayList<Vertex> vertices;
         private String name;
@@ -112,6 +110,36 @@ public class Assignment4 extends Tree
                 //System.out.println("VERTEX V: " + v.getId());
                 if(!v.getProcessed())
                     depthFirstSearch(v);
+            }
+        }
+
+        public void breadthFirstSearch(Vertex fromVertex)
+        {
+            Queue myQueue = new Queue();
+            myQueue.enqueue(String.valueOf(fromVertex.getId()));
+            fromVertex.setProcessed(true);
+
+            while(!myQueue.isEmpty())
+            {
+                Node currIndex = myQueue.dequeue();
+                System.out.println(currIndex.data);
+                Vertex currentVertex = this.getThisVertex(Integer.parseInt(currIndex.data));
+               // System.out.println("CV: " + currentVertex);
+
+               // System.out.println(currentVertex.getId());
+
+                for(int i = 0; i < currentVertex.getEdges().size(); i++)
+                {
+                    int n = currentVertex.getEdges().get(i);
+                    //System.out.println("N: " + n);
+                    Vertex v = this.getThisVertex(n);
+                    //System.out.println("VERTEX V: " + v.getId());
+                    if(!v.getProcessed())
+                    {
+                        myQueue.enqueue(String.valueOf(n));
+                        v.setProcessed(true);
+                    }
+                }
             }
         }
 
@@ -394,28 +422,6 @@ public class Assignment4 extends Tree
             System.out.println(results);
         }
     }
-
-
-    /*
-    public static void breadthFirstSearch(Vertex fromVertex)
-    {
-        myQueue = new Queue();
-        myQueue.enqueue(fromVertex);
-        fromVertex.setProcessed(true);
-
-        while(!myQueue.isEmpty())
-        {
-            currentVertex = myQueue.dequeue();
-            System.out.println(currentVertex.getId());
-            for(Vertex n : fromVertex.getEdges())
-                if(!n.getProcessed)
-                {
-                    myQueue.enqueue(n);
-                    n.setProcessed(true);
-                }
-       }
-    }
-     */
 
 
     public static void graphComplete() throws FileNotFoundException
