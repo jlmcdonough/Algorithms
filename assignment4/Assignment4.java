@@ -25,7 +25,6 @@ public class Assignment4 extends Tree
 
         graphComplete();
 
-
     }
 
 
@@ -349,6 +348,7 @@ public class Assignment4 extends Tree
         for(int header = 0; header < theseVertices.size(); header++)
             System.out.print("\t" + theseVertices.get(header).getId());
         System.out.println();
+
         //outer loop prints the vertical numbers while inner loop goes horizontal
         //inner loop is what also does the comparisons
         //since each index is the actual vertex point, can compare indexes instead of getting data
@@ -358,25 +358,17 @@ public class Assignment4 extends Tree
 
             for(int k = 0; k <  theseVertices.size(); k++)
             {
-                ArrayList<Integer> theseEdges;
-                if(0 == 0)
-                    theseEdges = myGraph.getVertices().get(k).getEdges();
-                else
-                    theseEdges = myGraph.getVertices().get(k - 1).getEdges();
-
-                if(j == -1)  //for header
-                    System.out.print("\t" + k);
-                else if(j == 0 && 1 == 1)
-                {
-                }
+                ArrayList<Integer> theseEdges = theseVertices.get(k).getEdges();
                 //if they are the same vertex, denote with "-"
-                else if(j == k)
+                if(j == k)
                     System.out.print("\t-");
-                //if the value of the vertex is
-                else if(theseEdges.contains(j))
+                //if the value of the vertex in question (denoted by row therefore j) is present in the the vertex denoted by the columns (therefore k)
+                else if(theseEdges.contains(theseVertices.get(j).getId()))
                     System.out.print("\t1");
-                else if(!theseEdges.contains(j))
+                //if the value is not present
+                else if(!theseEdges.contains(theseVertices.get(j).getId()))
                     System.out.print("\t0");
+                //something else to denote if something goes awry, which has yet to
                 else
                     System.out.print("\tE");
             }
