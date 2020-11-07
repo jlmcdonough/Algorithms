@@ -23,13 +23,7 @@ public class Assignment4 extends Tree
 
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"); */
 
-
-        ArrayList<String> graphFile = readGraphFile();
-        ArrayList<Graph> myGraphs = createGraphs(graphFile);
-        Graph g = myGraphs.get(0);
-        g.breadthFirstSearch(g.getVertices().get(0));
-
-         //graphComplete();
+        graphComplete();
 
 
     }
@@ -423,6 +417,12 @@ public class Assignment4 extends Tree
         }
     }
 
+    public static void resetProcessed(Graph g)
+    {
+        for(Vertex v : g.getVertices())
+            v.setProcessed(false);
+    }
+
 
     public static void graphComplete() throws FileNotFoundException
     {
@@ -439,7 +439,12 @@ public class Assignment4 extends Tree
             System.out.println(" ");
             printAdjacencyList(f);
             System.out.println(" ");
+            System.out.println("Depth First Search for " + f.name);
             f.depthFirstSearch(f.getVertices().get(0));
+            System.out.println(" ");
+            resetProcessed(f);
+            System.out.println("Breadth First Search for " + f.name);
+            f.breadthFirstSearch(f.getVertices().get(0));
 
         }
     }
