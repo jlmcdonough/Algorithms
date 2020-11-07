@@ -28,9 +28,9 @@ public class Assignment4 extends Tree
         Graph g = myGraphs.get(0);
         System.out.println(g.getVertices().get(0).getId());
         System.out.println(g.getVertices().get(0).edges.size());
+        g.depthFirstSearch(g.vertices.get(0));
 
-
-        graphComplete();
+      //  graphComplete();
 
 
     }
@@ -82,6 +82,38 @@ public class Assignment4 extends Tree
             return this.vertices;
         }
 
+        public Vertex getThisVertex(int id)
+        {
+            for(Vertex v : this.getVertices())
+            {
+                if(v.getId() == id)
+                    return v;
+            }
+
+            return null;
+        }
+
+        public void depthFirstSearch(Vertex fromVertex)
+        {
+            if(!fromVertex.getProcessed())
+            {
+                System.out.println(fromVertex.getId());
+                fromVertex.setProcessed(true);
+            }
+
+            //System.out.println("SIZE: " + fromVertex.getEdges().size() + " FOR VERTEX: " + fromVertex.getId());
+           // System.out.println(fromVertex.getEdges());
+            for(int i = 0; i < fromVertex.getEdges().size(); i++)
+            {
+                int n = fromVertex.getEdges().get(i);
+                //System.out.println("N: " + n);
+                Vertex v = this.getThisVertex(n);
+                //System.out.println("VERTEX V: " + v.getId());
+                if(!v.getProcessed())
+                    depthFirstSearch(v);
+            }
+        }
+
     }
 
     static class Vertex
@@ -98,6 +130,7 @@ public class Assignment4 extends Tree
         }
 
         public ArrayList<Integer> getEdges()
+
         {
             return this.edges;
         }
@@ -361,14 +394,27 @@ public class Assignment4 extends Tree
         }
     }
 
-    public static void depthFirstSearch(Vertex fromVertex)
+
+    /*
+    public static void breadthFirstSearch(Vertex fromVertex)
     {
-        if(!fromVertex.getProcessed())
+        myQueue = new Queue();
+        myQueue.enqueue(fromVertex);
+        fromVertex.setProcessed(true);
+
+        while(!myQueue.isEmpty())
         {
-            System.out.println(fromVertex.getId());
-            fromVertex.setProcessed(true);
-        }
+            currentVertex = myQueue.dequeue();
+            System.out.println(currentVertex.getId());
+            for(Vertex n : fromVertex.getEdges())
+                if(!n.getProcessed)
+                {
+                    myQueue.enqueue(n);
+                    n.setProcessed(true);
+                }
+       }
     }
+     */
 
 
     public static void graphComplete() throws FileNotFoundException
