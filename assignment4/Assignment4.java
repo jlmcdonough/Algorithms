@@ -15,13 +15,13 @@ public class Assignment4 extends Tree
     public static void main(String args[]) throws FileNotFoundException
     {
 
-       /*
+
         ArrayList<String> myMagicItems = getList();
         String[] myRandomItems = generateRandomItems(myMagicItems);
 
         binaryTreeComplete(myMagicItems, myRandomItems);
 
-        System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n"); */
+        System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
         graphComplete();
 
@@ -53,7 +53,7 @@ public class Assignment4 extends Tree
         }
     }
 
-    //used to hold a graph which contains an ArrayList of vertexs where each index is an arraylist of edges
+    //used to hold a graph which contains an ArrayList of vertices where each index is an arraylist of edges
     static class Graph extends Queue
     {
         private ArrayList<Vertex> vertices;
@@ -94,14 +94,11 @@ public class Assignment4 extends Tree
                 fromVertex.setProcessed(true);
             }
 
-            //System.out.println("SIZE: " + fromVertex.getEdges().size() + " FOR VERTEX: " + fromVertex.getId());
-           // System.out.println(fromVertex.getEdges());
             for(int i = 0; i < fromVertex.getEdges().size(); i++)
             {
                 int n = fromVertex.getEdges().get(i);
-                //System.out.println("N: " + n);
-                Vertex v = this.getThisVertex(n);
-                //System.out.println("VERTEX V: " + v.getId());
+                Vertex v = this.getThisVertex(n);         //getting the vertex from the id that is provided by the for-loop
+
                 if(!v.getProcessed())
                     depthFirstSearch(v);
             }
@@ -110,24 +107,20 @@ public class Assignment4 extends Tree
         public void breadthFirstSearch(Vertex fromVertex)
         {
             Queue myQueue = new Queue();
-            myQueue.enqueue(String.valueOf(fromVertex.getId()));
+            myQueue.enqueue(String.valueOf(fromVertex.getId()));   //passing the vertex id as a string into queue
             fromVertex.setProcessed(true);
 
             while(!myQueue.isEmpty())
             {
-                Node currIndex = myQueue.dequeue();
+                Node currIndex = myQueue.dequeue();      //dequeue returns a Node whose data is the string of vertex id
                 System.out.println(currIndex.data);
-                Vertex currentVertex = this.getThisVertex(Integer.parseInt(currIndex.data));
-               // System.out.println("CV: " + currentVertex);
-
-               // System.out.println(currentVertex.getId());
+                Vertex currentVertex = this.getThisVertex(Integer.parseInt(currIndex.data));    //turn the String id into an Int and then get the vertex with that id as a name
 
                 for(int i = 0; i < currentVertex.getEdges().size(); i++)
                 {
                     int n = currentVertex.getEdges().get(i);
-                    //System.out.println("N: " + n);
-                    Vertex v = this.getThisVertex(n);
-                    //System.out.println("VERTEX V: " + v.getId());
+                    Vertex v = this.getThisVertex(n);              //getting the vertex from the id that is provided by the for-loop
+
                     if(!v.getProcessed())
                     {
                         myQueue.enqueue(String.valueOf(n));
@@ -335,7 +328,6 @@ public class Assignment4 extends Tree
                     }
 
                     i++;
-
                 }
             }
         }
@@ -431,10 +423,6 @@ public class Assignment4 extends Tree
 
         for(Graph f : myGraphs)
         {
-            //    System.out.println("");
-            //    System.out.println(f);
-            //    System.out.println(f.name);
-            //    System.out.println(f.vertex);
             printMatrix(f);
             System.out.println(" ");
             printAdjacencyList(f);
@@ -445,7 +433,7 @@ public class Assignment4 extends Tree
             resetProcessed(f);
             System.out.println("Breadth First Search for " + f.name);
             f.breadthFirstSearch(f.getVertices().get(0));
-
+            System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
     }
 
