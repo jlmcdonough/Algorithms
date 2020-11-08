@@ -304,19 +304,16 @@ public class Assignment4 extends Tree
         boolean inGraph = false;
         while(i < graphFile.size())
         {
-            //the "--" is used prior to the naming of the graph and its contents follow
-            if(graphFile.get(i).substring(0,2).equalsIgnoreCase("--"))
+            if(graphFile.get(i).substring(0,2).equalsIgnoreCase("--"))                      //the "--" is used prior to the naming of the graph and its contents follow
             {
                 inGraph = true;
                 ArrayList<Vertex> tempVertex = new ArrayList<Vertex>();
                 String graphName = graphFile.get(i).substring(3);  //name starts after the 3 character in the -- line
 
                 i++;
-                //want <= so that the last graph can be added when file reaches completion
-                while(inGraph && i <= graphFile.size())
+                while(inGraph && i <= graphFile.size())                                                //want <= so that the last graph can be added when file reaches completion
                 {
-                    //end of file, or empty line mean end of graph in graphs1.txt file
-                    if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))
+                    if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))     //end of file, or empty line mean end of graph in graphs1.txt file
                     {
                         inGraph = false;
                         myGraphs.add(new Graph(graphName , tempVertex));
@@ -348,13 +345,13 @@ public class Assignment4 extends Tree
                         Vertex temp1 = null;
                         Vertex temp2 = null;
 
-                        for(int v1 = 0; v1 < tempVertex.size(); v1++)
+                        for(int v1 = 0; v1 < tempVertex.size(); v1++)          //gets the vertex identified by the edge1 vertex, and adds the vertex that forms edge2 to its edgeList
                         {
                             if(tempVertex.get(v1).getId() == edge1)
                                 temp1 = tempVertex.get(v1);
                         }
 
-                        for(int v2 = 0; v2 < tempVertex.size(); v2++)
+                        for(int v2 = 0; v2 < tempVertex.size(); v2++)         //gets the vertex identified by the edge2 vertex, and adds the vertex that forms edge1 to its edgeList
                         {
                             if(tempVertex.get(v2).getId() == edge2)
                                 temp2 = tempVertex.get(v2);
@@ -375,37 +372,30 @@ public class Assignment4 extends Tree
     //prints the matrix where 1 means there is an edge between the 2 vertices, 0 means none, and - means it's itself and cannot have edge with itself
     public static void printMatrix(Graph myGraph)
     {
-        System.out.println("Matrix for " + myGraph.getName());
+        System.out.println("Matrix");
 
         ArrayList<Vertex> theseVertices = myGraph.getVertices();
 
-        //Prints upper row of matrix
-        System.out.print("\t");
-        for(int header = 0; header < theseVertices.size(); header++)
+        System.out.print("\t");  //want cell row 0 column 0 to be empty
+        for(int header = 0; header < theseVertices.size(); header++)                         //Prints upper row of matrix
             System.out.print("\t" + theseVertices.get(header).getId());
+
         System.out.println();
 
-        //outer loop prints the vertical numbers while inner loop goes horizontal
-        //inner loop is what also does the comparisons
-        //since each index is the actual vertex point, can compare indexes instead of getting data
-        for(int j = 0 ; j < theseVertices.size(); j++)
+        for(int j = 0 ; j < theseVertices.size(); j++)                                       //outer loop prints the vertical numbers while inner loop goes horizontal
         {
             System.out.print("\t" + theseVertices.get(j).getId() + "|");
 
-            for(int k = 0; k <  theseVertices.size(); k++)
+            for(int k = 0; k <  theseVertices.size(); k++)                                   //inner loop is what also does the comparisons
             {
                 ArrayList<Integer> theseEdges = theseVertices.get(k).getEdges();
-                //if they are the same vertex, denote with "-"
-                if(j == k)
+                if(j == k)                                                                  //if they are the same vertex, denote with "-"
                     System.out.print("\t-");
-                //if the value of the vertex in question (denoted by row therefore j) is present in the the vertex denoted by the columns (therefore k)
-                else if(theseEdges.contains(theseVertices.get(j).getId()))
+                else if(theseEdges.contains(theseVertices.get(j).getId()))                  //if the value of the vertex in question (denoted by row therefore j) is present in the the vertex denoted by the columns (therefore k)
                     System.out.print("\t1");
-                //if the value is not present
-                else if(!theseEdges.contains(theseVertices.get(j).getId()))
+                else if(!theseEdges.contains(theseVertices.get(j).getId()))                 //if the value is not present
                     System.out.print("\t0");
-                //something else to denote if something goes awry, which has yet to
-                else
+                else                                                                        //something else to denote if something goes awry, which has yet to
                     System.out.print("\tE");
             }
             System.out.println("");
@@ -415,21 +405,35 @@ public class Assignment4 extends Tree
     //print the adjacency list for all vertices, regardless if they have edges
     public static void printAdjacencyList(Graph myGraph)
     {
+        System.out.println("Adjacency List");
 
-        System.out.println("Adjacency List for " + myGraph.name);
-        //goes through each vertex and prints it prior to checking to see if any edges
-        for(int i = 0; i < myGraph.getVertices().size(); i++)
+        for(int i = 0; i < myGraph.getVertices().size(); i++)                                   //goes through each vertex and prints it prior to checking to see if any edges
         {
             int vertexName = myGraph.getVertices().get(i).getId();
             String results = "[" + vertexName + "] ";
             ArrayList<Integer> theseEdges = myGraph.getVertices().get(i).getEdges();
 
-            //if edges do exist for this vertex, print them out here
-            for(int j = 0; j < theseEdges.size(); j++)
+            for(int j = 0; j < theseEdges.size(); j++)                                          //if edges do exist for this vertex, print them out here
                 results += ("\t" + theseEdges.get(j));
 
             System.out.println(results);
         }
+    }
+
+    public static void dFSComplete(Graph thisGraph)
+    {
+        System.out.println("Depth First Search");
+        thisGraph.depthFirstSearch(thisGraph.getVertices().get(0));
+        thisGraph.visitDisconnectedDFS();
+        printTraversal(thisGraph.getDFSResults());
+    }
+
+    public static void bFSComplete(Graph thisGraph)
+    {
+        System.out.println("Breadth First Search");
+        thisGraph.breadthFirstSearch(thisGraph.getVertices().get(0));
+        thisGraph.visitDisconnectedBFS();
+        printTraversal(thisGraph.getBFSResults());
     }
 
     public static void resetProcessed(Graph g)
@@ -437,7 +441,6 @@ public class Assignment4 extends Tree
         for(Vertex v : g.getVertices())
             v.setProcessed(false);
     }
-
 
     public static void printTraversal(ArrayList<String> results)
     {
@@ -458,31 +461,26 @@ public class Assignment4 extends Tree
         ArrayList<String> graphFile = readGraphFile();
         ArrayList<Graph> myGraphs = createGraphs(graphFile);
 
-        for(Graph f : myGraphs)
+        for(Graph thisGraph : myGraphs)
         {
-            printMatrix(f);
+            System.out.println(thisGraph.name.toUpperCase() + "\n");
+
+            printMatrix(thisGraph);
             System.out.println(" ");
 
-            printAdjacencyList(f);
+            printAdjacencyList(thisGraph);
             System.out.println(" ");
 
-            System.out.println("Depth First Search for " + f.name);
-            f.depthFirstSearch(f.getVertices().get(0));
-            f.visitDisconnectedDFS();
-            printTraversal(f.getDFSResults());
-            System.out.println(" ");
+            dFSComplete(thisGraph);
+            System.out.println("\n");
 
-            resetProcessed(f);
+            resetProcessed(thisGraph);
 
-            System.out.println("Breadth First Search for " + f.name);
-            f.breadthFirstSearch(f.getVertices().get(0));
-            f.visitDisconnectedBFS();
-            printTraversal(f.getBFSResults());
+            bFSComplete(thisGraph);
             System.out.println(" ");
 
             System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
     }
-
 
 }
