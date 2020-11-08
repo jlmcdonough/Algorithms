@@ -104,22 +104,34 @@ public class Assignment4 extends Tree
             }
         }
 
+        public void visitDisconnectedDFS()
+        {
+            for(Vertex checkProcess : this.getVertices())
+            {
+                if(!checkProcess.getProcessed())
+                {
+                    dFSResults.add("|");
+                    depthFirstSearch(checkProcess);
+                }
+            }
+        }
+
         public ArrayList<String> getDFSResults()
         {
             return dFSResults;
         }
 
+        ArrayList<String> bFSResults = new ArrayList<String>();
         public void breadthFirstSearch(Vertex fromVertex)
         {
             Queue myQueue = new Queue();
             myQueue.enqueue(String.valueOf(fromVertex.getId()));   //passing the vertex id as a string into queue
             fromVertex.setProcessed(true);
-            ArrayList<String> results = new ArrayList<>();
 
             while(!myQueue.isEmpty())
             {
                 Node currIndex = myQueue.dequeue();      //dequeue returns a Node whose data is the string of vertex id
-                results.add(currIndex.data);
+                bFSResults.add(currIndex.data);
                 Vertex currentVertex = this.getThisVertex(Integer.parseInt(currIndex.data));    //turn the String id into an Int and then get the vertex with that id as a name
 
                 for(int i = 0; i < currentVertex.getEdges().size(); i++)
@@ -134,10 +146,23 @@ public class Assignment4 extends Tree
                     }
                 }
             }
+        }
 
-            for(int s = 0; s < results.size() - 1; s++)
-                System.out.print(results.get(s) + ", ");
-            System.out.print(results.get(results.size() - 1));
+        public void visitDisconnectedBFS()
+        {
+            for(Vertex checkProcess : this.getVertices())
+            {
+                if(!checkProcess.getProcessed())
+                {
+                    bFSResults.add("|");
+                    breadthFirstSearch(checkProcess);
+                }
+            }
+        }
+
+        public ArrayList<String> getBFSResults()
+        {
+            return bFSResults;
         }
 
     }
@@ -413,11 +438,18 @@ public class Assignment4 extends Tree
             v.setProcessed(false);
     }
 
-    public static void getAndPrintDFS(Graph f)
+
+    public static void printTraversal(ArrayList<String> results)
     {
-        ArrayList<String> results =  f.getDFSResults();
         for(int s = 0; s < results.size() - 1; s++)
-            System.out.print(results.get(s) + ", ");
+        {
+            if(results.get(s).equalsIgnoreCase("|"))
+                System.out.println("");
+            else if(results.get(s + 1).equalsIgnoreCase("|"))
+                System.out.print(results.get(s));
+            else
+                System.out.print(results.get(s) + ", ");
+        }
         System.out.print(results.get(results.size() - 1));
     }
 
@@ -436,13 +468,16 @@ public class Assignment4 extends Tree
 
             System.out.println("Depth First Search for " + f.name);
             f.depthFirstSearch(f.getVertices().get(0));
-            getAndPrintDFS(f);
+            f.visitDisconnectedDFS();
+            printTraversal(f.getDFSResults());
             System.out.println(" ");
 
             resetProcessed(f);
 
             System.out.println("Breadth First Search for " + f.name);
             f.breadthFirstSearch(f.getVertices().get(0));
+            f.visitDisconnectedBFS();
+            printTraversal(f.getBFSResults());
             System.out.println(" ");
 
             System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
