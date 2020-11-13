@@ -1,0 +1,172 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CMPT 435
+% Fall 2020
+% Lab Four
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from: http://www.LaTeXTemplates.com
+% Original author: % Frits Wenneker (http://www.howtotex.com)
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Modified by Alan G. Labouseur  - alan@labouseur.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper, 10pt,DIV=13]{scrartcl} 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm,xfrac} % Math packages
+\usepackage{sectsty} % Allows customizing section commands
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,commentsnumbered]{algorithm2e}
+\usepackage{listings}
+\usepackage{parskip}
+\usepackage{lastpage}
+
+\allsectionsfont{\normalfont\scshape} % Make all section titles in default font and small caps.
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{page \thepage\ of \pageref{LastPage}} % Page numbering for right footer
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs.
+
+\binoppenalty=3000
+\relpenalty=3000
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+   \normalfont \normalsize 
+   \textsc{CMPT 435 - Fall 2020 - Dr. Labouseur} \\[10pt] % Header stuff.
+   \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
+   \huge Lab Four  \\     	    % Assignment title
+   \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
+}
+
+\author{Joseph McDonough \\ \normalsize Joseph.McDonough1@marist.edu}
+
+\date{\normalize{November 13, 2020}}	% Due date.
+
+\begin{document}
+\maketitle % Print the title
+
+
+%----------------------------------------------------------------------------------------
+%   start PROBLEM ONE
+%----------------------------------------------------------------------------------------
+\section{Binary Tree Results}
+A file, titled magicitems, is a text file that has the name of 666 different items.  The items appear in the text file in a random order, such that it is not presorted in any way. Those 666 unique items are ran through a binary tree.  At random, 42 of those items are selected to be found using the binary tree.  
+
+After running a large sample size of finding 42 random items, the average search count varies between 10 and 13 searches.  
+
+Following an analysis of Big O, a perfect binary tree would result in $\log_2 n$ time, just like a binary sort on a sorted list.  The worst possible binary tree would result in a search time of $n$, just like a linear search.  As it is far more likely for a binary tree to be closer to a binary search than a linear search, an average search count is expected around the $\log_2 n$ range, which for a list of size 666 is ~9.  Although the average search time in this case was between 10 and 13, it is close enough to 9 and can be deemed an appropiate result.
+
+\section{Traversals} \\
+
+\subsection{Results}
+
+\begin{enumerate}
+   \item Undirected 7-vertex 11-edge
+   \begin{itemize}
+     \item Vertex Count - 7
+     \item Edge Count - 11
+     \item Expected Time Complexity - O($V + E$) $\rightarrow$ 18
+     \item Depth-First Search Comparison - 16
+     \item Breadth-First Search Comparison - 7
+   \end{itemize}
+   \item  Undirected 8-Vertex Full
+   \begin{itemize}
+     \item Vertex Count - 8
+     \item Edge Count - 28
+     \item Expected Time Complexity - O($V + E$) $\rightarrow$ 36  
+     \item Depth-First Search Comparison - 15
+     \item Breadth-First Search Comparison - 8
+   \end{itemize}
+      \item Undirected 63-Vertex Tree (branch factor = 2)
+   \begin{itemize}
+     \item Vertex Count - 63
+     \item Edge Count - 62
+     \item Expected Time Complexity - O($V + E$) $\rightarrow$ 125  
+     \item Depth-First Search Comparison - 125
+     \item Breadth-First Search Comparison - 63
+   \end{itemize}
+      \item Undirected 64-Vertex 72-Edge Erdos-Renyi Random
+   \begin{itemize}
+     \item Vertex Count - 64
+     \item Edge Count - 72
+     \item Expected Time Complexity - O($V + E$) $\rightarrow$ 136  
+     \item Depth-First Search Comparison - 127
+     \item Breadth-First Search Comparison - 72
+   \end{itemize}
+      \item Undirected Zork Map (ground level) w/ 3 disconnected components
+   \begin{itemize}
+     \item Vertex Count - 21
+     \item Edge Count - 25
+     \item Expected Time Complexity - O($V + E$) $\rightarrow$ 46  
+     \item Depth-First Search Comparison - 41
+     \item Breadth-First Search Comparison - 23
+\end{itemize}
+\end{enumerate}
+
+\subsection{Asymptotic Analysis}
+
+Although they follow different algorithms, both depth-first search (DFS) and breadth-first search (BFS) have a time complexity of O($V + E$) where $V$ is the amount of vertices and $E$ is the total edge count.  DFS utilizes the stack data structure.  This traversal starts at a root node and traverse as long as it could along a branch and then backtracks.  When it backtracks, it is utilizing the stack and popping of vertices until it reaches one where there is an unexplored branch.  DFS explores that branch and backtracks and this process occurs until all nodes are visited.
+
+In the instance of a disconnected graph where all nodes are not connected in some way, an additional function is required to reach out and make sure all vertices get accounted for.
+
+\begin{center}
+\begin{tabular}{l}
+\begin{lstlisting}[numbers=left,firstnumber=109,stepnumber=1,escapeinside={\%}{\%}]
+for(Vertex checkProcess : this.getVertices())
+{
+    if(!checkProcess.getProcessed())
+        depthFirstSearch(checkProcess);
+}
+\end{lstlisting}
+\end{tabular}
+\end{center}\textbf{}
+
+BFS also takes has the same time complexity even though it utilizes a queue instead of a stack.  Instead of exploring a branch til completion and going back, BFS explores all the neighbors of the root first.  Once all the neighbors are accounted for, it takes the neighbors of one of it neighbors, then takes the neighbors of the rest of the neighbors to the root node until they are all accounted for.  Then it recursively goes out and gets the neighbors of all the nodes on the graph such that all get accounted for.
+
+In the instance of a disconnected graph, a near identical helper function is called to ensure that all vertices are accounted for in the BFS.
+
+For all the graphs that were experimented with on this assignment, none of the depth-first searches or breadth-first searches exceeded the sum of the edges and vertices.  This makes sense as O($V + E$) is a worst case scenario.  As the size of the graph grows, in both edge and/or vertex count, the amount of checks on the vertices increase.  Throughout the algorithm, each vertex can be marked for processing (that is, has just been visited for the first time) only once.    In all cases, the BFS was done with less comparisons than the DFS performs.  This also makes sense as BFS slows works its way out from the root, exploring its neighbors before going farther out.  DFS goes as far out as it could, before it makes it way back.
+
+Regardless, the calculation of O($V + E$) makes sense for both graphs.
+
+For breadth-first search, it will in posses all the vertices in its queue, which would result in O($V$).  Likewise, it will traverse over all the edges in the graph, just once too.  This results in O($E$).  Both sets of operations work in linear time so there are no unaccounted for variables, meaning the total time complexity is O($V + E$). 
+
+Depth-first search is nearly identical as all vertices will enter the stack at one point in time, meaning O($V$) and each edge will be accounted for, resulting in O($E$) with a total of O($V + E$).
+
+
+
+
+\end{document}
