@@ -18,29 +18,17 @@ public class Assignment5
         ArrayList<Spice> mySpices = getAndSortList();
         ArrayList<Spice> mutableSpice = new ArrayList<Spice>(mySpices);
 
-
-        for(Spice spices : mySpices)
-            System.out.println(spices.getName() + " " + spices.getUnitCost());
-
-        System.out.println(" ");
-
-        for(Integer i : knaps)
-            System.out.println(i);
-
-        System.out.println(" ");
-
-        ArrayList<Spice> results = new ArrayList<Spice>();
         ArrayList<ArrayList<Spice>> allResults = new ArrayList<ArrayList<Spice>>();
         for(int i = 0; i < knaps.size(); i++)
         {
             int capacity = knaps.get(i);
-            System.out.println("I is " + i + " CAP IS " + capacity);
+            ArrayList<Spice> results = new ArrayList<Spice>();
 
             while(capacity > 0)
             {
-//                System.out.println(mutableSpice.get(0).getQuantity());
                 if(mutableSpice.size() == 0)
-                    allResults.add(results);
+                {
+                }
                 else if(mutableSpice.get(0).getQuantity() == 0)
                 {
                     mutableSpice.remove(0);
@@ -57,26 +45,15 @@ public class Assignment5
                 capacity--;
             }
 
-            for(Spice spices : mutableSpice)
-                System.out.println(spices.getName() + " " + spices.getQuantity());
-            System.out.println(" ");
+            allResults.add(results);
+
             mutableSpice = resetSpice(constantSpice);
-            for(Spice spices : mutableSpice)
-                System.out.println(spices.getName() + " " + spices.getQuantity());
-            System.out.println("---------- ");
+
         }
 
         for(int i = 0; i < allResults.size(); i++)
-        {
-            int j = 0;
-            while(allResults.get(i).size() > j)
-            {
-                System.out.println("SPICE: " + allResults.get(i).get(j).getName());
-                j++;
-            }
-        }
+            System.out.println(individualKnapResult(allResults.get(i), knaps.get(i)));
     }
-
 
 
 
@@ -137,6 +114,50 @@ public class Assignment5
         }
         return newSpice;
     }
+
+    public static String individualKnapResult(ArrayList<Spice> knapSpice, int knapCap)
+    {
+        double sumPrice = 0;
+        ArrayList<String> colors = new ArrayList<String>();
+
+        for(Spice s : knapSpice)
+        {
+            sumPrice += s.getUnitCost();
+            colors.add(s.getName());
+        }
+
+        String colorSequence = colorStatement(colors);
+        String result = "Knapsack of capacity " + knapCap + " is worth " + sumPrice + " quatloos and contains " + colorSequence + ".";
+        return result;
+    }
+
+    public static String colorStatement(ArrayList<String> colorList)
+    {
+        String colorSequence = "";
+        ArrayList<String> color = new ArrayList<String>();
+        ArrayList<Integer> colorCount = new ArrayList<Integer>();
+
+        for(String s : colorList)
+        {
+            if(!color.contains(s))
+            {
+                color.add(s);
+                int indexOfColor = color.indexOf(s);
+                colorCount.add(indexOfColor, 1);
+            }
+            else
+            {
+                int indexOfColor = color.indexOf(s);
+                colorCount.set(indexOfColor, colorCount.get(indexOfColor)+1);
+            }
+        }
+
+        for(int i = 0; i < color.size() - 1; i++)
+            colorSequence += colorCount.get(i) + " of " + color.get(i) + ", ";
+        colorSequence += colorCount.get(colorCount.size() - 1) + " of " + color.get(color.size() - 1);
+        return colorSequence;
+    }
+
 
     static ArrayList<Integer> knaps = new ArrayList<Integer>();
     static ArrayList<Spice> constantSpice = new ArrayList<Spice>();
