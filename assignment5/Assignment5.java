@@ -16,6 +16,19 @@ public class Assignment5
     public static void main(String args[]) throws FileNotFoundException
     {
         knapsackComplete();
+        ArrayList<String> graphFile = readGraphFile();
+        ArrayList<Graph> myGraphs = createGraphs(graphFile);
+        System.out.println(myGraphs.get(0).getThisVertex(1).getEdges().get(0).getWeight()); //should print graph 1 vertex 1 weight going to 2 (which is 6)
+        System.out.println(myGraphs.get(0).getThisVertex(1).getThisEdge(2).getWeight()); //should print graph 1 vertex 1 weight going to 2 (which is 6)
+
+        Graph g = myGraphs.get(0);
+        for(Vertex v : g.getVertices())
+        {
+            for(Edge e : v.getEdges())
+            {
+                System.out.println("V: " + v.getId() + " Source V: " +  e.getSourceVertex() + " E DEST: " + e.getDestVertex() + " WEIGHT: " + e.getWeight());
+            }
+        }
     }
 
 
@@ -221,10 +234,6 @@ public class Assignment5
         printKnapsack(filled);
     }
 
-
-
-
-
 //~~~~~~~~~~~~~~~~~~~~SELECTION SORT FROM ASSIGNMENT 2~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static int selectionSort(ArrayList<Spice> itemList)
     {
@@ -248,6 +257,186 @@ public class Assignment5
         Spice temp = itemList.get(lowestPos);
         itemList.set(lowestPos, itemList.get(swaperPos));  //take what is in the higher spot, and put it at the lowest index
         itemList.set(swaperPos, temp);   //take what used to be in lowestPos and put it in the higher spot
+    }
+
+//~~~~~~~~~~~~~~~~~~~~GRAPH AND VERTEX CLASS FROM ASSIGNMENT 4~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    static class Graph extends Queue
+    {
+        private ArrayList<Vertex> vertices;
+        private String name;
+
+        public Graph(String n, ArrayList<Vertex> v)
+        {
+            this.vertices = v;
+            this.name = n;
+        }
+
+        public String getName()
+        {
+            return this.name;
+        }
+
+        public ArrayList<Vertex> getVertices()
+        {
+            return this.vertices;
+        }
+
+        public Vertex getThisVertex(int id)
+        {
+            for(Vertex v : this.getVertices())
+            {
+                if(v.getId() == id)
+                    return v;
+            }
+
+            return null;
+        }
+    }
+
+    static class Vertex
+    {
+        private ArrayList<Edge> edges;
+        private boolean processed;
+        private int id;
+
+        public Vertex(ArrayList<Edge> e, int i)
+        {
+            this.edges = e;
+            this.processed = false;
+            this.id = i;
+        }
+
+        public ArrayList<Edge> getEdges()
+
+        {
+            return this.edges;
+        }
+
+        public boolean getProcessed()
+        {
+            return this.processed;
+        }
+
+        public int getId()
+        {
+            return this.id;
+        }
+
+        public void setProcessed(boolean bool)
+        {
+            this.processed = bool;
+        }
+
+        public void addEdge(int s, int e, int w)
+        {
+            this.edges.add(new Edge(s, e, w));
+        }
+
+        public Edge getThisEdge(int id)
+        {
+            for(Edge e : this.getEdges())
+            {
+                if(e.getDestVertex() == id)
+                    return e;
+            }
+
+            return null;
+        }
+    }
+
+    static class Edge
+    {
+        private int sourceVertex;
+        private int destVertex;
+        private int weight;
+
+        public Edge(int s, int d, int w)
+        {
+            this.sourceVertex = s;
+            this.destVertex = d;
+            this.weight = w;
+        }
+
+        public int getSourceVertex()
+        {
+            return this.sourceVertex;
+        }
+
+        public int getDestVertex()
+        {
+            return this.destVertex;
+        }
+
+        public int getWeight()
+        {
+            return this.weight;
+        }
+    }
+
+    public static ArrayList<String> readGraphFile() throws FileNotFoundException
+    {
+        Scanner in = new Scanner(new File("graphs2.txt"));
+        ArrayList<String> graph1Data = new ArrayList<String>();
+        while(in.hasNextLine())
+            graph1Data.add(in.nextLine());
+
+        return graph1Data;
+    }
+
+    public static ArrayList<Graph> createGraphs(ArrayList<String> graphFile)
+    {
+        ArrayList<Graph> myGraphs = new ArrayList<Graph>();
+        int i = 0;
+        boolean inGraph = false;
+        while(i < graphFile.size())
+        {
+            if(graphFile.get(i).substring(0,2).equalsIgnoreCase("--"))                      //the "--" is used prior to the naming of the graph and its contents follow
+            {
+                inGraph = true;
+                ArrayList<Vertex> tempVertex = new ArrayList<Vertex>();
+                String graphName = graphFile.get(i).substring(3);  //name starts after the 3 character in the -- line
+
+                i++;
+                while(inGraph && i <= graphFile.size())                                                //want <= so that the last graph can be added when file reaches completion
+                {
+                    if(i == graphFile.size() || graphFile.get(i).equalsIgnoreCase(""))     //end of file, or empty line mean end of graph in graphs1.txt file
+                    {
+                        inGraph = false;
+                        myGraphs.add(new Graph(graphName , tempVertex));
+                    }
+                    else if(graphFile.get(i).equalsIgnoreCase("new graph"))
+                    {
+                    }
+                    else if(graphFile.get(i).substring(0,10).equalsIgnoreCase("add vertex"))
+                    {
+                        tempVertex.add(new Vertex(new ArrayList<Edge>(), Integer.parseInt(graphFile.get(i).substring(11))));
+                    }
+                    else if(graphFile.get(i).substring(0,8).equalsIgnoreCase("add edge"))
+                    {
+                        String edgeCombo = graphFile.get(i).substring(9);
+                        String[] edges = edgeCombo.split(" - ");
+                        int sourceEdge = Integer.parseInt(edges[0]);
+                        edges[1] = edges[1].replaceAll("  ", " ");  //graph 1 has two spaces before its weight, this makes all weights separated by one space from destination vertex
+                        String[] destinationAndWeight = edges[1].split(" ");
+                        int destination = Integer.parseInt(destinationAndWeight[0]);
+                        int weight = Integer.parseInt(destinationAndWeight[1]);
+                        Vertex temp1 = null;
+
+                        for(int v1 = 0; v1 < tempVertex.size(); v1++)          //gets the vertex identified by the edge1 vertex, and adds the vertex that forms edge2 to its edgeList
+                        {
+                            if(tempVertex.get(v1).getId() == sourceEdge)
+                                temp1 = tempVertex.get(v1);
+                        }
+
+                        temp1.addEdge(sourceEdge, destination, weight);
+                    }
+
+                    i++;
+                }
+            }
+        }
+
+        return myGraphs;
     }
 
 }
