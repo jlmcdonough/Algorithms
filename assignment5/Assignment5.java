@@ -15,44 +15,7 @@ public class Assignment5
 {
     public static void main(String args[]) throws FileNotFoundException
     {
-        ArrayList<Spice> mySpices = getAndSortList();
-        ArrayList<Spice> mutableSpice = new ArrayList<Spice>(mySpices);
-
-        ArrayList<ArrayList<Spice>> allResults = new ArrayList<ArrayList<Spice>>();
-        for(int i = 0; i < knaps.size(); i++)
-        {
-            int capacity = knaps.get(i);
-            ArrayList<Spice> results = new ArrayList<Spice>();
-
-            while(capacity > 0)
-            {
-                if(mutableSpice.size() == 0)
-                {
-                }
-                else if(mutableSpice.get(0).getQuantity() == 0)
-                {
-                    mutableSpice.remove(0);
-                    capacity++;   //done to negate this cycle in the for-loop
-                }
-                else
-                {
-                    Spice thisSpice = mutableSpice.get(0);
-                    String name = thisSpice.getName();
-                    double worth = thisSpice.getUnitCost();
-                    thisSpice.removeQuantity(1);
-                    results.add(new Spice(name, worth));
-                }
-                capacity--;
-            }
-
-            allResults.add(results);
-
-            mutableSpice = resetSpice(constantSpice);
-
-        }
-
-        for(int i = 0; i < allResults.size(); i++)
-            System.out.println(individualKnapResult(allResults.get(i), knaps.get(i)));
+        knapsackComplete();
     }
 
 
@@ -105,62 +68,10 @@ public class Assignment5
         }
     }
 
-    public static ArrayList<Spice> resetSpice(ArrayList<Spice> cSpice)
-    {
-        ArrayList<Spice> newSpice = new ArrayList<Spice>();
-        for(Spice s : cSpice)
-        {
-            newSpice.add(new Spice(s.getName(), s.getTotalPrice(), s.getQuantity()));
-        }
-        return newSpice;
-    }
-
-    public static String individualKnapResult(ArrayList<Spice> knapSpice, int knapCap)
-    {
-        double sumPrice = 0;
-        ArrayList<String> colors = new ArrayList<String>();
-
-        for(Spice s : knapSpice)
-        {
-            sumPrice += s.getUnitCost();
-            colors.add(s.getName());
-        }
-
-        String colorSequence = colorStatement(colors);
-        String result = "Knapsack of capacity " + knapCap + " is worth " + sumPrice + " quatloos and contains " + colorSequence + ".";
-        return result;
-    }
-
-    public static String colorStatement(ArrayList<String> colorList)
-    {
-        String colorSequence = "";
-        ArrayList<String> color = new ArrayList<String>();
-        ArrayList<Integer> colorCount = new ArrayList<Integer>();
-
-        for(String s : colorList)
-        {
-            if(!color.contains(s))
-            {
-                color.add(s);
-                int indexOfColor = color.indexOf(s);
-                colorCount.add(indexOfColor, 1);
-            }
-            else
-            {
-                int indexOfColor = color.indexOf(s);
-                colorCount.set(indexOfColor, colorCount.get(indexOfColor)+1);
-            }
-        }
-
-        for(int i = 0; i < color.size() - 1; i++)
-            colorSequence += colorCount.get(i) + " of " + color.get(i) + ", ";
-        colorSequence += colorCount.get(colorCount.size() - 1) + " of " + color.get(color.size() - 1);
-        return colorSequence;
-    }
-
-
     static ArrayList<Integer> knaps = new ArrayList<Integer>();
     static ArrayList<Spice> constantSpice = new ArrayList<Spice>();
+
+    //reads the text file and creates the spices and knapsack capacity 
     public static ArrayList<Spice> getAndSortList() throws FileNotFoundException
     {
         Scanner reader = new Scanner(new File("spice.txt"));
@@ -200,6 +111,121 @@ public class Assignment5
         return mySpices;
     }
 
+    //fills each knapsack up
+    public static ArrayList<ArrayList<Spice>> fillKnapsacks(ArrayList<Spice> mutableSpice)
+    {
+        ArrayList<ArrayList<Spice>> allResults = new ArrayList<ArrayList<Spice>>();
+        for(int i = 0; i < knaps.size(); i++)
+        {
+            int capacity = knaps.get(i);
+            ArrayList<Spice> results = new ArrayList<Spice>();
+
+            while(capacity > 0)
+            {
+                if(mutableSpice.size() == 0)
+                {
+                }
+                else if(mutableSpice.get(0).getQuantity() == 0)
+                {
+                    mutableSpice.remove(0);
+                    capacity++;   //done to negate this cycle in the for-loop
+                }
+                else
+                {
+                    Spice thisSpice = mutableSpice.get(0);
+                    String name = thisSpice.getName();
+                    double worth = thisSpice.getUnitCost();
+                    thisSpice.removeQuantity(1);
+                    results.add(new Spice(name, worth));
+                }
+                capacity--;
+            }
+
+            allResults.add(results);
+
+            mutableSpice = resetSpice(constantSpice);
+        }
+
+        return allResults;
+    }
+
+    //resets the values of all the spices to their original quantity
+    public static ArrayList<Spice> resetSpice(ArrayList<Spice> cSpice)
+    {
+        ArrayList<Spice> newSpice = new ArrayList<Spice>();
+        for(Spice s : cSpice)
+        {
+            newSpice.add(new Spice(s.getName(), s.getTotalPrice(), s.getQuantity()));
+        }
+        return newSpice;
+    }
+
+    //get the header of each knapsack - includes capacity and worth
+    public static String individualKnapResult(ArrayList<Spice> knapSpice, int knapCap)
+    {
+        double sumPrice = 0;
+        ArrayList<String> colors = new ArrayList<String>();
+
+        for(Spice s : knapSpice)
+        {
+            sumPrice += s.getUnitCost();
+            colors.add(s.getName());
+        }
+
+        String colorSequence = colorStatement(colors);
+        String result = "Knapsack of capacity " + knapCap + " is worth " + sumPrice + " quatloos and contains " + colorSequence + ".";
+        return result;
+    }
+
+    //creates the tail for the knapsack output - includes numbers of each color
+    public static String colorStatement(ArrayList<String> colorList)
+    {
+        String colorSequence = "";
+        ArrayList<String> color = new ArrayList<String>();
+        ArrayList<Integer> colorCount = new ArrayList<Integer>();
+
+        for(String s : colorList)
+        {
+            if(!color.contains(s))
+            {
+                color.add(s);
+                int indexOfColor = color.indexOf(s);
+                colorCount.add(indexOfColor, 1);
+            }
+            else
+            {
+                int indexOfColor = color.indexOf(s);
+                colorCount.set(indexOfColor, colorCount.get(indexOfColor)+1);
+            }
+        }
+
+        for(int i = 0; i < color.size() - 1; i++)
+            colorSequence += colorCount.get(i) + " of " + color.get(i) + ", ";
+        colorSequence += colorCount.get(colorCount.size() - 1) + " of " + color.get(color.size() - 1);
+        return colorSequence;
+    }
+
+    //prints the contents of each knapsack
+    public static void printKnapsack(ArrayList<ArrayList<Spice>> allResults)
+    {
+        for(int i = 0; i < allResults.size(); i++)
+            System.out.println(individualKnapResult(allResults.get(i), knaps.get(i)));
+    }
+
+    //does all the necessary work for the knapsack part of assignment
+    public static void knapsackComplete() throws FileNotFoundException
+    {
+        ArrayList<Spice> mySpices = getAndSortList();
+        ArrayList<Spice> mutableSpice = new ArrayList<Spice>(mySpices);
+        ArrayList<ArrayList<Spice>> filled = fillKnapsacks(mutableSpice);
+        printKnapsack(filled);
+    }
+
+
+
+
+
+//~~~~~~~~~~~~~~~~~~~~SELECTION SORT FROM ASSIGNMENT 2~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static int selectionSort(ArrayList<Spice> itemList)
     {
         int comparisonCount = 0;
