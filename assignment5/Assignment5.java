@@ -8,6 +8,7 @@ Professor Labouseur
 import java.awt.image.AreaAveragingScaleFilter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Assignment5
@@ -15,12 +16,65 @@ public class Assignment5
     public static void main(String args[]) throws FileNotFoundException
     {
         ArrayList<Spice> mySpices = getAndSortList();
+        ArrayList<Spice> mutableSpice = new ArrayList<Spice>(mySpices);
+
 
         for(Spice spices : mySpices)
             System.out.println(spices.getName() + " " + spices.getUnitCost());
 
+        System.out.println(" ");
+
         for(Integer i : knaps)
             System.out.println(i);
+
+        System.out.println(" ");
+
+        ArrayList<Spice> results = new ArrayList<Spice>();
+        ArrayList<ArrayList<Spice>> allResults = new ArrayList<ArrayList<Spice>>();
+        for(int i = 0; i < knaps.size(); i++)
+        {
+            int capacity = knaps.get(i);
+            System.out.println("I is " + i + " CAP IS " + capacity);
+
+            while(capacity > 0)
+            {
+//                System.out.println(mutableSpice.get(0).getQuantity());
+                if(mutableSpice.size() == 0)
+                    allResults.add(results);
+                else if(mutableSpice.get(0).getQuantity() == 0)
+                {
+                    mutableSpice.remove(0);
+                    capacity++;   //done to negate this cycle in the for-loop
+                }
+                else
+                {
+                    Spice thisSpice = mutableSpice.get(0);
+                    String name = thisSpice.getName();
+                    double worth = thisSpice.getUnitCost();
+                    thisSpice.removeQuantity(1);
+                    results.add(new Spice(name, worth));
+                }
+                capacity--;
+            }
+
+            for(Spice spices : mutableSpice)
+                System.out.println(spices.getName() + " " + spices.getQuantity());
+            System.out.println(" ");
+            mutableSpice = resetSpice(constantSpice);
+            for(Spice spices : mutableSpice)
+                System.out.println(spices.getName() + " " + spices.getQuantity());
+            System.out.println("---------- ");
+        }
+
+        for(int i = 0; i < allResults.size(); i++)
+        {
+            int j = 0;
+            while(allResults.get(i).size() > j)
+            {
+                System.out.println("SPICE: " + allResults.get(i).get(j).getName());
+                j++;
+            }
+        }
     }
 
 
@@ -41,6 +95,13 @@ public class Assignment5
             this.unitCost = p / q;
         }
 
+        //used as result when going through knapsack
+        public Spice(String n, double u)
+        {
+            this.name = n;
+            this.unitCost = u;
+        }
+
         public String getName()
         {
             return this.name;
@@ -56,17 +117,29 @@ public class Assignment5
             return this.quantity;
         }
 
+        public void removeQuantity(int qA)
+        {
+            this.quantity -= qA;
+        }
+
         public double getUnitCost()
         {
             return this.unitCost;
         }
     }
 
-
-
+    public static ArrayList<Spice> resetSpice(ArrayList<Spice> cSpice)
+    {
+        ArrayList<Spice> newSpice = new ArrayList<Spice>();
+        for(Spice s : cSpice)
+        {
+            newSpice.add(new Spice(s.getName(), s.getTotalPrice(), s.getQuantity()));
+        }
+        return newSpice;
+    }
 
     static ArrayList<Integer> knaps = new ArrayList<Integer>();
-
+    static ArrayList<Spice> constantSpice = new ArrayList<Spice>();
     public static ArrayList<Spice> getAndSortList() throws FileNotFoundException
     {
         Scanner reader = new Scanner(new File("spice.txt"));
@@ -89,6 +162,8 @@ public class Assignment5
                 int qty = Integer.parseInt(results[2].split(" = ")[1]);
                 Spice thisSpice = new Spice(name, tPrice, qty);
                 mySpices.add(thisSpice);
+                Spice constSpice = new Spice(name, tPrice, qty);
+                constantSpice.add(constSpice);
             }
             else if(thisLine.substring(0,8).equalsIgnoreCase("knapsack"))
             {
@@ -99,6 +174,7 @@ public class Assignment5
             }
         }
 
+        selectionSort(constantSpice);
         selectionSort(mySpices);
         return mySpices;
     }
