@@ -16,6 +16,8 @@ public class Assignment5
     public static void main(String args[]) throws FileNotFoundException
     {
         knapsackComplete();
+
+        /*
         ArrayList<String> graphFile = readGraphFile();
         ArrayList<Graph> myGraphs = createGraphs(graphFile);
         System.out.println(myGraphs.get(0).getThisVertex(1).getEdges().get(0).getWeight()); //should print graph 1 vertex 1 weight going to 2 (which is 6)
@@ -28,7 +30,7 @@ public class Assignment5
             {
                 System.out.println("V: " + v.getId() + " Source V: " +  e.getSourceVertex() + " E DEST: " + e.getDestVertex() + " WEIGHT: " + e.getWeight());
             }
-        }
+        } */
     }
 
 
@@ -81,7 +83,10 @@ public class Assignment5
         }
     }
 
+    //holds the capacity of the knapsacks
     static ArrayList<Integer> knaps = new ArrayList<Integer>();
+
+    //holds the spice list and this is the list that is never modified and used to repopulate the mutated list
     static ArrayList<Spice> constantSpice = new ArrayList<Spice>();
 
     //reads the text file and creates the spices and knapsack capacity 
@@ -92,13 +97,11 @@ public class Assignment5
         while (reader.hasNextLine())
         {
             String thisLine = reader.nextLine();
-            if(thisLine.equalsIgnoreCase(""))
+            //blank space lines that appear or commented lines
+            if(thisLine.equalsIgnoreCase("") || thisLine.substring(0,2).equalsIgnoreCase("--"))
             {
             }
-            else if(thisLine.substring(0,2).equalsIgnoreCase("--"))
-            {
-
-            }
+            //lines with spice and its contents being with spice and have name, total price, and quantity separated by ';'
             else if(thisLine.substring(0,5).equalsIgnoreCase("spice"))
             {
                 String[] results = thisLine.split(";");
@@ -107,9 +110,11 @@ public class Assignment5
                 int qty = Integer.parseInt(results[2].split(" = ")[1]);
                 Spice thisSpice = new Spice(name, tPrice, qty);
                 mySpices.add(thisSpice);
+                //create two lists such that one is immutable and can be used to repopulate the mutated one after removing elements to fill a knapsack
                 Spice constSpice = new Spice(name, tPrice, qty);
                 constantSpice.add(constSpice);
             }
+            //lines with knapsack capacity begin with knapsack and capacity is separated by '=' and lines end with ';'
             else if(thisLine.substring(0,8).equalsIgnoreCase("knapsack"))
             {
                 String results = thisLine.split(" = ")[1];
@@ -131,18 +136,19 @@ public class Assignment5
         for(int i = 0; i < knaps.size(); i++)
         {
             int capacity = knaps.get(i);
+
+            //holds the contents of the knapsack
             ArrayList<Spice> results = new ArrayList<Spice>();
 
-            while(capacity > 0)
+            while(capacity > 0 && mutableSpice.size() != 0)
             {
-                if(mutableSpice.size() == 0)
-                {
-                }
-                else if(mutableSpice.get(0).getQuantity() == 0)
+                //if the remaining quantity of spices in index 0 is 0, then remove that spice from the list
+                if(mutableSpice.get(0).getQuantity() == 0)
                 {
                     mutableSpice.remove(0);
-                    capacity++;   //done to negate this cycle in the for-loop
+                    capacity++;   //done to negate this cycle in the while-loop
                 }
+                //subtract a spice from the quantity of that at index 0 as well as adding this spice to the contents of the knapsack
                 else
                 {
                     Spice thisSpice = mutableSpice.get(0);
@@ -179,6 +185,7 @@ public class Assignment5
         double sumPrice = 0;
         ArrayList<String> colors = new ArrayList<String>();
 
+        //keep track of the total value of the contents as well as each color that appears
         for(Spice s : knapSpice)
         {
             sumPrice += s.getUnitCost();
@@ -194,17 +201,21 @@ public class Assignment5
     public static String colorStatement(ArrayList<String> colorList)
     {
         String colorSequence = "";
+
+        //color and colorCount are two separate arrays but the indices line up with each other such that element 0 is both the color and the amount of times the color appears
         ArrayList<String> color = new ArrayList<String>();
         ArrayList<Integer> colorCount = new ArrayList<Integer>();
 
         for(String s : colorList)
         {
+            //if color has not been previously used, add an entry for it in the colorList with a counter of 1
             if(!color.contains(s))
             {
                 color.add(s);
                 int indexOfColor = color.indexOf(s);
                 colorCount.add(indexOfColor, 1);
             }
+            //color has already appear, so dont need a new instance, just increase the counter that goes with it
             else
             {
                 int indexOfColor = color.indexOf(s);
@@ -214,7 +225,10 @@ public class Assignment5
 
         for(int i = 0; i < color.size() - 1; i++)
             colorSequence += colorCount.get(i) + " of " + color.get(i) + ", ";
-        colorSequence += colorCount.get(colorCount.size() - 1) + " of " + color.get(color.size() - 1);
+
+        //want last element to end in a period and not a comma, as well as putting the 'and' before it
+        colorSequence += "and " + colorCount.get(colorCount.size() - 1) + " of " + color.get(color.size() - 1);
+
         return colorSequence;
     }
 
@@ -307,7 +321,6 @@ public class Assignment5
         }
 
         public ArrayList<Edge> getEdges()
-
         {
             return this.edges;
         }
