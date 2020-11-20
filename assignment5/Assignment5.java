@@ -17,20 +17,12 @@ public class Assignment5
     {
         knapsackComplete();
 
-        /*
+
         ArrayList<String> graphFile = readGraphFile();
         ArrayList<Graph> myGraphs = createGraphs(graphFile);
-        System.out.println(myGraphs.get(0).getThisVertex(1).getEdges().get(0).getWeight()); //should print graph 1 vertex 1 weight going to 2 (which is 6)
-        System.out.println(myGraphs.get(0).getThisVertex(1).getThisEdge(2).getWeight()); //should print graph 1 vertex 1 weight going to 2 (which is 6)
 
         Graph g = myGraphs.get(0);
-        for(Vertex v : g.getVertices())
-        {
-            for(Edge e : v.getEdges())
-            {
-                System.out.println("V: " + v.getId() + " Source V: " +  e.getSourceVertex() + " E DEST: " + e.getDestVertex() + " WEIGHT: " + e.getWeight());
-            }
-        } */
+        bellmanFord(g, g.getThisVertex(1));
     }
 
 
@@ -248,6 +240,154 @@ public class Assignment5
         printKnapsack(filled);
     }
 
+//~~~~~~~~~~~~~~~~~~~~BELLMAN-FORD SINGLE SOURCE SHORTEST PATH~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    public static void bellmanFord(Graph g, Vertex sourceVertex)
+    {
+        //initializeSource(sourceVertex);
+
+        ArrayList<Edge> allEdges = new ArrayList<Edge>();
+        for(Vertex v : g.getVertices())
+        {
+            for(Edge e : v.getEdges())
+                allEdges.add(e);
+        }
+
+        ArrayList<Vertex> alLVertices = new ArrayList<Vertex>();
+        alLVertices = g.getVertices();
+
+        int distances[] = initializeSource(g);
+
+        for(int i: distances)
+            System.out.println(i);
+        System.out.println(allEdges.size());
+        System.out.println(alLVertices.size());
+
+        ArrayList<Integer> path = new ArrayList<Integer>();
+
+        for(int i = 1; i < alLVertices.size(); i++)
+        {
+            for(int j = 0; j < allEdges.size(); j++)
+            {
+                int src = allEdges.get(j).getSourceVertex();
+                int dst = allEdges.get(j).getDestVertex();
+                int weight = allEdges.get(j).getWeight();
+
+                if(distances[src] != Vertex.MAX_VALUE)
+                {
+                    if( (distances[src] + weight) < distances[dst])
+                    {
+                        distances[dst] = distances[src] + weight;
+                        g.getThisVertex(dst).addToPath(src);
+                        System.out.println("I: " + (i+1) + " J: " + (j+1) + " IF : " + distances[dst]);
+                    }
+                }
+            }
+        }
+
+        for(int k = 0; k < allEdges.size(); k++)
+        {
+            int src = allEdges.get(k).getSourceVertex();
+            int dst = allEdges.get(k).getDestVertex();
+            int weight = allEdges.get(k).getWeight();
+
+            if(distances[src] != Vertex.MAX_VALUE)
+            {
+                if( (distances[src] + weight) < distances[dst])
+                    System.out.println("NEGATIVE CYCLE");
+            }
+        }
+
+        System.out.println("!!!!!!!!!!!!!");
+        for(int z = 2; z < distances.length; z++)
+            System.out.println(distances[z]);
+
+        System.out.println("!!!!!!!!!!!!!");
+        for(Vertex v : g.getVertices())
+            System.out.println(v.getId() + " -> " + v.getPath());
+
+
+
+
+
+      /*  for(int i = 1; i < g.getVertices().size(); i++)
+        {
+            for(int j = 0; j < g.getVertices().get(i).getEdges().size(); j++)
+            {
+                int srcVertex = g.getVertices().get(i).getEdges().get(j).getSourceVertex();
+                int destVertex = g.getVertices().get(i).getEdges().get(j).getDestVertex();
+                int weight = g.getVertices().get(i).getEdges().get(j).getWeight();
+
+                System.out.println("I: " + i + " J: " + j + " SRC: " + srcVertex + " DST: " + destVertex + " WEIGHT: " + weight);
+
+                if(g.getThisVertex(srcVertex).getDistFromSrc() != Vertex.MAX_VALUE)
+                {
+                    if(g.getThisVertex(srcVertex).getDistFromSrc() + weight < g.getThisVertex(destVertex).getDistFromSrc())
+                    {
+                        g.getThisVertex(destVertex).setDistFromSrc(g.getThisVertex(srcVertex).getDistFromSrc() + weight);
+                        g.getThisVertex(destVertex).addToPath(srcVertex);
+                        System.out.println("IN IF: S " + srcVertex + " D " + destVertex + " W " + weight + " NW " + g.getThisVertex(destVertex).getDistFromSrc());
+                    }
+                }
+            }
+        }
+
+        for(int k = 0; k < g.getVertices().get(k).getEdges().size(); k++)
+        {
+            int srcVertex = g.getVertices().get(k).getEdges().get(k).getSourceVertex();
+            int destVertex = g.getVertices().get(k).getEdges().get(k).getDestVertex();
+            int weight = g.getVertices().get(k).getEdges().get(k).getWeight();
+
+            if(g.getThisVertex(srcVertex).getDistFromSrc() != Vertex.MAX_VALUE)
+            {
+                if(g.getThisVertex(srcVertex).getDistFromSrc() + weight < g.getThisVertex(destVertex).getDistFromSrc())
+                    System.out.println("NEGATIVE CYCLE");
+            }
+        }
+
+        printBellmanFord(g, sourceVertex); */
+    }
+
+    //distance from source is initialized to Java's highest alloted integer value, so only source needs to be set to 0 opposed to all others becoming the highest number
+    public static void initializeSource(Vertex src)
+    {
+        src.setDistFromSrc(0);
+    }
+
+    public static int[] initializeSource(Graph g)
+    {
+        int d[] =  new int[g.getVertices().size() + 1];
+        for(int i = 2; i < d.length; i++)
+        {
+            d[i] = Vertex.MAX_VALUE;
+        }
+
+        d[1] = 0;
+
+        return d;
+    }
+
+
+    public static void printBellmanFord(Graph g, Vertex src)
+    {
+        System.out.println("Vertex Dist. From Source");
+        for(int i = 0; i < g.getVertices().size(); i++)
+            System.out.println(g.getVertices().get(i).getId() + "\t\t" + g.getVertices().get(i).getDistFromSrc() + "\t\t" + printPath(g.getVertices().get(i), src));
+    }
+
+    public static String printPath(Vertex v, Vertex source)
+    {
+        String ans = Integer.toString(source.getId());
+        for(Integer i : v.getPath())
+        {
+            ans += " --> " + i.toString();
+        }
+
+        return ans + ".";
+    }
+
+
+
+
 //~~~~~~~~~~~~~~~~~~~~SELECTION SORT FROM ASSIGNMENT 2~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static int selectionSort(ArrayList<Spice> itemList)
     {
@@ -312,12 +452,17 @@ public class Assignment5
         private ArrayList<Edge> edges;
         private boolean processed;
         private int id;
+        static final int MAX_VALUE = 2147483647;
+        private int distFromSrc;
+        private ArrayList<Integer> path;
 
         public Vertex(ArrayList<Edge> e, int i)
         {
             this.edges = e;
             this.processed = false;
             this.id = i;
+            this.distFromSrc = MAX_VALUE;
+            this.path = new ArrayList<Integer>();
         }
 
         public ArrayList<Edge> getEdges()
@@ -330,14 +475,42 @@ public class Assignment5
             return this.processed;
         }
 
+        public void setProcessed(boolean bool)
+        {
+            this.processed = bool;
+        }
+
         public int getId()
         {
             return this.id;
         }
 
-        public void setProcessed(boolean bool)
+        public int getDistFromSrc()
         {
-            this.processed = bool;
+            return this.distFromSrc;
+        }
+
+        public void setDistFromSrc(int dist)
+        {
+            this.distFromSrc = dist;
+        }
+
+        public ArrayList<Integer> getPath()
+        {
+            return this.path;
+        }
+
+        public void addToPath(int v)
+        {
+            this.path.add(v);
+        }
+
+        public Boolean isMaxDist()
+        {
+            if(this.getDistFromSrc() == MAX_VALUE)
+                return true;
+            else
+                return false;
         }
 
         public void addEdge(int s, int e, int w)
@@ -384,6 +557,7 @@ public class Assignment5
         {
             return this.weight;
         }
+
     }
 
     public static ArrayList<String> readGraphFile() throws FileNotFoundException
