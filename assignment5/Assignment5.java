@@ -11,7 +11,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.*;
 
-public class Assignment5
+public class Assignment5 extends Stack
 {
     public static void main(String args[]) throws FileNotFoundException
     {
@@ -256,13 +256,13 @@ public class Assignment5
         alLVertices = g.getVertices();
 
         int distances[] = initializeSource(g);
+        int predecessors[] = initializePredecessors(g);
 
-        for(int i: distances)
-            System.out.println(i);
-        System.out.println(allEdges.size());
-        System.out.println(alLVertices.size());
-
-        ArrayList<Integer> path = new ArrayList<Integer>();
+        ArrayList<ArrayList<Integer>> path = new ArrayList<ArrayList<Integer>>();
+        for(int a = 0; a < alLVertices.size() + 1; a++)
+        {
+            path.add(new ArrayList<Integer>());
+        }
 
         for(int i = 1; i < alLVertices.size(); i++)
         {
@@ -277,8 +277,8 @@ public class Assignment5
                     if( (distances[src] + weight) < distances[dst])
                     {
                         distances[dst] = distances[src] + weight;
-                        g.getThisVertex(dst).addToPath(src);
-                        System.out.println("I: " + (i+1) + " J: " + (j+1) + " IF : " + distances[dst]);
+                        predecessors[dst] = src;
+                        path.get(dst).add(src);
                     }
                 }
             }
@@ -297,54 +297,13 @@ public class Assignment5
             }
         }
 
-        System.out.println("!!!!!!!!!!!!!");
         for(int z = 2; z < distances.length; z++)
-            System.out.println(distances[z]);
-
-        System.out.println("!!!!!!!!!!!!!");
-        for(Vertex v : g.getVertices())
-            System.out.println(v.getId() + " -> " + v.getPath());
-
-
-
-
-
-      /*  for(int i = 1; i < g.getVertices().size(); i++)
         {
-            for(int j = 0; j < g.getVertices().get(i).getEdges().size(); j++)
-            {
-                int srcVertex = g.getVertices().get(i).getEdges().get(j).getSourceVertex();
-                int destVertex = g.getVertices().get(i).getEdges().get(j).getDestVertex();
-                int weight = g.getVertices().get(i).getEdges().get(j).getWeight();
-
-                System.out.println("I: " + i + " J: " + j + " SRC: " + srcVertex + " DST: " + destVertex + " WEIGHT: " + weight);
-
-                if(g.getThisVertex(srcVertex).getDistFromSrc() != Vertex.MAX_VALUE)
-                {
-                    if(g.getThisVertex(srcVertex).getDistFromSrc() + weight < g.getThisVertex(destVertex).getDistFromSrc())
-                    {
-                        g.getThisVertex(destVertex).setDistFromSrc(g.getThisVertex(srcVertex).getDistFromSrc() + weight);
-                        g.getThisVertex(destVertex).addToPath(srcVertex);
-                        System.out.println("IN IF: S " + srcVertex + " D " + destVertex + " W " + weight + " NW " + g.getThisVertex(destVertex).getDistFromSrc());
-                    }
-                }
-            }
+            String goal = sourceVertex.getId() + " --> " + z;
+            String cost = " cost is " + distances[z] + "; ";
+            String route = "path is: " + sourceVertex.getId() + listPredecessors(predecessors, z, sourceVertex.getId(), new Stack()) + ".";
+            System.out.println(goal + cost + route);
         }
-
-        for(int k = 0; k < g.getVertices().get(k).getEdges().size(); k++)
-        {
-            int srcVertex = g.getVertices().get(k).getEdges().get(k).getSourceVertex();
-            int destVertex = g.getVertices().get(k).getEdges().get(k).getDestVertex();
-            int weight = g.getVertices().get(k).getEdges().get(k).getWeight();
-
-            if(g.getThisVertex(srcVertex).getDistFromSrc() != Vertex.MAX_VALUE)
-            {
-                if(g.getThisVertex(srcVertex).getDistFromSrc() + weight < g.getThisVertex(destVertex).getDistFromSrc())
-                    System.out.println("NEGATIVE CYCLE");
-            }
-        }
-
-        printBellmanFord(g, sourceVertex); */
     }
 
     //distance from source is initialized to Java's highest alloted integer value, so only source needs to be set to 0 opposed to all others becoming the highest number
@@ -366,6 +325,32 @@ public class Assignment5
         return d;
     }
 
+    public static int[] initializePredecessors(Graph g)
+    {
+        int p[] = new int[g.getVertices().size() + 1];
+        for(int i = 1; i < p.length; i++)
+        {
+            p[i] = -1;
+        }
+
+        return p;
+    }
+
+    public static String listPredecessors(int[] predArr, int pred, int src, Stack s)
+    {
+        while(pred != src)
+        {
+            s.push(Integer.toString(pred));
+            pred = predArr[pred];
+        }
+
+        String ans = "";
+
+        while(!s.isEmpty())
+            ans += " --> " + s.pop().data;
+
+        return ans;
+    }
 
     public static void printBellmanFord(Graph g, Vertex src)
     {
