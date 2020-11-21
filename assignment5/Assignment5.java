@@ -20,7 +20,6 @@ public class Assignment5 extends Stack
         System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
         graphSSSPComplete();
-
     }
 
 
@@ -241,8 +240,11 @@ public class Assignment5 extends Stack
 //~~~~~~~~~~~~~~~~~~~~BELLMAN-FORD SINGLE SOURCE SHORTEST PATH~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static void bellmanFord(Graph g, Vertex sourceVertex)
     {
-        //initializeSource(sourceVertex);
+        //if there were to be a negative cycle, their would be an infinte loop between to verticies and the shortest path would not be found
+        //assumed to be true, unless broken in the check at the end
+        Boolean noNegativeCycle = true;
 
+        //puts all the edges for the graph into one arraylist for easier references
         ArrayList<Edge> allEdges = new ArrayList<Edge>();
         for(Vertex v : g.getVertices())
         {
@@ -250,38 +252,42 @@ public class Assignment5 extends Stack
                 allEdges.add(e);
         }
 
+        //puts all the vertices for the graph into one arraylist for easier references
         ArrayList<Vertex> alLVertices = new ArrayList<Vertex>();
         alLVertices = g.getVertices();
 
+        //array contains the distance requried to reach the vertex represented by the index
+        //input for all graphs starts with one and goes up in increments of 1, therefore index 0 is unused and index 1 is the source
         int distances[] = initializeSource(g);
+
+        //array contains the predecessor that allowed for the lowest weight move to the vertex at the given index
+        //same index rules apply from above
         int predecessors[] = initializePredecessors(g);
 
-        ArrayList<ArrayList<Integer>> path = new ArrayList<ArrayList<Integer>>();
-        for(int a = 0; a < alLVertices.size() + 1; a++)
-        {
-            path.add(new ArrayList<Integer>());
-        }
-
+        //outer-loop goes through all vertices to find the weight between each of them
         for(int i = 1; i < alLVertices.size(); i++)
         {
+            //inner-loop controls the edges and is where the checking for lowest weight neighbor is
             for(int j = 0; j < allEdges.size(); j++)
             {
-                int src = allEdges.get(j).getSourceVertex();
-                int dst = allEdges.get(j).getDestVertex();
-                int weight = allEdges.get(j).getWeight();
+                int src = allEdges.get(j).getSourceVertex();     //source vertex for this edge iteration
+                int dst = allEdges.get(j).getDestVertex();       //destination vertex for this edge iteration
+                int weight = allEdges.get(j).getWeight();       //cost in terms of weight from source to destination
 
+                //if distance from source is max value, can skip it
                 if(distances[src] != Vertex.MAX_VALUE)
                 {
+                    //if the source's distance value plus the travel weight is still less than the destination's value, then the distance value must be updated because a cheaper path has been found
                     if( (distances[src] + weight) < distances[dst])
                     {
                         distances[dst] = distances[src] + weight;
                         predecessors[dst] = src;
-                        path.get(dst).add(src);
                     }
                 }
             }
         }
 
+        //this loop checks to make sure there are no negative cycles, if so, the program would break
         for(int k = 0; k < allEdges.size(); k++)
         {
             int src = allEdges.get(k).getSourceVertex();
@@ -291,10 +297,19 @@ public class Assignment5 extends Stack
             if(distances[src] != Vertex.MAX_VALUE)
             {
                 if( (distances[src] + weight) < distances[dst])
-                    System.out.println("NEGATIVE CYCLE");
+                    noNegativeCycle = false;
             }
         }
 
+        if(noNegativeCycle)
+            printBellmanFord(distances, predecessors, sourceVertex);
+        else
+            System.out.println("THERE WAS A NEGATIVE CYCLE, SINGLE SOURCE SHORTEST PATH NOT FOUND");
+    }
+
+    //prints the shortest path taken between source and a given vertex
+    public static void printBellmanFord(int[] distances, int[] predecessors, Vertex sourceVertex)
+    {
         for(int z = 2; z < distances.length; z++)
         {
             String goal = sourceVertex.getId() + " --> " + z;
@@ -304,9 +319,13 @@ public class Assignment5 extends Stack
         }
     }
 
+    //sets the initial distance of each vertex to be the highest integer value allowed by java
+    //initial distance of the source vertex must be 0 so the Bellman-Ford has a starting point since one of the conditions is one distance must not be infinity
     public static int[] initializeSource(Graph g)
     {
         int d[] =  new int[g.getVertices().size() + 1];
+
+        //start at index 2 since index 1 is the source and index 0 is left blank
         for(int i = 2; i < d.length; i++)
         {
             d[i] = Vertex.MAX_VALUE;
@@ -317,9 +336,11 @@ public class Assignment5 extends Stack
         return d;
     }
 
+    //sets the initial predecessor value to -1, since there cannot be a -1 vertex, this is a clear indicator
     public static int[] initializePredecessors(Graph g)
     {
         int p[] = new int[g.getVertices().size() + 1];
+
         for(int i = 1; i < p.length; i++)
         {
             p[i] = -1;
@@ -328,6 +349,25 @@ public class Assignment5 extends Stack
         return p;
     }
 
+    //gets the predecessors for each vertex such that it can identify the path taken from source to this vertex
+    //stack is used as predecessors are evaluated in reverse and so want last
+        //e.g. for the first graph, predecessor array looks as follows
+            /*
+                index 0 is -1
+                index 1 is 3
+                index 2 is 4
+                index 3 is 1
+                index 4 is 2
+             */
+            //index 0 is the source and the path from source is -1 and don't care about path to itself
+            //to find path from vertex 1 (index 0) to vertex 2 (index 1)
+                /*
+                    to arrive at vertex 2 (index 1), must come from vertex 3 (index 2)
+                    to arrive at vertex 3 (index 2), must come from vertex 4 (index 3)
+                    to arrive at vertex 4 (index 3), must come from vertex 1 (index 0)
+                    since index 0 is the source, can stop there and pop elements off the stack
+                        such that it gets popped off as 4 -> 3 -> 2 which is the correct order
+                 */
     public static String listPredecessors(int[] predArr, int pred, int src, Stack s)
     {
         while(pred != src)
@@ -344,17 +384,7 @@ public class Assignment5 extends Stack
         return ans;
     }
 
-    public static String printPath(Vertex v, Vertex source)
-    {
-        String ans = Integer.toString(source.getId());
-        for(Integer i : v.getPath())
-        {
-            ans += " --> " + i.toString();
-        }
-
-        return ans + ".";
-    }
-
+    //does the work to complete the whole part of the assignment
     public static void graphSSSPComplete() throws FileNotFoundException
     {
         ArrayList<String> graphFile = readGraphFile();
@@ -366,7 +396,6 @@ public class Assignment5 extends Stack
             bellmanFord(g, g.getThisVertex(1));
             System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
         }
-
     }
 
 //~~~~~~~~~~~~~~~~~~~~SELECTION SORT FROM ASSIGNMENT 2~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -434,16 +463,12 @@ public class Assignment5 extends Stack
         private boolean processed;
         private int id;
         static final int MAX_VALUE = 2147483647;
-        private int distFromSrc;
-        private ArrayList<Integer> path;
 
         public Vertex(ArrayList<Edge> e, int i)
         {
             this.edges = e;
             this.processed = false;
             this.id = i;
-            this.distFromSrc = MAX_VALUE;
-            this.path = new ArrayList<Integer>();
         }
 
         public ArrayList<Edge> getEdges()
@@ -464,34 +489,6 @@ public class Assignment5 extends Stack
         public int getId()
         {
             return this.id;
-        }
-
-        public int getDistFromSrc()
-        {
-            return this.distFromSrc;
-        }
-
-        public void setDistFromSrc(int dist)
-        {
-            this.distFromSrc = dist;
-        }
-
-        public ArrayList<Integer> getPath()
-        {
-            return this.path;
-        }
-
-        public void addToPath(int v)
-        {
-            this.path.add(v);
-        }
-
-        public Boolean isMaxDist()
-        {
-            if(this.getDistFromSrc() == MAX_VALUE)
-                return true;
-            else
-                return false;
         }
 
         public void addEdge(int s, int e, int w)
