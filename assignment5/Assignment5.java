@@ -17,12 +17,10 @@ public class Assignment5 extends Stack
     {
         knapsackComplete();
 
+        System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
 
-        ArrayList<String> graphFile = readGraphFile();
-        ArrayList<Graph> myGraphs = createGraphs(graphFile);
+        graphSSSPComplete();
 
-        Graph g = myGraphs.get(0);
-        bellmanFord(g, g.getThisVertex(1));
     }
 
 
@@ -306,12 +304,6 @@ public class Assignment5 extends Stack
         }
     }
 
-    //distance from source is initialized to Java's highest alloted integer value, so only source needs to be set to 0 opposed to all others becoming the highest number
-    public static void initializeSource(Vertex src)
-    {
-        src.setDistFromSrc(0);
-    }
-
     public static int[] initializeSource(Graph g)
     {
         int d[] =  new int[g.getVertices().size() + 1];
@@ -352,13 +344,6 @@ public class Assignment5 extends Stack
         return ans;
     }
 
-    public static void printBellmanFord(Graph g, Vertex src)
-    {
-        System.out.println("Vertex Dist. From Source");
-        for(int i = 0; i < g.getVertices().size(); i++)
-            System.out.println(g.getVertices().get(i).getId() + "\t\t" + g.getVertices().get(i).getDistFromSrc() + "\t\t" + printPath(g.getVertices().get(i), src));
-    }
-
     public static String printPath(Vertex v, Vertex source)
     {
         String ans = Integer.toString(source.getId());
@@ -370,8 +355,19 @@ public class Assignment5 extends Stack
         return ans + ".";
     }
 
+    public static void graphSSSPComplete() throws FileNotFoundException
+    {
+        ArrayList<String> graphFile = readGraphFile();
+        ArrayList<Graph> myGraphs = createGraphs(graphFile);
 
+        for(Graph g : myGraphs)
+        {
+            System.out.println(g.getName());
+            bellmanFord(g, g.getThisVertex(1));
+            System.out.println("\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
+        }
 
+    }
 
 //~~~~~~~~~~~~~~~~~~~~SELECTION SORT FROM ASSIGNMENT 2~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public static int selectionSort(ArrayList<Spice> itemList)
