@@ -118,6 +118,35 @@ public class Assignment5 extends Stack
         return mySpices;
     }
 
+    //fills up one knapsack
+    public static ArrayList<Spice> fillOneKnapsack(int capacity, ArrayList<Spice> mutableSpice)
+    {
+        //holds the contents of the knapsack
+        ArrayList<Spice> results = new ArrayList<Spice>();
+
+        while(capacity > 0 && mutableSpice.size() != 0)
+        {
+            //if the remaining quantity of spices in index 0 is 0, then remove that spice from the list
+            if(mutableSpice.get(0).getQuantity() == 0)
+            {
+                mutableSpice.remove(0);
+                capacity++;   //done to negate this cycle in the while-loop
+            }
+            //subtract a spice from the quantity of that at index 0 as well as adding this spice to the contents of the knapsack
+            else
+            {
+                Spice thisSpice = mutableSpice.get(0);
+                String name = thisSpice.getName();
+                double worth = thisSpice.getUnitCost();
+                thisSpice.removeQuantity(1);
+                results.add(new Spice(name, worth));
+            }
+            capacity--;
+        }
+
+        return results;
+    }
+
     //fills each knapsack up
     public static ArrayList<ArrayList<Spice>> fillKnapsacks(ArrayList<Spice> mutableSpice)
     {
@@ -126,30 +155,7 @@ public class Assignment5 extends Stack
         {
             int capacity = knaps.get(i);
 
-            //holds the contents of the knapsack
-            ArrayList<Spice> results = new ArrayList<Spice>();
-
-            while(capacity > 0 && mutableSpice.size() != 0)
-            {
-                //if the remaining quantity of spices in index 0 is 0, then remove that spice from the list
-                if(mutableSpice.get(0).getQuantity() == 0)
-                {
-                    mutableSpice.remove(0);
-                    capacity++;   //done to negate this cycle in the while-loop
-                }
-                //subtract a spice from the quantity of that at index 0 as well as adding this spice to the contents of the knapsack
-                else
-                {
-                    Spice thisSpice = mutableSpice.get(0);
-                    String name = thisSpice.getName();
-                    double worth = thisSpice.getUnitCost();
-                    thisSpice.removeQuantity(1);
-                    results.add(new Spice(name, worth));
-                }
-                capacity--;
-            }
-
-            allResults.add(results);
+            allResults.add(fillOneKnapsack(capacity, mutableSpice));
 
             mutableSpice = resetSpice(constantSpice);
         }
